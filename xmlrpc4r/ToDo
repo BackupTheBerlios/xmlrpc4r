@@ -1,7 +1,6 @@
-$Id: ToDo,v 1.21 2001/06/12 10:23:52 michael Exp $
+$Id: ToDo,v 1.22 2001/06/12 14:15:15 michael Exp $
 
 - implement new features of non-standard XML-RPC extensions
-- service introspection
 - Service Registry that creates WSDL (Web Service Description Languag)
 - Mix-in for service classes
 - Server: do method-lookup with Hash
@@ -17,6 +16,7 @@ $Id: ToDo,v 1.21 2001/06/12 10:23:52 michael Exp $
 - XML pretty print?
 - write more/better samples
 
+* service introspection
 * Server method hooks (e.g. for converting types and catching exceptions):
   class Service
   ...
