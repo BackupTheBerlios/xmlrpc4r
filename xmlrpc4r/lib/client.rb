@@ -9,10 +9,6 @@ Released under the same term of license as Ruby.
 
 
 = XMLRPC::Client
-Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
-
-Released under the same term of license as Ruby.
-
 == Synopsis
     require "xmlrpc/client"
 
@@ -91,7 +87,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.16 2001/01/27 23:18:09 michael Exp $
+    $Id: client.rb,v 1.17 2001/01/28 00:01:05 michael Exp $
 =end
 
 
