@@ -482,8 +482,8 @@ Implements a standalone XML-RPC server.
     Call this after you have added all you handlers to the server.
     This method starts the server to listen for XML-RPC requests and answer them.
 
---- XMLRPC::Server#stop
-    Stops the server.
+--- XMLRPC::Server#shutdown
+    Stops and shuts the server down.
     
 =end
 
@@ -495,15 +495,12 @@ class Server < BasicServer
   end
   
   def serve
-    begin
-      @server.start.join
-    ensure
-      @server.stop
-    end
+    trap("HUP") { @server.shutdown }
+    @server.start.join
   end
   
-  def stop
-    @server.stop
+  def shutdown
+    @server.shutdown
   end
 
  
@@ -522,6 +519,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.28 2001/06/19 12:26:56 michael Exp $    
+    $Id: server.rb,v 1.29 2001/06/19 20:21:27 michael Exp $    
 =end
 
