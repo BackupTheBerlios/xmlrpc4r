@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.7 2001/01/26 17:17:23 michael Exp $
+# $Id: parser.rb,v 1.8 2001/01/26 17:24:02 michael Exp $
 #
 
 
@@ -146,10 +146,12 @@ class Parser
     
     if dt =~ /^(\d\d\d\d)(\d\d)(\d\d)T(\d\d):(\d\d):(\d\d)$/ then
       # TODO: Time.gm ??? .local ??? 
-      if $1 >= 1970 then
-        Time.gm($1.to_i, $2.to_i, $3.to_i, $4.to_i, $5.to_i, $6.to_i)
+      a = [$1, $2, $3, $4, $5, $6].collect{|i| i.to_i}
+      
+      if a[0] >= 1970 then
+        Time.gm(*a)
       else
-        Date.new($1.to_i, $2.to_i, $3.to_i)
+        Date.new(*a[0,3])
       end
     else
       raise "wrong dateTime.iso8601 format"
