@@ -17,17 +17,19 @@ Released under the same term of license as Ruby.
       puts e.faultCode
       puts e.faultString
     end
+
 or
+
     require "xmlrpc/client"
   
     server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
-    ok, param = server.call("michael.add", 4, 5)
+    ok, param = server.call2("michael.add", 4, 5)
     if ok then
       puts "4 + 5 = #{param}"
     else
       puts "Error:"
-      puts params["faultCode"] 
-      puts params["faultString"]
+      puts param.faultCode
+      puts param.faultString
     end
 
 = Description
@@ -35,7 +37,7 @@ Class (({XMLRPC::Client})) provides remote procedure calls to a XML-RPC server.
 After setting the connection-parameters with ((<XMLRPC::Client.new>)) which
 creates a new (({XMLRPC::Client})) instance, you can execute a remote procedure 
 by sending the ((<call|XMLRPC::Client#call>)) or ((<call2|XMLRPC::Client#call2>))
-message to this new instance, giving parameters that indicate which method to 
+message to this new instance. The given parameters indicate which method to 
 call on the remote-side and of course the parameters for the remote procedure.
 
 = Class Methods
@@ -70,8 +72,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     a (({Date})). 
     If the remote procedure returned a fault-structure, then a 
     (({XMLRPC::FaultException})) exception is raised, which has two accessor-methods
-    (({XMLRPC::FaultException#faultCode})) and 
-    (({XMLRPC::FaultException#faultString})) of type (({Integer})) and (({String})).
+    (({faultCode})) and (({faultString})) of type (({Integer})) and (({String})).
 
 --- XMLRPC::Client#call2( method, *args )
     The difference between this method and ((<call|XMLRPC::Client#call>)) is, that
@@ -82,7 +83,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.13 2001/01/27 20:04:00 michael Exp $
+    $Id: client.rb,v 1.14 2001/01/27 20:50:45 michael Exp $
 =end
 
 
