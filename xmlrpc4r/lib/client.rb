@@ -141,13 +141,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Log: client.rb,v $
-    Revision 1.25  2001/03/22 20:22:07  michael
-    *** empty log message ***
-
-    Revision 1.24  2001/03/22 19:59:42  michael
-
-    added Client#proxy, Client#proxy2 and subclass Client::Proxy
+    $Id: client.rb,v 1.26 2001/03/22 20:29:29 michael Exp $
 
 =end
 
