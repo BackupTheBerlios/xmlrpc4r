@@ -4,14 +4,12 @@
 # This sample demonstrates how to call the XML-RPC interface
 # of RAA (Ruby Application Archive)
 #
-# $Id: raa_test.rb,v 1.2 2001/03/23 18:27:31 michael Exp $
+# $Id: raa_test.rb,v 1.3 2001/03/23 19:02:19 michael Exp $
 #
 
-require "xmlrpc/client"
+require "raa"
 
-server = XMLRPC::Client.new("www.ruby-lang.org", "/~nahi/xmlrpc/raa/")
-raa = server.proxy("raa")
-
+raa = RAA.new("www.ruby-lang.org", "/~nahi/xmlrpc/raa/")
 
 
 #
@@ -19,7 +17,6 @@ raa = server.proxy("raa")
 # of the packages at RAA
 #
 p raa.getAllListings
-
 
 
 #
@@ -30,7 +27,6 @@ p raa.getAllListings
 # names of the packages under this section.
 #
 p raa.getProductTree
-
 
 
 #
@@ -49,13 +45,10 @@ p raa.getInfoFromCategory( :major => "Library", :minor => "XML" )
 p raa.getInfoFromName( "XML-RPC" )
 
 
-
 #
 # Get all packages (in an array) which has been
 # modified since the given time.
 #
 p raa.getModifiedInfoSince( Time.at( Time.now.to_i - 24 * 3600 ) )
-
-
 
 
