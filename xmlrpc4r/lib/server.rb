@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: server.rb,v 1.1 2001/01/27 18:37:35 michael Exp $
+# $Id: server.rb,v 1.2 2001/01/27 19:24:31 michael Exp $
 #
 
 
@@ -65,7 +65,7 @@ class BasicServer
   #
   def handle(methodname, *args)
     res = begin
-      [true, dispatch(methodname, *args) 
+      [true, dispatch(methodname, *args)]
     rescue XMLRPC::FaultException => e  
       [false, e]  
     end
@@ -116,6 +116,7 @@ class CGIServer < BasicServer
   end
 
   def initialize
+    super
     $stdin.binmode
     data = $stdin.read(ENV['CONTENT_LENGTH'].to_i)
     parser = Parser.new
