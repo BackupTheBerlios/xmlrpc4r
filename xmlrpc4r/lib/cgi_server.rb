@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: cgi_server.rb,v 1.3 2001/01/26 15:41:22 michael Exp $
+# $Id: cgi_server.rb,v 1.4 2001/01/27 17:14:04 michael Exp $
 #
 
 
@@ -12,7 +12,7 @@
    require "xmlrpc/cgi_server"
  
    create = XMLRPC::Create.new
-   s = XMLRPC::CGI_Server.new     
+   s = XMLRPC::CGIServer.new     
 
    resp = case s.method        # name of called method
    when "michael.add"
@@ -37,19 +37,21 @@ require "xmlrpc/create"
 
 module XMLRPC
 
-class CGI_Server
-  @@init = false
+class CGIServer
+  @@obj = nil
 
   attr_reader :method, :params
   
+  def CGIServer.new
+    @@obj = super if @@obj.nil?
+    @@obj
+  end
+
   def initialize
-    if not @@init  
-      $stdin.binmode
-      data = $stdin.read(Integer(ENV['CONTENT_LENGTH']))
-      parser = Parser.new
-      @method, @params = parser.parseMethodCall(data) 
-      @@init = true
-    end
+    $stdin.binmode
+    data = $stdin.read(ENV['CONTENT_LENGTH'].to_i)
+    parser = Parser.new
+    @method, @params = parser.parseMethodCall(data) 
   end
 
 end
