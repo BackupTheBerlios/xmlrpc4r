@@ -1,6 +1,14 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.1
+* NQXML parser support
+* possibility to choose between different XML parsers and XML writers, with
+  Client#set_parser/#set_writer and BasicServer#set_parser/#set_writer
+* added HTTP.version_1_1, so now works with Ruby versions > 1.7
+* now you can do XML-RPC calls through a proxy server (Client.new).
+  Thanks to Hiroshi.
+
 :1.6
 * added RAA (Ruby Application Archive) XML-RPC example TkRAA
 * added XMLRPC::Client#proxy and #proxy2 as well as subclass Client::Proxy
@@ -36,5 +44,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.15 2001/03/23 18:48:04 michael Exp $
+  $Id: ChangeLog,v 1.16 2001/04/20 15:53:46 michael Exp $
 =end
