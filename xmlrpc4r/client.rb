@@ -5,8 +5,25 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.1 2001/01/24 16:24:10 michael Exp $
+# $Id: client.rb,v 1.2 2001/01/24 17:06:58 michael Exp $
 #
+
+
+=begin
+= Synopsis
+   require "client.rb"
+ 
+   server = Server.new("www.ruby-lang.org", 80, "/RPC2")
+   ok, params = server.call("michael.add", 4, 5)
+   if ok then
+     puts "4 + 5 = #{params[0]}"
+   else
+     puts "Error:"
+     puts params["faultCode"] 
+     puts params["faultString"]
+   end
+=end
+
 
 
 require "create"
@@ -23,11 +40,11 @@ class Server
     @http = Net::HTTP.new(host, port)
   end
 
-  def call(*args)
+  def call(method, *args)
     
     resp, data = @http.post (
                    @path, 
-                   createMethodCall(*args),
+                   createMethodCall(method, *args),
                    "User-Agent"   =>  USER_AGENT,
                    "Content-Type" => "text/xml"
                  )
