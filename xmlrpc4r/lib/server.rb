@@ -484,6 +484,85 @@ class CGIServer < BasicServer
 
 end
 
+=begin
+= XMLRPC::ModRubyServer
+=end 
+class ModRubyServer < BasicServer
+  @@obj = nil
+
+  def ModRubyServer.new(*a)
+    @@obj = super(*a) if @@obj.nil?
+    @@obj
+  end
+
+  def initialize(*a)
+    @ap = Apache::request
+    super(*a)
+  end
+  
+  def serve
+    catch(:exit_serve) {
+      header = {}
+      @ap.each_header {|key, value| header[key.capitalize] = value}
+
+      length = header['Content-length'].to_i
+
+      http_error(405, "Method Not Allowed") unless @ap.request_method  == "POST" 
+      http_error(400, "Bad Request")        unless header['Content-type'] == "text/xml"
+      http_error(411, "Length Required")    unless length > 0 
+
+      # TODO: do we need a call to binmode?
+      @ap.binmode
+      data = @ap.read(length)
+
+      http_error(400, "Bad Request")        if data.nil? or data.size != length
+
+      method, params = parser().parseMethodCall(data) 
+
+      resp = handle(method, *params)
+      http_write(resp, 200, "Content-type" => "text/xml")
+    }
+  end
+
+
+  private
+
+  def http_error(status, message)
+    err = "#{status} #{message}"
+    msg = <<-"MSGEND" 
+      <html>
+        <head>
+          <title>#{err}</title>
+        </head>
+        <body>
+          <h1>#{err}</h1>
+          <p>Unexpected error occured while processing XML-RPC request!</p>
+        </body>
+      </html>
+    MSGEND
+
+    http_write(msg, status, "Status" => err, "Content-type" => "text/html")
+    throw :exit_serve # exit from the #serve method
+  end
+
+  def http_write(body, status, header)
+    h = {}
+    header.each {|key, value| h[key.to_s.capitalize] = value}
+    h['Status']         ||= "200 OK"
+    h['Content-length'] ||= body.size.to_s 
+
+    h.each {|key, value| @ap[key] = value }
+    @ap.content_type = h["Content-type"] 
+    @ap.status = status.to_i 
+    @ap.send_http_header 
+
+    @ap.print body
+  end
+
+end
+
+
+
 
 =begin
 = XMLRPC::Server
@@ -572,6 +651,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.36 2001/07/05 14:52:54 michael Exp $    
+    $Id: server.rb,v 1.37 2001/07/06 11:21:10 michael Exp $    
 =end
 
