@@ -1,6 +1,9 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+: 1.5.x 
+* added Struct as possible type in a XMLRPC::Client#call/call2 or as a return value from a server-hanlder.
+
 : 1.5.1
 * now works also with Windows (validates)
 * standalone-server (XMLRPC::Server) works correctly (changed \n to \r\n), and validates
@@ -21,5 +24,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.7 2001/02/04 14:58:54 michael Exp $
+  $Id: ChangeLog,v 1.8 2001/02/05 00:27:23 michael Exp $
 =end

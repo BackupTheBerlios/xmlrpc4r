@@ -59,12 +59,12 @@ call on the remote-side and of course the parameters for the remote procedure.
     The parameter ((|method|)) is converted into a (({String})) and should 
     be a valid XML-RPC method-name.  
     Each parameter of ((|args|)) must be of one of the following types,
-    where (({Hash})) and (({Array})) can contain any of these listed ((:types:)):
+    where (({Hash})), (({Struct})) and (({Array})) can contain any of these listed ((:types:)):
     * (({Fixnum})), (({Bignum}))
     * (({TrueClass})), (({FalseClass})) ((({true})), (({false})))
     * (({String}))
     * (({Float}))
-    * (({Hash}))
+    * (({Hash})), (({Struct}))
     * (({Array}))
     * (({Date})), (({Time})), (({XMLRPC::DateTime}))
     * (({XMLRPC::Base64})) 
@@ -74,7 +74,9 @@ call on the remote-side and of course the parameters for the remote procedure.
     The type of the return-value is one of the above shown,
     only that a (({Bignum})) is only allowed when it fits in 32-bit and
     that a XML-RPC (('dateTime.iso8601')) type is always returned as
-    a ((<(({XMLRPC::DateTime}))|URL:datetime.html>)) object.
+    a ((<(({XMLRPC::DateTime}))|URL:datetime.html>)) object and 
+    a (({Struct})) is never returned, only a (({Hash})).
+    
     If the remote procedure returned a fault-structure, then a 
     (({XMLRPC::FaultException})) exception is raised, which has two accessor-methods
     (({faultCode})) and (({faultString})) of type (({Integer})) and (({String})).
@@ -88,7 +90,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.22 2001/02/02 16:34:17 michael Exp $
+    $Id: client.rb,v 1.23 2001/02/05 00:25:02 michael Exp $
 =end
 
 
