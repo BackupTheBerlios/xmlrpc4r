@@ -1,4 +1,4 @@
-$Id: ToDo,v 1.4 2001/01/29 17:29:07 michael Exp $
+$Id: ToDo,v 1.5 2001/01/29 21:29:39 michael Exp $
 
 - write test-cases
 - write documentation (3/4 done)
@@ -7,12 +7,12 @@ $Id: ToDo,v 1.4 2001/01/29 17:29:07 michael Exp $
 - a Java XMLRPC implementation had <nil\>. should implement?  
 - add the method-name to the FaultException?
 - client do not handle HTTP 301 redirects
-- what if a method fails due to a ArgumentError. Should check #arity,
-  or define argument_error_handler.
 - XML pretty print?
 - "400 Bad Request" on not valid XML ?
 - write more/better samples
 - Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
+* check arity (if check_arity is true) before calling hanlder
+* argument_error_handler, which is called due to a ArgumentError exception 
 * added standalone server
 * add Date <-> Time conversions
 * base64 type
