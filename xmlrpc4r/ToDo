@@ -1,6 +1,5 @@
-$Id: ToDo,v 1.22 2001/06/12 14:15:15 michael Exp $
+$Id: ToDo,v 1.23 2001/06/19 13:27:31 michael Exp $
 
-- implement new features of non-standard XML-RPC extensions
 - Service Registry that creates WSDL (Web Service Description Languag)
 - Mix-in for service classes
 - Server: do method-lookup with Hash
@@ -9,13 +8,14 @@ $Id: ToDo,v 1.22 2001/06/12 14:15:15 michael Exp $
 - write documentation (3/4 done)
 - convert from DOM to SAX ? (faster)
 - declare exceptions (e.g. ParserException...)
-- a Java XMLRPC implementation had <nil\>. should implement?  
 - add the method-name to the FaultException?
 - client do not handle HTTP 301 redirects
 - "400 Bad Request" on not valid XML ?
 - XML pretty print?
 - write more/better samples
 
+* a Java XMLRPC implementation had <nil\>. should implement?  
+* implement new features of non-standard XML-RPC extensions
 * service introspection
 * Server method hooks (e.g. for converting types and catching exceptions):
   class Service

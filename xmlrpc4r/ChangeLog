@@ -1,6 +1,11 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.4 
+* added <nil/> (optionally) as well as BigInt (Bignum's > 32 bits)
+* added configuration file (config.rb) for changing globally the parser/writer
+  to use as well as which features to enable
+
 :1.6.3 (2001-06-12)
 * fixed default_handler bug
 * added system.multicall extension
@@ -57,5 +62,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.25 2001/06/12 14:15:15 michael Exp $
+  $Id: ChangeLog,v 1.26 2001/06/19 13:26:26 michael Exp $
 =end
