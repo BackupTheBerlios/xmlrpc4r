@@ -4,11 +4,12 @@
 # An implementation of tests for the the first validator suite
 # (validator1) as shown on http://www.xmlrpc.com/validator1Docs 
 # For validated hosts, see http://validator.xmlrpc.com where
-# 149.225.142.138, 149.225.145.228 and 149.225.114.66 were my hosts.
+# 149.225.142.138, 149.225.145.228, 149.225.114.66 (all NetBSD) and
+# 149.225.117.236 (Windows 98) were my hosts.
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: validator1.rb,v 1.3 2001/02/04 14:32:09 michael Exp $
+# $Id: validator1.rb,v 1.4 2001/02/04 14:57:30 michael Exp $
 #
 
 
@@ -119,7 +120,7 @@ if __FILE__ == $0
 
   require "xmlrpc/server"
 
-  s = XMLRPC::Server.new(8080)
+  s = XMLRPC::Server.new(8080, "0.0.0.0")
   s.add_handler("validator1", Validator1.new)
   s.serve
 
