@@ -4,7 +4,7 @@
 # This sample demonstrates how to call the XML-RPC interface
 # of RAA (Ruby Application Archive)
 #
-# $Id: raa_test.rb,v 1.3 2001/03/23 19:02:19 michael Exp $
+# $Id: raa_test.rb,v 1.4 2001/03/23 19:09:11 michael Exp $
 #
 
 require "raa"
@@ -32,10 +32,10 @@ p raa.getProductTree
 #
 # Returns an array of hashes, where each hash
 # describes completely a RAA package.
-# Only packages in section "major" and subsection
-# "minor" are returned.
+# Only packages in section "Library" and subsection
+# "XML" are returned.
 #
-p raa.getInfoFromCategory( :major => "Library", :minor => "XML" )
+p raa.getInfoFromCategory( "Library", "XML" )
 
 
 #
