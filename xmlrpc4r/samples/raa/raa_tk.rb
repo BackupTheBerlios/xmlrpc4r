@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: raa_tk.rb,v 1.1 2001/03/22 22:53:36 michael Exp $
+# $Id: raa_tk.rb,v 1.2 2001/03/22 23:27:35 michael Exp $
 #
 
 require "tk"
@@ -24,7 +24,7 @@ INDENT = "    "
 raa = RAA.new(HOST, PATH, PORT)
 
 
-root  = TkRoot.new { title "TkRAA " }
+root  = TkRoot.new { title "TkRAA"; width "600"}
 lframe = TkFrame.new(root)
 rframe = TkFrame.new(root)
 
@@ -44,27 +44,21 @@ def generate_listing(raa)
   return l
 end
 
-#$list = generate_listing(raa)
+$list = generate_listing(raa)
 
 
 
 
-list_w = TkScrollbox.new(lframe) {
+list = TkScrollbox.new(lframe) {
   relief 'raised'
-  pack 'fill' => 'both'
+  setgrid 'yes'
+  pack 'side' => 'left', 'fill' => 'both', 'expand' => 'yes'
 }
 
-#list_w = TkListbox.new(lframe, 'selectmode' => 'single')
-#scroll_bar = TkScrollbar.new(lframe, 'command' => proc {|*args| list_w.yview *args})
-#scroll_bar.pack('side' => 'left', 'fill' => 'y')
-#list_w.yscrollcommand(proc {|first,last| scroll_bar.set(first,last)})
-#list_w.pack('side' => 'left', 'fill' => 'y')
-
-=begin
 $list.each {|i|
   txt = i[:text]
 
-  list_w.insert('end',
+  list.insert('end',
     case i[:type]
     when :maj   then txt
     when :min   then INDENT + txt
@@ -74,19 +68,26 @@ $list.each {|i|
 
 }
 
-=end
 
-list_w.bind("ButtonRelease-1") {
-  index = list_w.curselection[0].to_i
-  p index
+list.bind("ButtonRelease-1") {
+  index = list.curselection[0].to_i
   entry = $list[index]
-  p entry
 
   if entry[:type] == :entry then
     info = raa.getInfoFromName(entry[:text])
     $product.keys.each {|k| 
       $product[k].value = info["product"][k.to_s]  
     } 
+
+    $owner.keys.each {|k| 
+      $owner[k].value = info["owner"][k.to_s]  
+    } 
+
+    $category.keys.each {|k| 
+      $category[k].value = info["category"][k.to_s]  
+    } 
+
+    $update.value = info["update"].to_s
   end
 }
 
@@ -100,70 +101,95 @@ $product[:name]        = TkVariable.new
 $product[:homepage]    = TkVariable.new
 $product[:description] = TkVariable.new
 
+$owner = {}
+$owner[:email] = TkVariable.new
+$owner[:name]  = TkVariable.new
+$owner[:id]    = TkVariable.new
 
-def label_entry(parent, label, tkvar, row)
+$category = {}
+$category[:major] = TkVariable.new
+$category[:minor] = TkVariable.new
+
+$update = TkVariable.new
+
+
+
+
+def label_entry(parent, label, tkvar, row, klass_entry=TkEntry)
   TkLabel.new(parent) {
     text label
   }.grid('row' => row, 'column' => 0, 'sticky' => 'w')
   
-  TkEntry.new(parent) {
+  klass_entry.new(parent) {
     textvariable tkvar
+    width 50
   }.grid('row' => row, 'column' => 1)
 end
 
 
- 
-label_entry(rframe, "Download", $product[:download], 0)
-label_entry(rframe, "Status", $product[:status], 1)
-label_entry(rframe, "Version", $product[:version], 2)
-label_entry(rframe, "License", $product[:license], 3)
-label_entry(rframe, "Name", $product[:name], 4)
-label_entry(rframe, "Homepage", $product[:homepage], 5)
-label_entry(rframe, "Description", $product[:description], 6)
+
+
+# product
+TkLabel.new(rframe) {
+  text "Product"
+  pack 'fill' => 'x'
+}.pack  
+
+prod = TkFrame.new(rframe)
+label_entry(prod, "Download", $product[:download], 0)
+label_entry(prod, "Status", $product[:status], 1)
+label_entry(prod, "Version", $product[:version], 2)
+label_entry(prod, "License", $product[:license], 3)
+label_entry(prod, "Name", $product[:name], 4)
+label_entry(prod, "Homepage", $product[:homepage], 5)
+label_entry(prod, "Description", $product[:description], 6)
+prod.pack  'fill' => 'x'
+
+
+# owner
+TkLabel.new(rframe) {
+  text "Owner"
+  pack 'fill' => 'x'
+}.pack  
+
+owner = TkFrame.new(rframe)
+label_entry(owner, "Email", $owner[:email], 0)
+label_entry(owner, "Name", $owner[:name], 1)
+label_entry(owner, "Id", $owner[:id], 2)
+owner.pack  'fill' => 'x'
+
+# category
+TkLabel.new(rframe) {
+  text "Category"
+  pack 'fill' => 'x'
+}.pack  
+
+categ = TkFrame.new(rframe)
+label_entry(categ, "Major", $category[:major], 0)
+label_entry(categ, "Minor", $category[:minor], 1)
+categ.pack  'fill' => 'x'
+
+# update
+TkLabel.new(rframe) {
+  text "Update"
+  pack 'fill' => 'x'
+}.pack  
+
+update = TkFrame.new(rframe)
+label_entry(update, "Update", $update, 0)
+update.pack  'fill' => 'x'
 
 
 
 
-lframe.pack 'side' => 'left', 'fill' => 'y', 'fill' => 'x'
-rframe.pack 'side' => 'right', 'fill' => 'y'
 
-#Tk.wm "HallO"
-
-
+lframe.pack 'side' => 'left', 'fill' => 'both', 'expand' => 'yes'
+rframe.pack 'side' => 'right', 'fill' => 'both', 'expand' => 'yes'
 
 
 Tk.mainloop
 
 
 
-
-=begin
-
-  $msg.configure('text'=>$msg.cget('text') + message)
-
-$entry = TkVariable.new
-
-$msg = TkMessage.new(root) {
-  pack
-}
-
-TkEntry.new(root) {
-  textvariable $entry
-  pack
-}
-
-TkButton.new(root) {
-  text "send"
-  command {
-    $mutex.synchronize {
-      Thread.new {
-        chat_server.call("chat.server.send", CHANNEL, $entry.value+"\n")
-      }
-      $entry.value = "" 
-    }
-  } 
-  pack
-}
-=end
 
   
