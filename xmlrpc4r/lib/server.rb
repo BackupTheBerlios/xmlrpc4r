@@ -16,13 +16,20 @@ You can add handler and set a default handler.
 Do not use this server, as this is/should be an abstract class.
 
 == Class Methods
---- XMLRPC::BasicServer.new( class_delim="." )
+--- XMLRPC::BasicServer.new( class_delim=".", check_arity=true )
     Creates a new (({XMLRPC::BasicServer})) instance, which should not be 
     done, because (({XMLRPC::BasicServer})) is an abstract class. This
     method should be called from a subclass indirectly by a (({super})) call
     in the method (({initialize})). The paramter ((|class_delim|)) is used
     in ((<add_handler|XMLRPC::BasicServer#add_handler>)) when an object is
     added as handler, to delimit the object-prefix and the method-name.
+
+    If ((|check_arity|)) is true, the arity (number of accepted arguments) of
+    a handler (method or (({Proc})) object) is compared to the given arguments submitted
+    by the client for a RPC ((-Remote Procedure Call-)). 
+    A handler is only called if it accepts the number of arguments, otherwise the search 
+    for another handler will go on.
+    
 
 == Instance Methods
 --- XMLRPC::BasicServer#add_handler( prefix, obj=nil, &block )
@@ -62,10 +69,19 @@ Do not use this server, as this is/should be an abstract class.
 --- XMLRPC::BasicServer#set_default_handler ( &handler )
     Sets ((|handler|)) as the default-handler, which is called when 
     no handler for a method-name is found. ((|handler|)) is a code-block.
-    The default-handler is called with the method-name as first argument, and
+    The default-handler is called with the (XML-RPC) method-name as first argument, and
     the other arguments are the parameters given by the client-call.
 
+--- XMLRPC::BasicServer#get_argument_error_handler
+    Returns the argument-error handler, which is called when a handler is called
+    and an (({ArgumentError})) exception is raised due to too less or too much arguments.
+    It is a (({Proc})) object.
 
+--- XMLRPC::BasicServer#set_argument_error_handler ( &handler )
+    Sets ((|handler|)) as the argument-error handler, which is called when a handler is called
+    and an (({ArgumentError})) exception is raised due to too less or too much arguments.
+    The argument-error handler is called with the (XML-RPC) method-name as first argument, 
+    and the other arguments are the parameters given by the client-call.
 =end
 
 
@@ -79,11 +95,14 @@ module XMLRPC
 
 class BasicServer
 
-  def initialize(class_delim=".")
+  def initialize(class_delim=".", check_arity=true)
     @handler = []
-    @default_handler = proc {|*a| def_handler(*a)} 
+    @default_handler        = method( :default_handler).to_proc
+    @argument_error_handler = method( :argument_error_handler).to_proc 
+
     @create = XMLRPC::Create.new
     @class_delim = class_delim
+    @check_arity = check_arity
   end
 
   def add_handler(prefix, obj=nil, &block)
@@ -115,25 +134,60 @@ class BasicServer
     end
   end  
 
+
+  def get_argument_error_handler
+    @argument_error_handler
+  end
+
+  def set_argument_error_handler (&handler)
+    if handler.nil? 
+      raise ArgumentError, "No block given"
+    else
+      @argument_error_handler = handler
+    end
+  end
+
+
   private
  
   #
   # method dispatch
   #
   def dispatch(methodname, *args)
-    for name, obj in @handler do
-
-      if obj.kind_of? Proc  
-        return obj.call(*args) if methodname == name
-      else
-        if methodname =~ /^#{name}(.+)$/ 
-          return obj.send($1, *args) if obj.respond_to? $1
-        end
-      end
-        
-    end 
     
-    @default_handler.call(methodname, *args) 
+    begin
+      for name, obj in @handler
+	if obj.kind_of? Proc
+	  next unless methodname == name
+	else
+	  next unless methodname =~ /^#{name}(.+)$/
+	  obj = obj.method($1) if obj.respond_to? $1
+	end
+	
+	return obj.call(*args) if check_arity(obj, args.size)
+      end 
+   
+      @default_handler.call(methodname, *args) 
+
+    rescue ArgumentError
+      @argument_error_handler.call(methodname, *args)
+    end
+
+  end
+
+
+  #
+  # returns true, if the arity of "obj" matches
+  #
+  def check_arity(obj, n_args)
+    return true unless @check_arity
+    ary = obj.arity
+
+    if ary >= 0
+      n_args == ary
+    else
+      n_args >= (ary+1).abs 
+    end
   end
 
   #
@@ -152,8 +206,16 @@ class BasicServer
   # is called when no other method is 
   # responsible for the request
   #
-  def def_handler(methodname, *args)
+  def default_handler(methodname, *args)
     raise XMLRPC::FaultException.new(-99, "Method <#{methodname}> missing!")
+  end
+
+  #
+  # is called when a handler-method is called and an ArgumentError-exception 
+  # is raises due to too much/too less arguments (this will only happen when check_arity is false).
+  #
+  def argument_error_handler(methodname, *args)
+    raise XMLRPC::FaultException.new(-98, "Wrong number of parameters for <#{methodname}>!")
   end
 
 end
@@ -358,6 +420,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.15 2001/01/29 17:27:03 michael Exp $    
+    $Id: server.rb,v 1.16 2001/01/29 21:28:06 michael Exp $    
 =end
 
