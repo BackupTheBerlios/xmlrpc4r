@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: test_features.rb,v 1.1 2001/06/19 13:24:30 michael Exp $
+# $Id: test_features.rb,v 1.2 2001/06/21 11:38:29 michael Exp $
 #
 
 require "runit/testcase"
@@ -13,7 +13,7 @@ require "xmlrpc/create"
 require "xmlrpc/parser"
 
 module XMLRPC
-module Extensions
+module Config
   ENABLE_NIL_CREATE = true
   ENABLE_NIL_PARSER = true
 end
