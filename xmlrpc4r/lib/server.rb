@@ -201,18 +201,58 @@ class CGIServer < BasicServer
 
   def initialize(*a)
     super(*a)
-    $stdin.binmode
-    data = $stdin.read(ENV['CONTENT_LENGTH'].to_i)
+
     parser = Parser.new
+   
+    length = ENV['CONTENT_LENGTH'].to_i
+
+    http_error(405, "Method Not Allowed") unless ENV['REQUEST_METHOD'] == "POST" 
+    http_error(400, "Bad Request")        unless ENV['CONTENT_TYPE'] == "text/xml"
+    http_error(411, "Length Required")    unless length > 0 
+
+    $stdin.binmode
+    data = $stdin.read(length)
+
+    http_error(400, "Bad Request")        if data.nil? or data.size != length
+
     @method, @params = parser.parseMethodCall(data) 
   end
   
   def serve
     resp = handle(@method, *@params)
-    puts "Content-type: text/xml"
-    puts "Content-length: #{resp.size}"
+    http_write(resp, "Content-type" => "text/xml")
+  end
+
+
+  private
+
+  def http_error(status, message)
+    err = "#{status} #{message}"
+    msg = <<-"MSGEND" 
+      <html>
+        <head>
+          <title>#{err}</title>
+        </head>
+        <body>
+          <h1>#{err}</h1>
+          <p>Unexpected error occured while processing XML-RPC request!</p>
+        </body>
+      </html>
+    MSGEND
+
+    http_write(msg, "Status" => err, "Content-type" => "text/html")
+    exit 
+  end
+
+  def http_write(body, header)
+    h = {}
+    header.each {|key, value| h[key.to_s.capitalize] = value}
+    h['Status']         ||= "200 OK"
+    h['Content-length'] ||= body.size.to_s 
+
+    h.each {|key, value| puts "#{key} #{value}"}
     puts
-    puts resp
+    print body 
   end
 
 end
@@ -297,6 +337,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.9 2001/01/28 17:01:18 michael Exp $    
+    $Id: server.rb,v 1.10 2001/01/29 13:02:28 michael Exp $    
 =end
 
