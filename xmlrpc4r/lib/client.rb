@@ -46,25 +46,53 @@ message to this new instance. The given parameters indicate which method to
 call on the remote-side and of course the parameters for the remote procedure.
 
 == Class Methods
---- XMLRPC::Client.new( host=nil, path=nil, port=nil, proxy_addr=nil, proxy_port=nil, user=nil, password=nil, use_ssl=false )
+--- XMLRPC::Client.new( host=nil, path=nil, port=nil, proxy_host=nil, proxy_port=nil, user=nil, password=nil, use_ssl=false, timeout =nil)
     Creates an object which represents the remote XML-RPC server on the 
     given host ((|host|)). If the server is CGI-based, ((|path|)) is the
     path to the CGI-script, which will be called, otherwise (in the
     case of a standalone server) ((|path|)) should be (({"/RPC2"})).
     ((|port|)) is the port on which the XML-RPC server listens.
-    If ((|proxy_addr|)) is given, then a proxy server listening at
-    ((|proxy_addr|)) is used. ((|proxy_port|)) is the port of the
+    If ((|proxy_host|)) is given, then a proxy server listening at
+    ((|proxy_host|)) is used. ((|proxy_port|)) is the port of the
     proxy server.
 
     Default values for ((|host|)), ((|path|)) and ((|port|)) are 'localhost', '/RPC2' and
     '80' respectively using SSL '443'.
 
-    If ((|user|)) and ((|password|)) are given, then on a HTTP 401 Authorization Required
-    status, these values are passed to authentificate the client. Currently only Basic
-    Authentification is implemented, no Digest. 
+    If ((|user|)) and ((|password|)) are given, each time a request is send, 
+    a Authorization header is send. Currently only Basic Authentification is 
+    implemented no Digest.
 
     If ((|use_ssl|)) is set to (({true})), comunication over SSL is enabled.
     Note, that you need the SSL package from RAA installed.
+
+    Parameter ((|timeout|)) is the time to wait for a XML-RPC response, defaults to 30.
+
+--- XMLRPC::Client.new2( uri, proxy=nil, timeout=nil)
+    : uri
+      URI specifying protocol (http or https), host, port, path, user and password.
+      Example:
+        https://user:password@host:port/path
+
+    : proxy
+      Is of the form "host:port".
+ 
+    : timeout
+      Defaults to 30. 
+
+--- XMLRPC::Client.new3( hash={} )
+    Parameter ((|hash|)) has following case-insensitive keys:
+    * host
+    * path
+    * port
+    * proxy_host
+    * proxy_port
+    * user
+    * password
+    * use_ssl
+    * timeout
+
+    Calls ((<XMLRPC::Client.new>)) with the corresponding values.
 
 == Instance Methods
 --- XMLRPC::Client#call( method, *args )
@@ -135,6 +163,42 @@ call on the remote-side and of course the parameters for the remote procedure.
     a call on that object will return two parameters. 
 
 
+
+
+--- XMLRPC::Client#call_async(...)
+--- XMLRPC::Client#call2_async(...)
+--- XMLRPC::Client#multicall_async(...)
+--- XMLRPC::Client#multicall2_async(...)
+--- XMLRPC::Client#proxy_async(...)
+--- XMLRPC::Client#proxy2_async(...)
+    In contrast to corresponding methods without "_async", these can be
+    called concurrently and use for each request a new connection, where the 
+    non-asynchronous counterparts use connection-alive (one connection for all requests)
+    if possible. 
+
+    Note, that you have to use Threads to call these methods concurrently. 
+    The following example calls two methods concurrently:
+    
+      Thread.new {
+        p client.call_async("michael.add", 4, 5)
+      }
+ 
+      Thread.new {
+        p client.call_async("michael.div", 7, 9)
+      }
+ 
+
+--- XMLRPC::Client#timeout
+--- XMLRPC::Client#user
+--- XMLRPC::Client#password
+    Return the corresponding attributes.
+
+--- XMLRPC::Client#timeout= (new_timeout)
+--- XMLRPC::Client#user= (new_user)
+--- XMLRPC::Client#password= (new_password)
+    Set the corresponding attributes.
+    
+
 --- XMLRPC::Client#set_writer( writer )
     Sets the XML writer to use for generating XML output.
     Should be an instance of a class from module (({XMLRPC::XMLWriter})).
@@ -167,12 +231,17 @@ Don't use this class directly, but use instead method ((<XMLRPC::Client#proxy>))
 ((<XMLRPC::Client#proxy2>)).
 
 == Class Methods
---- XMLRPC::Client::Proxy.new( server, prefix, args=[], call=true, delim="." ) 
+--- XMLRPC::Client::Proxy.new( server, prefix, args=[], meth=:call, delim="." ) 
     Creates an object which provides (({method_missing})).
+
     ((|server|)) must be of type (({XMLRPC::Client})), which is the XML-RPC server to be used
     for a XML-RPC call. ((|prefix|)) and ((|delim|)) will be prepended to the methodname
-    called onto this object. If ((|call|)) is (({true})) then ((<XMLRPC::Client#call>)) is used,
-    otherwise ((<XMLRPC::Client#call2>)). ((|args|)) are arguments which are automatically given
+    called onto this object. 
+
+    Parameter ((|meth|)) is the method (call, call2, call_async, call2_async) to use for
+    a RPC.
+
+    ((|args|)) are arguments which are automatically given
     to every XML-RPC call before the arguments provides through (({method_missing})).
     
 == Instance Methods
@@ -184,7 +253,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.40 2001/06/29 21:14:51 michael Exp $
+    $Id: client.rb,v 1.41 2001/07/02 15:02:22 michael Exp $
 
 =end
 
@@ -204,14 +273,20 @@ module XMLRPC
 
     include ParserWriterChooseMixin
 
-    def initialize(host=nil, path=nil, port=nil, proxy_addr=nil, proxy_port=nil, 
-                   user=nil, password=nil, use_ssl=false)
+
+    # Constructors -------------------------------------------------------------------
+
+    def initialize(host=nil, path=nil, port=nil, proxy_host=nil, proxy_port=nil, 
+                   user=nil, password=nil, use_ssl=nil, timeout=nil)
 
       @host       = host || "localhost"
       @path       = path || "/RPC2"
-      @proxy_addr = proxy_addr
+      @proxy_host = proxy_host
       @proxy_port = proxy_port
-      @use_ssl    = use_ssl 
+      @proxy_host ||= 'localhost' if @proxy_port != nil
+      @proxy_port ||= 8080 if @proxy_host != nil
+      @use_ssl    = use_ssl || false
+      @timeout    = timeout || 30
 
       if use_ssl
         require "net/https"
@@ -220,15 +295,77 @@ module XMLRPC
         @port = port || 80
       end
 
-      if user != nil and password != nil
-        @auth = ("Basic " + ["#{user}:#{password}"].pack("m")).chomp
-      else
-        @auth = nil
-      end
+      @user, @password = user, password
+
+      set_auth
+
+      # convert ports to integers
+      @port = @port.to_i if @port != nil
+      @proxy_port = @proxy_port.to_i if @proxy_port != nil
+
+      # HTTP object for synchronous calls
+      Net::HTTP.version_1_2
+      @http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port) 
+      @http.use_ssl = @use_ssl if @use_ssl
+      @http.read_timeout = @timeout
 
       @parser = nil
       @create = nil
     end
+
+
+    def self.new2(uri, proxy=nil, timeout=nil)
+      if uri =~ /^([^:]+):\/\/(([^@]+)@)?([^\/]+)(\/.*)?$/
+        proto = $1
+        user, passwd = ($3 || "").split(":")
+        host, port = $4.split(":") 
+        path = $5
+
+        if proto != "http" and proto != "https"
+          raise "Wrong protocol specified. Only http or https allowed!"
+        end
+
+      else
+        raise "Wrong URI as parameter!"
+      end
+ 
+      proxy_host, proxy_port = (proxy || "").split(":")
+
+      self.new(host, path, port, proxy_host, proxy_port, user, passwd, (proto == "https"), timeout)
+    end
+ 
+
+    def self.new3(hash={})
+
+      # convert all keys into lowercase strings
+      h = {}
+      hash.each { |k,v| h[k.to_s.downcase] = v }
+
+      self.new(h['host'], h['path'], h['port'], h['proxy_port'], h['user'], h['password'],
+               h['use_ssl'], h['timeout'])
+    end
+
+
+    # Attribute Accessors -------------------------------------------------------------------
+
+    attr_reader :timeout, :user, :password
+
+    def timeout=(new_timeout)
+      @timeout = new_timeout
+      @http.read_timeout = @timeout
+    end
+
+    def user=(new_user)
+      @user = new_user
+      set_auth
+    end
+
+    def password=(new_password)
+      @password = new_password
+      set_auth
+    end
+
+    # Call methods --------------------------------------------------------------
 
     def call(method, *args)
       ok, param = call2(method, *args) 
@@ -238,7 +375,30 @@ module XMLRPC
         raise param
       end
     end 
-  
+
+    def call2(method, *args)
+      request = create().methodCall(method, *args)
+      data = do_rpc(request, false)
+      parser().parseMethodResponse(data)
+    end
+
+    def call_async(method, *args)
+      ok, param = call2_async(method, *args) 
+      if ok
+        param
+      else
+        raise param
+      end
+    end 
+
+    def call2_async(method, *args)
+      request = create().methodCall(method, *args)
+      data = do_rpc(request, true)
+      parser().parseMethodResponse(data)
+    end
+
+
+    # Multicall methods --------------------------------------------------------------
 
     def multicall(*methods)
       ok, params = multicall2(*methods)
@@ -250,7 +410,110 @@ module XMLRPC
     end
 
     def multicall2(*methods)
-      ok, params = call2("system.multicall", 
+      gen_multicall(methods, false)
+    end
+
+    def multicall_async(*methods)
+      ok, params = multicall2_async(*methods)
+      if ok
+        params
+      else
+        raise params
+      end
+    end
+
+    def multicall2_async(*methods)
+      gen_multicall(methods, true)
+    end
+
+
+    # Proxy generating methods ------------------------------------------
+    
+    def proxy(prefix, *args)
+      Proxy.new(self, prefix, args, :call)
+    end
+
+    def proxy2(prefix, *args)
+      Proxy.new(self, prefix, args, :call2)
+    end
+
+    def proxy_async(prefix, *args)
+      Proxy.new(self, prefix, args, :call_async)
+    end
+
+    def proxy2_async(prefix, *args)
+      Proxy.new(self, prefix, args, :call2_async)
+    end
+
+
+    private # ----------------------------------------------------------
+
+    def set_auth
+      if @user.nil?
+        @auth = nil
+      else
+        a =  "#@user"
+        a << ":#@password" if @password != nil
+        @auth = ("Basic " + [a].pack("m")).chomp
+      end
+    end
+
+    def do_rpc(request, async=false)
+      header = {  
+       "User-Agent"     =>  USER_AGENT,
+       "Content-Type"   => "text/xml",
+       "Content-Length" => request.size.to_s 
+      }
+
+      if @auth != nil
+        # add authorization header
+        header["Authorization"] = @auth
+      end
+ 
+      if async
+        # use a new HTTP object for each call 
+        Net::HTTP.version_1_2
+        http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port) 
+        http.use_ssl = @use_ssl if @use_ssl
+        http.read_timeout = @timeout
+      else
+        # reuse the HTTP object for each call => connection alive is possible
+        http = @http
+      end
+  
+      # post request
+      resp = http.post2(@path, request, header) 
+      data = resp.body
+      http.finish if async
+
+      if resp.code == "401"
+        # Authorization Required
+        raise "Authorization failed.\nHTTP-Error: #{resp.code} #{resp.message}" 
+      elsif resp.code[0,1] != "2"
+        raise "HTTP-Error: #{resp.code} #{resp.message}" 
+      end
+
+      if resp["Content-Type"] != "text/xml"
+        if resp["Content-Type"] == "text/html"
+          raise "Wrong content-type: \n#{data}"
+        else
+          raise "Wrong content-type"
+        end
+      end
+
+      expected = resp["Content-Length"] || "<unknown>"
+      if data.nil? or data.size == 0 or expected.to_i != data.size
+        raise "Wrong size. Was #{data.size}, should be #{expected}"
+      end
+
+      return data
+    end
+
+    def gen_multicall(methods=[], async=false)
+      meth = :call2
+      meth = :call2_async if async
+
+      ok, params = self.send(meth, "system.multicall", 
         methods.collect {|m| {'methodName' => m[0], 'params' => m[1..-1]} }
       )
 
@@ -270,102 +533,20 @@ module XMLRPC
     end
 
 
- 
-    def call2(method, *args)
-      request = create().methodCall(method, *args)
-      data = do_rpc(request)
-      parser().parseMethodResponse(data)
-    end
-
-    
-    def proxy(prefix, *args)
-      Proxy.new(self, prefix, args)
-    end
-
-    def proxy2(prefix, *args)
-      Proxy.new(self, prefix, args, false)
-    end
-
-
-    # NOTE: block parameters like xxxx2 method!!!
-    def async_call(method, *args)
-      Thread.start {
-        yield call2(method, *args) 
-      }
-    end
-
-    # NOTE: block parameters like xxxx2 method!!!
-    def async_multicall(*methods)
-      Thread.start {
-        yield multicall2(*methods) 
-      }
-    end
-
-    private # ------------------------------------
-
-    def do_rpc(request)
-      header = {  
-       "User-Agent"     =>  USER_AGENT,
-       "Content-Type"   => "text/xml",
-       "Content-Length" => request.size.to_s 
-      }
-
-      if @auth != nil
-        # add authorization header
-        header["Authorization"] = @auth
-      end
- 
-      data = nil
-      # post request
-      HTTP.version_1_2
-      HTTP.start(@host, @port, @proxy_addr, @proxy_port) do |http|
-        http.use_ssl = @use_ssl
-        resp = http.post2(@path, request, header) 
-        data = response.body
-
-        if resp.code == "401"
-          # Authorization Required
-          raise "Authorization failed.\nHTTP-Error: #{resp.code} #{resp.message}" 
-        elsif resp.code[0,1] != "2"
-          raise "HTTP-Error: #{resp.code} #{resp.message}" 
-        end
-
-        if resp["Content-Type"] != "text/xml"
-          if resp["Content-Type"] == "text/html"
-            raise "Wrong content-type: \n#{data}"
-          else
-            raise "Wrong content-type"
-          end
-        end
-
-        expected = resp["Content-Length"] || "<unknown>"
-        if data.nil? or data.size == 0 or expected.to_i != data.size
-          raise "Wrong size. Was #{data.size}, should be #{expected}"
-        end
-      end # start
-
-      return data
-    end
-
 
     class Proxy
 
-      def initialize(server, prefix, args=[], call=true, delim=".")
+      def initialize(server, prefix, args=[], meth=:call, delim=".")
 	@server = server
 	@prefix = prefix + delim
-	@call   = call
 	@args   = args 
+        @meth   = meth
       end
 
       def method_missing(mid, *args)
 	pre = @prefix + mid.to_s
 	arg = @args + args
-
-	if @call
-	  @server.call(pre, *arg)
-	else
-	  @server.call2(pre, *arg)
-	end
+	@server.send(@meth, pre, *arg)
       end
 
     end # class Proxy
