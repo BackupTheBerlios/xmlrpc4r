@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.11 2001/01/27 18:17:13 michael Exp $
+# $Id: parser.rb,v 1.12 2001/01/27 18:21:56 michael Exp $
 #
 
 
@@ -21,6 +21,12 @@ class FaultException < Exception
     @faultCode   = faultCode
     @faultString = faultString
   end
+  
+  # returns a hash
+  def to_h
+    {"faultCode" => @faultCode, "faultString" => @faultString}
+  end
+
 end
 
 
