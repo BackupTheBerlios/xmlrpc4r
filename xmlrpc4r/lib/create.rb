@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.21 2001/06/19 13:59:42 michael Exp $
+# $Id: create.rb,v 1.22 2001/06/19 20:51:13 michael Exp $
 #
 
 require "date"
@@ -250,12 +250,22 @@ module XMLRPC
 	  @writer.tag("base64", param.encoded) 
 
 	else 
-	  raise "Wrong type: not yet working!"
+          ok, pa = wrong_type(param)
+          if ok
+            return conv2value(pa)
+          else 
+            raise "Wrong type!"
+          end
 	end
 	 
 	@writer.ele("value", val)
     end
 
+    def wrong_type(value)
+      false
+    end
+
+    
   end # class Create
 
 end # module XMLRPC
