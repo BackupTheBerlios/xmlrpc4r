@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.9 2001/01/26 17:17:23 michael Exp $
+# $Id: create.rb,v 1.10 2001/01/26 17:27:28 michael Exp $
 #
 
 require "date"
@@ -128,7 +128,8 @@ class Create
         # TODO: Time.gm??? .local???
         t = param
         if t.kind_of? Date then
-          ele("dateTime.iso8601", format("%.4d%02d%02dT00:00:00", t.year, t.month, t.day))
+          ele("dateTime.iso8601", 
+            format("%.4d%02d%02dT00:00:00", t.year, t.month, t.day))
         else
           ele("dateTime.iso8601", t.strftime("%Y%m%dT%H:%M:%S"))  
         end
