@@ -187,15 +187,10 @@ class BasicServer
         # class-handler
         raise ArgumentError, "Expected non-nil value" if obj_or_signature.nil?
         @handler << [prefix + @class_delim, obj_or_signature]
-      elsif prefix.kind_of? XMLRPC::ServiceInterface
+      elsif prefix.kind_of? XMLRPC::Service::BasicInterface
         # class-handler with interface
-        interface = prefix
-        prefix    = interface.get_prefix + @class_delim
-
         # add all methods
-        interface.get_methods.each do |name, meth, sig, help|
-          @handler << [prefix+name, obj_or_signature.method(meth).to_proc, sig, help]
-        end
+        @handler += prefix.get_methods(obj_or_signature, @class_delim)
       else
         raise ArgumentError, "Wrong type for parameter 'prefix'"
       end
@@ -577,6 +572,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.35 2001/07/03 13:20:59 michael Exp $    
+    $Id: server.rb,v 1.36 2001/07/05 14:52:54 michael Exp $    
 =end
 

@@ -6,7 +6,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: utils.rb,v 1.5 2001/07/03 13:16:27 michael Exp $ 
+# $Id: utils.rb,v 1.6 2001/07/05 14:52:54 michael Exp $ 
 #
 
 module XMLRPC
@@ -57,24 +57,20 @@ module XMLRPC
 
   end # module ParserWriterChooseMixin
 
+
+  module Service
+
   #
-  # class which wraps a Service Interface definition, used
-  # by BasicServer#add_ihandler
+  # base class for Service Interface definitions, used
+  # by BasicServer#add_handler
   #
-  class ServiceInterface
-    def initialize(prefix, &p)
-      raise "No interface specified" if p.nil?
-      @prefix  = prefix
+
+  class BasicInterface
+    attr_reader :prefix, :methods
+
+    def initialize(prefix)
+      @prefix = prefix
       @methods = []
-      instance_eval &p
-    end
-
-    def get_prefix
-      @prefix
-    end
-
-    def get_methods
-      @methods
     end
 
     def add_method(sig, help=nil, meth_name=nil)
@@ -93,10 +89,6 @@ module XMLRPC
 
     private # ---------------------------------
   
-    def meth(*a)
-      add_method(*a)
-    end
-
     def parse_sig(sig)
       # sig is a String, returned will be 
       if sig =~ /^\s*(\w+)\s+([^(]+)(\(([^)]*)\))?\s*$/
@@ -109,13 +101,61 @@ module XMLRPC
       end
     end
 
+  end # class BasicInterface
+
+  #
+  # class which wraps a Service Interface definition, used
+  # by BasicServer#add_handler
+  #
+  class Interface < BasicInterface
+    def initialize(prefix, &p)
+      raise "No interface specified" if p.nil?
+      super(prefix)
+      instance_eval &p
+    end
+
+    def get_methods(obj, delim=".") 
+      prefix = @prefix + delim
+      @methods.collect { |name, meth, sig, help| 
+        [prefix + name, obj.method(meth).to_proc, sig, help] 
+      }
+    end
+
+    private # ---------------------------------
+
+    def meth(*a)
+      add_method(*a)
+    end
+
   end # class Interface
 
+  class PublicInstanceMethodsInterface < BasicInterface
+    def initialize(prefix)
+      super(prefix)
+    end
+
+    def get_methods(obj, delim=".")
+      prefix = @prefix + delim
+      obj.class.public_instance_methods.collect { |name|
+        [prefix + name, obj.method(name).to_proc, nil, nil] 
+      }
+    end
+  end
+
+
+  end # module Service
+
+
   # 
-  # short-form to create a ServiceInterface
+  # short-form to create a Service::Interface
   #
   def self.interface(prefix, &p)
-    ServiceInterface.new(prefix, &p)  
+    Service::Interface.new(prefix, &p)  
+  end
+
+  # short-cut for creating a PublicInstanceMethodsInterface
+  def self.iPIMethods(prefix)
+    Service::PublicInstanceMethodsInterface.new(prefix) 
   end
 
 end # module XMLRPC
