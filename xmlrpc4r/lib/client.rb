@@ -5,13 +5,13 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.1 2001/01/25 22:36:50 michael Exp $
+# $Id: client.rb,v 1.2 2001/01/25 22:41:53 michael Exp $
 #
 
 
 =begin
 = Synopsis
-   require "client.rb"
+   require "xmlrpc/client.rb"
  
    server = XMLRPC::Server.new("www.ruby-lang.org", 80, "/RPC2")
    ok, params = server.call("michael.add", 4, 5)
@@ -26,8 +26,8 @@
 
 
 
-require "parser.rb"
-require "create.rb"
+require "xmlrpc/parser.rb"
+require "xmlrpc/create.rb"
 require "net/http"
 
 module XMLRPC

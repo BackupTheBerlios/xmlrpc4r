@@ -5,13 +5,13 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: cgi_server.rb,v 1.1 2001/01/25 22:36:50 michael Exp $
+# $Id: cgi_server.rb,v 1.2 2001/01/25 22:41:52 michael Exp $
 #
 
 
 =begin
 = Synopsis
-   require "cgi_server.rb"
+   require "xmlrpc/cgi_server.rb"
  
    create = XMLRPC::Create.new
    s = XMLRPC::CGI_Server.new     
@@ -34,8 +34,8 @@
    puts resp
 =end
 
-require "parser.rb"
-require "create.rb"
+require "xmlrpc/parser.rb"
+require "xmlrpc/create.rb"
 
 module XMLRPC
 
