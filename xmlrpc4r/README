@@ -1,4 +1,4 @@
-$Id: README,v 1.3 2001/01/26 13:25:34 michael Exp $
+$Id: README,v 1.4 2001/01/26 14:28:52 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -37,7 +37,6 @@ server-script)
 TODO
 ----
 - write documentation
-- base64 type
 - dateTime.iso8601 type
 - convert from DOM to SAX ?
 - declare exceptions (e.g. ParserException...)
