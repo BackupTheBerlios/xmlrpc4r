@@ -1,4 +1,4 @@
-$Id: README,v 1.7 2001/01/27 18:37:09 michael Exp $
+$Id: README,v 1.8 2001/01/27 23:39:29 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -23,6 +23,11 @@ of the actual ruby-version (e.g. "site_ruby/1.6") under the
 directory "xmlrpc".
 
 
+DOCUMENTATION
+-------------
+Open doc/index.html in a web-browser.
+
+
 SAMPLES
 -------
 I've included one example of an XML-RPC cgi-based server and
@@ -42,7 +47,8 @@ I use Time.gm(...) to create a Time object!
 TODO
 ----
 - write test-cases
-- write documentation (half done)
+- write documentation (3/4 done)
 - convert from DOM to SAX ?
 - declare exceptions (e.g. ParserException...)
 - a Java XMLRPC implementation had <nil\>. should implement?  
+- add the method-name to the FaultException?
