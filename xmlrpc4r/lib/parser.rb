@@ -1,16 +1,14 @@
-#! /usr/bin/env ruby
-
 #
 # Parser for XML-RPC call and response
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.4 2001/01/26 14:56:40 michael Exp $
+# $Id: parser.rb,v 1.5 2001/01/26 15:41:22 michael Exp $
 #
 
 
 require "xmltreebuilder"
-require "xmlrpc/base64.rb"
+require "xmlrpc/base64"
 
 module XMLRPC
 
@@ -292,7 +290,7 @@ class Parser
     doc
   end
 
-end # class Parser
+end
 
 end # module XMLRPC
 

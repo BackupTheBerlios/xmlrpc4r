@@ -1,17 +1,15 @@
-#! /usr/bin/env ruby
-
 #
 # A simple class for a CGI-based XML-RPC server
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: cgi_server.rb,v 1.2 2001/01/25 22:41:52 michael Exp $
+# $Id: cgi_server.rb,v 1.3 2001/01/26 15:41:22 michael Exp $
 #
 
 
 =begin
 = Synopsis
-   require "xmlrpc/cgi_server.rb"
+   require "xmlrpc/cgi_server"
  
    create = XMLRPC::Create.new
    s = XMLRPC::CGI_Server.new     
@@ -34,8 +32,8 @@
    puts resp
 =end
 
-require "xmlrpc/parser.rb"
-require "xmlrpc/create.rb"
+require "xmlrpc/parser"
+require "xmlrpc/create"
 
 module XMLRPC
 
@@ -56,5 +54,5 @@ class CGI_Server
 
 end
 
-end # module
+end # module XMLRPC
 

@@ -1,17 +1,15 @@
-#! /usr/bin/env ruby
-
 #
 # Implements the client-side of XML-RPC
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.2 2001/01/25 22:41:53 michael Exp $
+# $Id: client.rb,v 1.3 2001/01/26 15:41:22 michael Exp $
 #
 
 
 =begin
 = Synopsis
-   require "xmlrpc/client.rb"
+   require "xmlrpc/client"
  
    server = XMLRPC::Server.new("www.ruby-lang.org", 80, "/RPC2")
    ok, params = server.call("michael.add", 4, 5)
@@ -26,8 +24,8 @@
 
 
 
-require "xmlrpc/parser.rb"
-require "xmlrpc/create.rb"
+require "xmlrpc/parser"
+require "xmlrpc/create"
 require "net/http"
 
 module XMLRPC
@@ -59,5 +57,5 @@ class Server
 
 end
 
-end # module
+end # module XMLRPC
 

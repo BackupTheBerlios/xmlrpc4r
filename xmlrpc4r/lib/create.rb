@@ -1,15 +1,13 @@
-#! /usr/bin/env ruby
-
 #
 # Creates XML-RPC call/response documents
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.5 2001/01/26 15:33:09 michael Exp $
+# $Id: create.rb,v 1.6 2001/01/26 15:41:22 michael Exp $
 #
 
 require "xmltreebuilder"
-require "xmlrpc/base64.rb"
+require "xmlrpc/base64"
 
 module XMLRPC
 
@@ -21,127 +19,124 @@ class Create
   Do = XML::SimpleTree::Document
 
 
-####################################
+  def methodCall(name, *params)
+    # TODO: check method_name
 
-
-def methodCall(name, *params)
-  # TODO: check method_name
-
-  parameter = params.collect do |param|
-    El.new("param", nil, conv2value(param))
-  end
-
-  if not parameter.empty? then
-    parameter = [El.new("params", nil, *parameter)]
-  end
-
-    
-  tree = Do.new(
-           Pi.new("xml", 'version="1.0"'),
-           El.new("methodCall", nil,  
-             El.new("methodName", nil,
-               Tx.new(name)
-             ),
-             *parameter    # is nothing when == []
-           )
-         )
-
-  tree.to_s + "\n"
-end
-
-
-
-#
-# generates a XML-RPC methodResponse document
-#
-# if is_ret == false then the params array must
-# contain only one element, which is a structure
-# of a fault return-value.
-# 
-# if is_ret == true then a normal 
-# return-value of all the given params is created.
-#
-def methodResponse(is_ret, *params)
-
-  if is_ret 
-    resp = params.collect do |param|
+    parameter = params.collect do |param|
       El.new("param", nil, conv2value(param))
     end
- 
-    resp = [El.new("params", nil, *resp)]
-  else
-    if params.size != 1 or params[0] === Hash 
-      raise "no valid fault-structure given"
+
+    if not parameter.empty? then
+      parameter = [El.new("params", nil, *parameter)]
     end
-    resp = El.new("fault", nil, conv2value(params[0]))
+
+      
+    tree = Do.new(
+	     Pi.new("xml", 'version="1.0"'),
+	     El.new("methodCall", nil,  
+	       El.new("methodName", nil,
+		 Tx.new(name)
+	       ),
+	       *parameter    # is nothing when == []
+	     )
+	   )
+
+    tree.to_s + "\n"
   end
 
-    
-  tree = Do.new(
-           Pi.new("xml", 'version="1.0"'),
-           El.new("methodResponse", nil, resp) 
-         )
-
-  tree.to_s + "\n"
-end
 
 
+  #
+  # generates a XML-RPC methodResponse document
+  #
+  # if is_ret == false then the params array must
+  # contain only one element, which is a structure
+  # of a fault return-value.
+  # 
+  # if is_ret == true then a normal 
+  # return-value of all the given params is created.
+  #
+  def methodResponse(is_ret, *params)
 
-#####################################
-private
-#####################################
-
-def ele(e, txt)
-  El.new(e, nil, Tx.new(txt))
-end
-
-#
-# converts a Ruby object into
-# a XML-RPC <value> tag
-#
-def conv2value(param)
-
-    # TODO: dateTime.iso8601
- 
-    val = case param
-    when Fixnum 
-      ele("i4", param.to_s)
-    when TrueClass, FalseClass
-      ele("boolean", param ? "1" : "0")
-    when String 
-      ele("string", param)
-    when Float
-      ele("double", param.to_s)
-    when Hash
-      # TODO: can a Hash be empty?
-      
-      h = param.collect do |key, value|
-        El.new("member", nil,
-          ele("name", key.to_s),
-          conv2value(value) 
-        )
+    if is_ret 
+      resp = params.collect do |param|
+	El.new("param", nil, conv2value(param))
       end
-
-      El.new("struct", nil, *h) 
-    when Array
-      # TODO: can an Array be empty?
-      a = param.collect {|v| conv2value(v) }
-      
-      El.new("array", nil,
-        El.new("data", nil, *a)
-      )
-    when XMLRPC::Base64
-      ele("base64", param.encoded) 
-    else 
-      raise "Wrong type: not yet working!"
+   
+      resp = [El.new("params", nil, *resp)]
+    else
+      if params.size != 1 or params[0] === Hash 
+	raise "no valid fault-structure given"
+      end
+      resp = El.new("fault", nil, conv2value(params[0]))
     end
-     
-    El.new("value", nil, val)
-end
+
+      
+    tree = Do.new(
+	     Pi.new("xml", 'version="1.0"'),
+	     El.new("methodResponse", nil, resp) 
+	   )
+
+    tree.to_s + "\n"
+  end
 
 
-end
+
+  #####################################
+  private
+  #####################################
+
+  def ele(e, txt)
+    El.new(e, nil, Tx.new(txt))
+  end
+
+  #
+  # converts a Ruby object into
+  # a XML-RPC <value> tag
+  #
+  def conv2value(param)
+
+      # TODO: dateTime.iso8601
+   
+      val = case param
+      when Fixnum 
+	ele("i4", param.to_s)
+      when TrueClass, FalseClass
+	ele("boolean", param ? "1" : "0")
+      when String 
+	ele("string", param)
+      when Float
+	ele("double", param.to_s)
+      when Hash
+	# TODO: can a Hash be empty?
+	
+	h = param.collect do |key, value|
+	  El.new("member", nil,
+	    ele("name", key.to_s),
+	    conv2value(value) 
+	  )
+	end
+
+	El.new("struct", nil, *h) 
+      when Array
+	# TODO: can an Array be empty?
+	a = param.collect {|v| conv2value(v) }
+	
+	El.new("array", nil,
+	  El.new("data", nil, *a)
+	)
+      when XMLRPC::Base64
+	ele("base64", param.encoded) 
+      else 
+	raise "Wrong type: not yet working!"
+      end
+       
+      El.new("value", nil, val)
+  end
 
 
-end # module
+  end
+
+
+end # module XMLRPC
 
