@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.4 2001/01/24 20:00:39 michael Exp $
+# $Id: client.rb,v 1.5 2001/01/24 20:06:39 michael Exp $
 #
 
 
@@ -43,15 +43,18 @@ class Server
 
   def call(method, *args)
     
+    create = Create.new
+    parser = Parser.new
+
     resp, data = @http.post (
                    @path, 
-                   createMethodCall(method, *args),
+                   create.MethodCall(method, *args),
                    "User-Agent"   =>  USER_AGENT,
                    "Content-Type" => "text/xml"
                  )
 
     @http.finish
-    parseMethodResponse(data)
+    parser.parseMethodResponse(data)
   end 
 
 end
