@@ -17,8 +17,8 @@ class MyHandlerClass
 end
  
 
-# s = XMLRPC::Server.new(8080)    # if you want a standalone server
-s = XMLRPC::CGIServer.new
+s = XMLRPC::Server.new(8070)    # if you want a standalone server
+#s = XMLRPC::CGIServer.new
 
 s.add_handler("michael.add") {|a,b|
   a+b
@@ -32,6 +32,8 @@ s.add_handler("michael.div") {|a,b|
 }
 
 s.add_handler("michael", MyHandlerClass.new)
+
+s.add_introspection
 
 s.serve
 

@@ -2,7 +2,7 @@
 
 require "xmlrpc/client"
  
-server = XMLRPC::Client.new("localhost", "/cgi-bin/xml.cgi")
+server = XMLRPC::Client.new("localhost", "/cgi-bin/xml.cgi", 8070)
 
 ok, param = server.call2("michael.add", 4, 5)
 if ok then
@@ -13,3 +13,4 @@ else
   puts param.faultString
 end
 
+p server.call("system.listMethods")
