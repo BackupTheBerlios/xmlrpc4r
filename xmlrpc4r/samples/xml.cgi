@@ -4,6 +4,19 @@
 require "xmlrpc/server"
 
 
+class MyHandlerClass
+
+  def sub(a,b)
+    a-b
+  end
+
+  def exp(a,b)
+    a ** b
+  end
+ 
+end
+ 
+
 s = XMLRPC::CGIServer.new
 
 s.add_handler("michael.add") {|a,b|
@@ -16,6 +29,8 @@ s.add_handler("michael.div") {|a,b|
     a / b
   end
 }
+
+s.add_handler("michael", MyHandlerClass.new)
 
 s.serve
 
