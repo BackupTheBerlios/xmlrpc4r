@@ -632,7 +632,9 @@ class Server < BasicServer
 
   def initialize(port=8080, host="127.0.0.1", maxConnections=4, stdlog=$stdout, audit=true, debug=true, *a)
     super(*a)
-    @server = ::HttpServer.new(proc {|data| request_handler(data)}, port, host, maxConnections, stdlog, audit, debug)
+
+    handler = self.method(:request_handler).to_proc
+    @server = ::HttpServer.new(handler, port, host, maxConnections, stdlog, audit, debug)
   end
   
   def serve
@@ -647,10 +649,46 @@ class Server < BasicServer
  
   private
 
-  def request_handler(data)
+  def request_handler(request, response)
     $stderr.puts "in request_handler" if $DEBUG
+
+    if request.method != "POST"
+      # Method not allowed
+      response.status = 405
+      return
+    end
+
+    if request.header['Content-type'] != "text/xml" 
+      # Bad request
+      response.status = 400
+      return
+    end 
+
+    length = request.content_length || 0
+    
+    unless length > 0
+      # Length required
+      response.status = 411
+      return
+    end
+
+    data = request.data.read(length)
+
+    if data.nil? or data.size != length
+      # Bad request
+      response.status = 400
+      return
+    end
+
     method, params = parser().parseMethodCall(data) 
-    handle(method, *params)
+    resp = handle(method, *params)
+    raise if resp.nil? or resp.size <= 0  # => Internal Server Error
+
+    response.status = 200
+    response.header['Content-Length'] = resp.size
+    response.header['Content-Type']   = "text/xml"
+    response.body = resp 
+    
    end
   
 end
@@ -660,6 +698,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.39 2001/07/06 11:37:07 michael Exp $    
+    $Id: server.rb,v 1.40 2001/07/11 20:32:10 michael Exp $    
 =end
 
