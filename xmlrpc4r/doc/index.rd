@@ -21,23 +21,22 @@ See ((<here|URL:howto.html>)).
 == Features
 
 : Extensions
-  * Introspection 
-  * multiCall 
-  * optionally nil values and integers larger than 32 Bit 
-
+* Introspection
+* multiCall
+* optionally nil values and integers larger than 32 Bit
 : Server
-  * Standalone XML-RPC server
-  * CGI-based (works with FastCGI)
+* Standalone XML-RPC server
+* CGI-based (works with FastCGI)
 
 : Client
-  * synchronous/asynchronous calls
-  * Basic HTTP-401 Authentification
-  * HTTPS protocol (SSL)
+* synchronous/asynchronous calls
+* Basic HTTP-401 Authentification
+* HTTPS protocol (SSL)
 
 : General
-  * possible to choose between XMLParser Module (Expat wrapper) and NQXML (pure Ruby) parsers
-  * Marshalling Ruby objects to Hashs and reconstruct them later from a Hash
-  * SandStorm component architecture Client interface
+* possible to choose between XMLParser Module (Expat wrapper) and NQXML (pure Ruby) parsers
+* Marshalling Ruby objects to Hashs and reconstruct them later from a Hash
+* SandStorm component architecture Client interface
 
 
 == ChangeLog
@@ -76,6 +75,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.21 2001/07/02 15:01:20 michael Exp $
+    $Id: index.rd,v 1.22 2001/07/02 15:17:42 michael Exp $
 
 =end

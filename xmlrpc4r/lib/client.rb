@@ -69,16 +69,15 @@ call on the remote-side and of course the parameters for the remote procedure.
     Parameter ((|timeout|)) is the time to wait for a XML-RPC response, defaults to 30.
 
 --- XMLRPC::Client.new2( uri, proxy=nil, timeout=nil)
-    : uri
-      URI specifying protocol (http or https), host, port, path, user and password.
-      Example:
-        https://user:password@host:port/path
+:   uri
+    URI specifying protocol (http or https), host, port, path, user and password.
+    Example: https://user:password@host:port/path
 
-    : proxy
-      Is of the form "host:port".
+:   proxy
+    Is of the form "host:port".
  
-    : timeout
-      Defaults to 30. 
+:   timeout
+    Defaults to 30. 
 
 --- XMLRPC::Client.new3( hash={} )
     Parameter ((|hash|)) has following case-insensitive keys:
@@ -253,7 +252,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.41 2001/07/02 15:02:22 michael Exp $
+    $Id: client.rb,v 1.42 2001/07/02 15:21:37 michael Exp $
 
 =end
 
