@@ -19,15 +19,19 @@ xmlrpc4r can be downloaded from here:
 
 * Version 1.2:
 
-  ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_2.tar.gz>))
+  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_2.tar.gz>))
 
 * Version 1.3:
 
-  ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_3.tar.gz>))
+  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_3.tar.gz>))
 
 * Version 1.4:
 
-  ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_4.tar.gz>))
+  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_4.tar.gz>))
+
+* Version 1.5:
+
+  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5.tar.gz>))
 
 
 == Further information
@@ -35,6 +39,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.4 2001/01/29 21:30:49 michael Exp $
+    $Id: index.rd,v 1.5 2001/02/02 13:44:08 michael Exp $
 
 =end
