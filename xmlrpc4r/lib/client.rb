@@ -94,6 +94,21 @@ call on the remote-side and of course the parameters for the remote procedure.
     (({XMLRPC::FaultException})). 
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
+--- XMLRPC::Client#multicall( array_of_methods )
+    You can use this method to execute several methods on a XMLRPC server which supports
+    the multi-call extension.
+    Example:
+
+      s.multicall(
+        ['michael.add', 3, 4],
+        ['michael.sub', 4, 5]
+      )
+      # => [[7], [-1]]
+
+--- XMLRPC::Client#multicall2( array_of_methods )
+    Same as ((<XMLRPC::Client#multicall>)), but returns like ((<XMLRPC::Client#call2>)) two parameters 
+    instead of raising an (({XMLRPC::FaultException})).
+
 --- XMLRPC::Client#proxy( prefix, *args )
     Returns an object of class (({XMLRPC::Client::Proxy})), initialized with
     ((|prefix|)) and ((|args|)). A proxy object returned by this method behaves
@@ -155,7 +170,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.31 2001/05/13 19:48:42 michael Exp $
+    $Id: client.rb,v 1.32 2001/06/12 14:04:42 michael Exp $
 
 =end
 
@@ -188,7 +203,34 @@ module XMLRPC
       return param if ok
       raise param
     end 
-   
+  
+    def multicall(*methods)
+      ok, params = multicall2(*methods)
+      return params if ok
+      raise params 
+    end
+
+    def multicall2(*methods)
+      ok, params = call2("system.multicall", 
+        methods.collect {|m| {'methodName' => m[0], 'params' => m[1..-1]} }
+      )
+
+      if ok 
+        params = params.collect do |param|
+          if param.is_a? Array
+            param
+          elsif param.is_a? Hash
+            XMLRPC::FaultException.new(param["faultCode"], param["faultString"])
+          else
+            raise "Wrong multicall return value"
+          end 
+        end
+      end
+
+      return ok, params
+    end
+
+ 
     def call2(method, *args)
 
       request = create().methodCall(method, *args)

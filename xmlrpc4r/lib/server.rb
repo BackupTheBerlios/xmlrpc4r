@@ -68,7 +68,7 @@ the same class.
 --- XMLRPC::BasicServer#get_default_handler
     Returns the default-handler, which is called when no handler for
     a method-name is found.
-    It is a (({Proc})) object.
+    It is a (({Proc})) object or (({nil})).
 
 --- XMLRPC::BasicServer#set_default_handler ( &handler )
     Sets ((|handler|)) as the default-handler, which is called when 
@@ -76,8 +76,8 @@ the same class.
     The default-handler is called with the (XML-RPC) method-name as first argument, and
     the other arguments are the parameters given by the client-call.
   
-    If no block is specified the default of (({XMLRPC::BasicServer})) is used, which is it's 
-    method default_handler.
+    If no block is specified the default of (({XMLRPC::BasicServer})) is used, which raises a
+    XMLRPC::FaultException saying "method missing".
 
 
 --- XMLRPC::BasicServer#set_writer( writer )
@@ -90,9 +90,12 @@ the same class.
     Should be an instance of a class from module (({XMLRPC::XMLParser})).
     If this method is not called, then (({XMLRPC::XMLParser::DEFAULT_WRITER})) is used.
 
---- XMLRPC::BasicServer#add_introspection( prefix="system" )
-    Adds the introspection handlers "listMethods", "methodSignature" and "methodHelp", 
+--- XMLRPC::BasicServer#add_introspection
+    Adds the introspection handlers "system.listMethods", "system.methodSignature" and "system.methodHelp", 
     where only the first one works.
+
+--- XMLRPC::BasicServer#add_multicall
+    Adds the multi-call handler "system.multicall".
 
 --- XMLRPC::BasicServer#get_service_hook
     Returns the service-hook, which is called on each service request (RPC) unless it's (({nil})).
@@ -133,9 +136,19 @@ class BasicServer
 
   include ParserWriterChooseMixin
 
+  ERR_METHOD_MISSING        = 1 
+  ERR_UNCAUGHT_EXCEPTION    = 2
+  ERR_MC_WRONG_PARAM        = 3
+  ERR_MC_MISSING_PARAMS     = 4
+  ERR_MC_MISSING_METHNAME   = 5
+  ERR_MC_RECURSIVE_CALL     = 6
+  ERR_MC_WRONG_PARAM_PARAMS = 7
+  ERR_MC_EXPECTED_STRUCT    = 8
+
+
   def initialize(class_delim=".")
     @handler = []
-    @default_handler = method( :default_handler).to_proc
+    @default_handler = nil #method( :default_handler).to_proc
     @service_hook = nil
 
     @class_delim = class_delim
@@ -172,17 +185,52 @@ class BasicServer
   end
 
   def set_default_handler (&handler)
-    if handler.nil? 
-      @default_handler = method( :default_handler).to_proc
-    else
-      @default_handler = handler
-    end
+    @default_handler = handler
   end  
 
-  
+  def add_multicall
+    add_handler("system.multicall") do |arrStructs|
+      unless arrStructs.is_a? Array 
+        raise XMLRPC::FaultException.new(ERR_MC_WRONG_PARAM, "system.multicall expects an array")
+      end
 
-  def add_introspection(prefix="system")
-    add_handler(prefix + @class_delim + "listMethods") do
+      arrStructs.collect {|call|
+        if call.is_a? Hash
+          methodName = call["methodName"]
+          params     = call["params"]  
+
+          if params.nil?
+            multicall_fault(ERR_MC_MISSING_PARAMS, "Missing params")
+          elsif methodName.nil?
+            multicall_fault(ERR_MC_MISSING_METHNAME, "Missing methodName")
+          else
+            if methodName == "system.multicall"
+              multicall_fault(ERR_MC_RECURSIVE_CALL, "Recursive system.multicall forbidden")
+            else
+              unless params.is_a? Array
+                multicall_fault(ERR_MC_WRONG_PARAM_PARAMS, "Parameter params have to be an Array")
+              else
+                ok, val = call_method(methodName, *params)
+                if ok
+                  # correct return value
+                  [val]
+                else
+                  # exception
+                  multicall_fault(val.faultCode, val.faultString) 
+                end
+              end
+            end
+          end  
+           
+        else
+          multicall_fault(ERR_MC_EXPECTED_STRUCT, "system.multicall expected struct")
+        end
+      } 
+    end
+  end
+
+  def add_introspection
+    add_handler("system.listMethods") do
       methods = []
       @handler.each do |name, obj|
         if obj.kind_of? Proc
@@ -194,16 +242,20 @@ class BasicServer
       methods
     end
 
-    add_handler(prefix + @class_delim + "methodSignature") do |meth|
+    add_handler("system.methodSignature") do |meth|
       "Not implemented"
     end
 
-    add_handler(prefix + @class_delim + "methodHelp") do |meth|
+    add_handler("system.methodHelp") do |meth|
       "Not implemented"
     end
   end
  
   private # --------------------------------------------------------------
+
+  def multicall_fault(nr, str)
+    {"faultCode" => nr, "faultString" => str}
+  end
  
   #
   # method dispatch
@@ -226,7 +278,11 @@ class BasicServer
       end
     end 
  
-    @default_handler.call(methodname, *args) 
+    if @default_handler.nil?
+      raise XMLRPC::FaultException.new(ERR_METHOD_MISSING, "Method #{methodname} missing or wrong number of parameters!")
+    else
+      @default_handler.call(methodname, *args) 
+    end
   end
 
 
@@ -243,26 +299,26 @@ class BasicServer
     end
   end
 
+
+
+  def call_method(methodname, *args)
+    begin
+      [true, dispatch(methodname, *args)]
+    rescue XMLRPC::FaultException => e  
+      [false, e]  
+    rescue Exception => e
+      [false, XMLRPC::FaultException.new(ERR_UNCAUGHT_EXCEPTION, "Uncaught exception #{e.message} in method #{methodname}")]
+    end
+  end
+
   #
   #
   #
   def handle(methodname, *args)
-    res = begin
-      [true, dispatch(methodname, *args)]
-    rescue XMLRPC::FaultException => e  
-      [false, e]  
-    end
-    create().methodResponse(*res) 
+    create().methodResponse(*call_method(methodname, *args))
   end
 
-  #
-  # is called when no other method is 
-  # responsible for the request
-  #
-  def default_handler(methodname, *args)
-    raise XMLRPC::FaultException.new(-99, "Method <#{methodname}> missing or wrong number of parameters!")
-  end
- 
+
 end
 
 
@@ -465,6 +521,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.26 2001/06/11 16:33:53 michael Exp $    
+    $Id: server.rb,v 1.27 2001/06/12 14:04:42 michael Exp $    
 =end
 
