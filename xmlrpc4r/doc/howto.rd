@@ -5,17 +5,20 @@ Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 Released under the same term of license as Ruby.
 
 = Install
-You need James Clark's XML Parser Toolkit "expat" installed, to install
-the the Expat Module for Ruby "xmlparser", which is
-available from RAA (Ruby Application Archive - ((<URL:http://www.ruby-lang.org/en/raa.html>)))  
-and was made by Yoshida Masato.
-"xmlrpc4r" is based on "xmlparser".
+You can currently use xmlrpc4r with two parsers, XMLParser and/or NQXML.
+Both are available at RAA (Ruby Application Archive - ((<URL:http://www.ruby-lang.org/en/raa.html>))).
+
+If you want to use XMLParser (Expat Module for Ruby), you need 
+James Clark's XML Parser Toolkit "expat" installed. I recommend using this parser, 
+because xmlrpc4r is better with it and XMLParser is much faster than NQXML.
+The advantage of using NQXML is that it is written in pure Ruby.
+
 Then you'll need "xmlrpc4r" of course, which is available at
 ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r>)).
 
 To install xmlrpc4r:
-  tar -xvzf xmlrpc4r-1_6.tar.gz
-  cd xmlrpc4r-1_6
+  tar -xvzf xmlrpc4r-1_6_1.tar.gz
+  cd xmlrpc4r-1_6_1
   su root -c "ruby install.rb"
 
 
@@ -155,8 +158,35 @@ must be changed to
 if you want a server listening on port 8080.
 The rest is the same.
 
+== Choosing a different XML Parser or XML Writer
+The examples above all use the default parser (which is XMLParser, due to compatibility issues)
+and a default XML writer (which is independent from XMLParser). 
+If you want to use NQXML then you have to call the (({#set_parser})) method onto (({XMLRPC::Client}))
+instances or instances of subclasses of (({XMLRPC::BasicServer})).
+
+Client Example:
+ 
+  # ...
+  server = XMLRPC::Client.new( "xmlrpc-c.sourceforge.net", "/api/sample.php")
+  server.set_parser(XMLRPC::XMLParser::NQXMLParser.new)
+  # ...
+
+Server Example:
+
+  # ...
+  s = XMLRPC::CGIServer.new
+  s.set_parser(XMLRPC::XMLParser::NQXMLParser.new)
+  # ...
+  
+or:
+
+  # ...
+  server = XMLRPC::Server.new(8080)
+  server.set_parser(XMLRPC::XMLParser::NQXMLParser.new)
+  # ...
+
 
 = History
-  $Id: howto.rd,v 1.2 2001/03/23 18:48:17 michael Exp $
+  $Id: howto.rd,v 1.3 2001/04/20 16:09:44 michael Exp $
 =end
 
