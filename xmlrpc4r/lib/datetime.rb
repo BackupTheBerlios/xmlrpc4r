@@ -11,7 +11,7 @@ Released under the same term of license as Ruby.
 == Description
 This class is important to handle XMLRPC (('dateTime.iso8601')) values,
 correcly, because normal UNIX-dates (class (({Date}))) only handle dates 
-from year 1970 on, and (class (({Time}))) handles dates without the time
+from year 1970 on, and class (({Time})) handles dates without the time
 component. (({XMLRPC::DateTime})) is able to store a XMLRPC 
 (('dateTime.iso8601')) value correctly.
 
@@ -103,5 +103,5 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: datetime.rb,v 1.2 2001/02/02 20:44:54 michael Exp $
+    $Id: datetime.rb,v 1.3 2001/02/05 22:18:58 michael Exp $
 =end
