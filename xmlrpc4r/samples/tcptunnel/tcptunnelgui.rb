@@ -3,7 +3,7 @@
 # TCP Tunnel
 # Copyright (c) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: tcptunnelgui.rb,v 1.3 2001/07/04 15:03:23 michael Exp $
+# $Id: tcptunnelgui.rb,v 1.4 2001/07/04 15:15:57 michael Exp $
 # 
 
 require "socket"
@@ -59,6 +59,8 @@ rtext  = TkText.new(bottom, 'width' => WIDTH, 'height' => HEIGHT)
 ltext.pack 'side' => 'left',  'fill' => 'y'
 rtext.pack 'side' => 'right', 'fill' => 'y'
 
+sc = ""
+ss = ""
 
 
 Thread.new {
@@ -71,29 +73,32 @@ Thread.new {
     if $clear 
       ltext.value = ""
       rtext.value = "" 
+      sc = ""
+      ss = ""
       $clear = false
     end
   }
 }
 
-
 s = TCPServer.new(LISTENHOST, LISTENPORT)
 while client = s.accept
   server = TCPSocket.new(TUNNELHOST, TUNNELPORT)
 
-  sc = ""
-  ss = ""
+  lc = ""
+  ls = ""
 
-  a = forward(client, server, ltext, sc)
-  b = forward(server, client, rtext, ss)
-
+  a = forward(client, server, ltext, lc)
+  b = forward(server, client, rtext, ls)
   a.join; b.join
 
-  ltext.value = sc.gsub("\r", "")
-  rtext.value = ss.gsub("\r", "")
+  sc += lc + "\n\n" 
+  ss += ls + "\n\n"
+  ltext.value = sc.gsub("\r", "") 
+  rtext.value = ss.gsub("\r", "") 
 
-  puts sc
+  puts lc
   puts "-" * 79
-  puts ss
+  puts ls
+  puts "-" * 79
 end
 
