@@ -6,10 +6,26 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: utils.rb,v 1.1 2001/04/20 13:34:52 michael Exp $ 
+# $Id: utils.rb,v 1.2 2001/06/20 10:35:11 michael Exp $ 
 #
 
 module XMLRPC
+
+  #
+  # This module enables a user-class to be marshalled
+  # by XML-RPC for Ruby into a Hash, with one additional
+  # key/value pair "___class___" => ClassName
+  # 
+  module Marshallable
+    def __get_instance_variables
+      instance_variables.collect {|var| [var[1..-1], eval(var)] }
+    end
+
+    def __set_instance_variable(key, value)
+      eval("@#$1 = value") if key =~ /^([\w_][\w_0-9]*)$/
+    end
+  end
+
 
   module ParserWriterChooseMixin
 

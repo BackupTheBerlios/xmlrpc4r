@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.22 2001/06/19 20:51:13 michael Exp $
+# $Id: create.rb,v 1.23 2001/06/20 10:35:10 michael Exp $
 #
 
 require "date"
@@ -250,11 +250,18 @@ module XMLRPC
 	  @writer.tag("base64", param.encoded) 
 
 	else 
-          ok, pa = wrong_type(param)
-          if ok
-            return conv2value(pa)
+          if Extensions::ENABLE_MARSHALLING and param.class.included_modules.include? XMLRPC::Marshallable
+            # convert Ruby object into Hash
+            ret = {"___class___" => param.class.name}
+            param.__get_instance_variables.each {|name, val| ret[name] = val}
+            return conv2value(ret)
           else 
-            raise "Wrong type!"
+            ok, pa = wrong_type(param)
+            if ok
+              return conv2value(pa)
+            else 
+              raise "Wrong type!"
+            end
           end
 	end
 	 

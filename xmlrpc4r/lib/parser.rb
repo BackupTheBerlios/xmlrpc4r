@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.27 2001/06/20 09:56:05 michael Exp $
+# $Id: parser.rb,v 1.28 2001/06/20 10:35:11 michael Exp $
 #
 
 
@@ -340,7 +340,24 @@ module XMLRPC
 	  n, v = member(me)  
 	  hash[n] = v
 	end 
-	hash
+
+        # convert to marhalled object
+        klass = hash["___class___"]
+        if klass.nil? or Extensions::ENABLE_MARSHALLING == false 
+	  hash
+        else
+          begin
+            mod = Module
+            klass.split("::").each {|const| mod = mod.const_get const.strip }
+            obj = mod.new
+
+            hash.delete "___class___"
+            hash.each {|k,v| obj.__set_instance_variable(k, v) } 
+            obj
+          rescue
+            hash
+          end
+        end
       end
 
 

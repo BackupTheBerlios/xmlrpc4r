@@ -72,6 +72,9 @@ call on the remote-side and of course the parameters for the remote procedure.
     * (({Array}))
     * (({Date})), (({Time})), (({XMLRPC::DateTime}))
     * (({XMLRPC::Base64})) 
+    * A Ruby object which class includes XMLRPC::Marshallable (only if Extensions::ENABLE_MARSHALLABLE is (({true}))). 
+      That object is converted into a hash, with one additional key/value pair "___class___" which contains the class name
+      for restoring later that object.
     
     The method returns the return-value from the RPC 
     ((-stands for Remote Procedure Call-)). 
@@ -171,7 +174,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.34 2001/06/19 14:01:31 michael Exp $
+    $Id: client.rb,v 1.35 2001/06/20 10:35:10 michael Exp $
 
 =end
 
