@@ -14,8 +14,8 @@ Then you'll need "xmlrpc4r" of course, which is available at
 ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r>)).
 
 To install xmlrpc4r:
-  tar -xvzf xmlrpc4r-1_5_3.tar.gz
-  cd xmlrpc4r-1_5_3
+  tar -xvzf xmlrpc4r-1_6.tar.gz
+  cd xmlrpc4r-1_6
   su root -c "ruby install.rb"
 
 
@@ -83,6 +83,31 @@ There are two possible ways, of handling a fault-structure:
     puts result.faultString
   end
    
+== Client using Proxy
+
+You can create a (({Proxy})) object onto which you can call methods. This way it
+looks nicer. Both forms, "call" and "call2" are supported through "proxy" and "proxy2".
+You can additionally give arguments to the Proxy, which will be given to each XML-RPC
+call using that Proxy.
+
+  require "xmlrpc/client"
+  
+  # Make an object to represent the XML-RPC server.
+  server = XMLRPC::Client.new( "xmlrpc-c.sourceforge.net", "/api/sample.php")
+
+  # Create a Proxy object
+  sample = server.proxy("sample")
+
+  # Call the remote server and get our result
+  result = sample.sumAndDifference(5,3)
+
+  sum = result["sum"]
+  difference = result["difference"]
+
+  puts "Sum: #{sum}, Difference: #{difference}"
+
+
+
 == CGI-based Server
 
 There are also two ways to define handler, the first is
@@ -132,6 +157,6 @@ The rest is the same.
 
 
 = History
-  $Id: howto.rd,v 1.1 2001/02/07 23:37:39 michael Exp $
+  $Id: howto.rd,v 1.2 2001/03/23 18:48:17 michael Exp $
 =end
 
