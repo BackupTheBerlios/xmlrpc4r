@@ -15,24 +15,25 @@ Is the base class for all XML-RPC server-types (CGI, standalone).
 You can add handler and set a default handler. 
 Do not use this server, as this is/should be an abstract class.
 
+=== How the method to call is found
+The arity (number of accepted arguments) of a handler (method or (({Proc})) object) is 
+compared to the given arguments submitted by the client for a RPC ((-Remote Procedure Call-)). 
+A handler is only called if it accepts the number of arguments, otherwise the search 
+for another handler will go on. When at the end no handler was found, 
+the ((<default_handler|XMLRPC::BasicServer#set_default_handler>)) will be called.
+With this technique it is possible to do overloading by number of parameters, but
+only for (({Proc})) handler, because you cannot define two methods of the same name in
+the same class. 
+
+
 == Class Methods
---- XMLRPC::BasicServer.new( class_delim=".", check_arity=false )
+--- XMLRPC::BasicServer.new( class_delim="." )
     Creates a new (({XMLRPC::BasicServer})) instance, which should not be 
     done, because (({XMLRPC::BasicServer})) is an abstract class. This
     method should be called from a subclass indirectly by a (({super})) call
     in the method (({initialize})). The paramter ((|class_delim|)) is used
     in ((<add_handler|XMLRPC::BasicServer#add_handler>)) when an object is
     added as handler, to delimit the object-prefix and the method-name.
-
-    If ((|check_arity|)) is true, the arity (number of accepted arguments) of
-    a handler (method or (({Proc})) object) is compared to the given arguments submitted
-    by the client for a RPC ((-Remote Procedure Call-)). 
-    A handler is only called if it accepts the number of arguments, otherwise the search 
-    for another handler will go on. When at the end no handler was found, 
-    the ((<default_handler|XMLRPC::BasicServer#set_default_handler>)) will be called.
-    With this technique it is possible to do overloading by number of parameters, but
-    only for (({Proc})) handler, because you cannot define two methods of the same name in
-    the same class. 
 
 == Instance Methods
 --- XMLRPC::BasicServer#add_handler( prefix, obj=nil, &block )
@@ -75,16 +76,6 @@ Do not use this server, as this is/should be an abstract class.
     The default-handler is called with the (XML-RPC) method-name as first argument, and
     the other arguments are the parameters given by the client-call.
 
---- XMLRPC::BasicServer#get_argument_error_handler
-    Returns the argument-error handler, which is called when a handler is called
-    and an (({ArgumentError})) exception is raised due to too less or too much arguments.
-    It is a (({Proc})) object.
-
---- XMLRPC::BasicServer#set_argument_error_handler ( &handler )
-    Sets ((|handler|)) as the argument-error handler, which is called when a handler is called
-    and an (({ArgumentError})) exception is raised due to too less or too much arguments.
-    The argument-error handler is called with the (XML-RPC) method-name as first argument, 
-    and the other arguments are the parameters given by the client-call.
 =end
 
 
@@ -98,14 +89,12 @@ module XMLRPC
 
 class BasicServer
 
-  def initialize(class_delim=".", check_arity=false)
+  def initialize(class_delim=".")
     @handler = []
-    @default_handler        = method( :default_handler).to_proc
-    @argument_error_handler = method( :argument_error_handler).to_proc 
+    @default_handler = method( :default_handler).to_proc
 
     @create = XMLRPC::Create.new
     @class_delim = class_delim
-    @check_arity = check_arity
   end
 
   def add_handler(prefix, obj=nil, &block)
@@ -138,44 +127,24 @@ class BasicServer
   end  
 
 
-  def get_argument_error_handler
-    @argument_error_handler
-  end
-
-  def set_argument_error_handler (&handler)
-    if handler.nil? 
-      raise ArgumentError, "No block given"
-    else
-      @argument_error_handler = handler
-    end
-  end
-
-
   private
  
   #
   # method dispatch
   #
   def dispatch(methodname, *args)
-    
-    begin
-      for name, obj in @handler
-	if obj.kind_of? Proc
-	  next unless methodname == name
-	else
-	  next unless methodname =~ /^#{name}(.+)$/
-	  obj = obj.method($1) if obj.respond_to? $1
-	end
-	
-	return obj.call(*args) if check_arity(obj, args.size)
-      end 
-   
-      @default_handler.call(methodname, *args) 
-
-    rescue ArgumentError
-      @argument_error_handler.call(methodname, *args)
-    end
-
+    for name, obj in @handler
+      if obj.kind_of? Proc
+	next unless methodname == name
+      else
+	next unless methodname =~ /^#{name}(.+)$/
+	obj = obj.method($1) if obj.respond_to? $1
+      end
+      
+      return obj.call(*args) if check_arity(obj, args.size)
+    end 
+ 
+    @default_handler.call(methodname, *args) 
   end
 
 
@@ -183,7 +152,6 @@ class BasicServer
   # returns true, if the arity of "obj" matches
   #
   def check_arity(obj, n_args)
-    return true unless @check_arity
     ary = obj.arity
 
     if ary >= 0
@@ -210,15 +178,7 @@ class BasicServer
   # responsible for the request
   #
   def default_handler(methodname, *args)
-    raise XMLRPC::FaultException.new(-99, "Method <#{methodname}> missing!")
-  end
-
-  #
-  # is called when a handler-method is called and an ArgumentError-exception 
-  # is raises due to too much/too less arguments (this will only happen when check_arity is false).
-  #
-  def argument_error_handler(methodname, *args)
-    raise XMLRPC::FaultException.new(-98, "Wrong number of parameters for <#{methodname}>!")
+    raise XMLRPC::FaultException.new(-99, "Method <#{methodname}> missing or wrong number of parameters!")
   end
 
 end
@@ -244,7 +204,7 @@ end
     end 
 
     s.set_default_handler do |name, *args|
-      raise XMLRPC::FaultException.new(-99, "Method #{name} missing")
+      raise XMLRPC::FaultException.new(-99, "Method #{name} missing or wrong number of parameters!")
     end
   
     s.serve
@@ -360,7 +320,7 @@ end
     end 
 
     s.set_default_handler do |name, *args|
-      raise XMLRPC::FaultException.new(-99, "Method #{name} missing")
+      raise XMLRPC::FaultException.new(-99, "Method #{name} missing or wrong number of parameters!")
     end
  
     s.serve
@@ -423,6 +383,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.18 2001/01/29 22:15:11 michael Exp $    
+    $Id: server.rb,v 1.19 2001/02/02 16:02:39 michael Exp $    
 =end
 
