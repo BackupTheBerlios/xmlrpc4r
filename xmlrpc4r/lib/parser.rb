@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.15 2001/01/27 20:32:55 michael Exp $
+# $Id: parser.rb,v 1.16 2001/01/27 20:34:27 michael Exp $
 #
 
 
@@ -318,7 +318,7 @@ class Parser
       end
     else # response (only one param)
       hasOnlyOneChild(node)
-      param(node.childNode)
+      param(node.firstChild)
     end
   end
 
