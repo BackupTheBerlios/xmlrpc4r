@@ -35,17 +35,17 @@ component. (({XMLRPC::DateTime})) is able to store a XMLRPC
 --- XMLRPC::DateTime#mon
     Alias for ((<XMLRPC::DateTime#month>)).
 
---- XMLRPC::DateTime#year= (value) 
---- XMLRPC::DateTime#month= (value)
---- XMLRPC::DateTime#day= (value)
---- XMLRPC::DateTime#hour= (value)
---- XMLRPC::DateTime#min= (value)
---- XMLRPC::DateTime#sec= (value)
+--- XMLRPC::DateTime#year=( value )
+--- XMLRPC::DateTime#month=( value )
+--- XMLRPC::DateTime#day=( value )
+--- XMLRPC::DateTime#hour=( value )
+--- XMLRPC::DateTime#min=( value )
+--- XMLRPC::DateTime#sec=( value )
     Set ((|value|)) as the new date/time component.
     Raises (({ArgumentError})) if ((|value|)) is out of range, or in the case
     of (({XMLRPC::DateTime#year=})) if ((|value|)) is not of type (({Integer})).
 
---- XMLRPC::DateTime#mon= (value)
+--- XMLRPC::DateTime#mon=( value )
     Alias for ((<XMLRPC::DateTime#month=>)).
 
 --- XMLRPC::DateTime#to_time
@@ -134,5 +134,5 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: datetime.rb,v 1.4 2001/02/07 18:36:37 michael Exp $
+    $Id: datetime.rb,v 1.5 2001/02/07 20:26:30 michael Exp $
 =end
