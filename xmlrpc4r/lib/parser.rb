@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.29 2001/06/21 11:38:12 michael Exp $
+# $Id: parser.rb,v 1.30 2001/06/21 19:18:20 michael Exp $
 #
 
 
@@ -349,7 +349,28 @@ module XMLRPC
           begin
             mod = Module
             klass.split("::").each {|const| mod = mod.const_get const.strip }
+            
+            Thread.critical = true
+            # let initialize take 0 parameters
+            mod.module_eval %{
+              begin
+                alias __initialize initialize
+              rescue NameError
+              end
+              def initialize; end
+            }
+
             obj = mod.new
+
+            # restore old initialize
+            mod.module_eval %{
+              undef initialize
+              begin
+                alias initialize __initialize
+              rescue NameError
+              end
+            }
+            Thread.critical = false
 
             hash.delete "___class___"
             hash.each {|k,v| obj.__set_instance_variable(k, v) } 
