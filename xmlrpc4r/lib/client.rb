@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.6 2001/01/27 13:08:37 michael Exp $
+# $Id: client.rb,v 1.7 2001/01/27 13:10:54 michael Exp $
 #
 
 =begin
@@ -21,7 +21,7 @@
     end
 
 = Description
-Class (({XMLRPC::Client})) provides method calls to an XML-RPC server.
+Class (({XMLRPC::Client})) provides remote procedure calls to XML-RPC server.
 
 = Class Methods
 --- XMLRPC::Client.new( host, path="/RPC2", port=80 )
@@ -58,7 +58,7 @@ Class (({XMLRPC::Client})) provides method calls to an XML-RPC server.
     * A fault-structure is a (({Hash})) object containing a key (({"faultCode"})) which value is a (({Fixnum})) 
       and a key (({"faultString"})) which value is a (({String})).
 = History
-    $Id: client.rb,v 1.6 2001/01/27 13:08:37 michael Exp $
+    $Id: client.rb,v 1.7 2001/01/27 13:10:54 michael Exp $
 =end
 
 
