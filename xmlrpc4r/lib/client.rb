@@ -11,7 +11,7 @@ Released under the same term of license as Ruby.
     server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
     begin
       params = server.call("michael.add", 4, 5)
-      puts "4 + 5 = #{params[0]}"
+      puts "4 + 5 = #{params}"
     rescue XMLRPC::FaultException => e
       puts "Error:"
       puts e.faultCode
@@ -23,7 +23,7 @@ or
     server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
     ok, params = server.call("michael.add", 4, 5)
     if ok then
-      puts "4 + 5 = #{params[0]}"
+      puts "4 + 5 = #{params}"
     else
       puts "Error:"
       puts params["faultCode"] 
@@ -84,7 +84,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     For both see ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.9 2001/01/27 18:32:55 michael Exp $
+    $Id: client.rb,v 1.10 2001/01/27 19:49:23 michael Exp $
 =end
 
 
