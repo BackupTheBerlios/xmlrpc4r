@@ -1,6 +1,5 @@
-$Id: ToDo,v 1.16 2001/02/26 19:01:47 michael Exp $
+$Id: ToDo,v 1.17 2001/03/22 20:08:06 michael Exp $
 
-- RPCs like server.michael.add(2,3) => method_missing
 - Server: do method-lookup with Hash
 - Conversion-class which handles conversion from and to XMLRPC.
 - write test-cases
@@ -15,6 +14,7 @@ $Id: ToDo,v 1.16 2001/02/26 19:01:47 michael Exp $
 - write more/better samples
 
 
+* RPCs like michael.add(2,3) => method_missing
 * raise exception, when DateTime.new or setters get parameters which are out of range (e.g. month=13)
 * make it work under Windows
 * test validation with standalone server
