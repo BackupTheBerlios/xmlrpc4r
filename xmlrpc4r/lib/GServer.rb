@@ -55,7 +55,7 @@ class GServer
 
   def connecting(client)
     addr = client.peeraddr
-    log("#{self.class.to_s}:#{@host}:#{@port} client:#{addr[1]} " +
+    log("#{self.class.to_s} #{@host}:#{@port} client:#{addr[1]} " +
         "#{addr[2]}<#{addr[3]}> connect")
     true
   end
@@ -78,7 +78,7 @@ class GServer
   protected :starting, :stopping
 
   def error(detail)
-    log($!+msg.backtrace.join("\n"))
+    log(detail.backtrace.join("\n"))
   end
 
   def log(msg)
