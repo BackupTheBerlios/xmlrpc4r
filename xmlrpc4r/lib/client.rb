@@ -98,7 +98,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     (({XMLRPC::FaultException})). 
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
---- XMLRPC::Client#multicall( array_of_methods )
+--- XMLRPC::Client#multicall( *methods )
     You can use this method to execute several methods on a XMLRPC server which supports
     the multi-call extension.
     Example:
@@ -107,9 +107,9 @@ call on the remote-side and of course the parameters for the remote procedure.
         ['michael.add', 3, 4],
         ['michael.sub', 4, 5]
       )
-      # => [[7], [-1]]
+      # => [7, -1]
 
---- XMLRPC::Client#multicall2( array_of_methods )
+--- XMLRPC::Client#multicall2( *methods )
     Same as ((<XMLRPC::Client#multicall>)), but returns like ((<XMLRPC::Client#call2>)) two parameters 
     instead of raising an (({XMLRPC::FaultException})).
 
@@ -174,7 +174,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.35 2001/06/20 10:35:10 michael Exp $
+    $Id: client.rb,v 1.36 2001/06/20 20:38:53 michael Exp $
 
 =end
 
@@ -223,7 +223,7 @@ module XMLRPC
       if ok 
         params = params.collect do |param|
           if param.is_a? Array
-            param
+            param[0]
           elsif param.is_a? Hash
             XMLRPC::FaultException.new(param["faultCode"], param["faultString"])
           else
