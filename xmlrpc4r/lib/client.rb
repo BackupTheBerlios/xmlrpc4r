@@ -252,7 +252,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.42 2001/07/02 15:21:37 michael Exp $
+    $Id: client.rb,v 1.43 2001/07/05 16:51:25 michael Exp $
 
 =end
 
@@ -307,6 +307,7 @@ module XMLRPC
       @http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port) 
       @http.use_ssl = @use_ssl if @use_ssl
       @http.read_timeout = @timeout
+      @http.open_timeout = @timeout
 
       @parser = nil
       @create = nil
@@ -352,6 +353,7 @@ module XMLRPC
     def timeout=(new_timeout)
       @timeout = new_timeout
       @http.read_timeout = @timeout
+      @http.open_timeout = @timeout
     end
 
     def user=(new_user)
@@ -475,6 +477,7 @@ module XMLRPC
         http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port) 
         http.use_ssl = @use_ssl if @use_ssl
         http.read_timeout = @timeout
+        http.open_timeout = @timeout
       else
         # reuse the HTTP object for each call => connection alive is possible
         http = @http
