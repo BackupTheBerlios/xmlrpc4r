@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.11 2001/01/27 18:22:48 michael Exp $
+# $Id: create.rb,v 1.12 2001/01/27 19:52:36 michael Exp $
 #
 
 require "date"
@@ -21,8 +21,11 @@ class Create
 
 
   def methodCall(name, *params)
-    # TODO: check method_name
     name = name.to_s
+
+    if name !~ /[a-zA-Z0-9_.:\/]+/
+      raise ArgumentError, "Wrong XML-RPC method-name"
+    end
 
     parameter = params.collect do |param|
       El.new("param", nil, conv2value(param))
