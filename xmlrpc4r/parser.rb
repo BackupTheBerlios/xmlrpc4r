@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.4 2001/01/24 19:43:19 michael Exp $
+# $Id: parser.rb,v 1.5 2001/01/24 20:04:00 michael Exp $
 #
 
 
@@ -17,9 +17,15 @@
 
 
 
-# xmltreebuilder must be load before xmltree
 require "xmltreebuilder"
-require "xmltree"
+
+module XMLRPC
+
+class Parser
+
+
+private
+
 
 #
 # remove all whitespace but the innerst 
@@ -280,8 +286,12 @@ def createCleanedTree(str)
   doc
 end
 
+public
 
 ##################################################
+
+def initialize
+end
 
 def parseMethodResponse(str)
   methodResponse_document(createCleanedTree(str))
@@ -292,3 +302,9 @@ def parseMethodCall(str)
 end
 
 ##################################################
+
+
+end # class
+
+end # module
+
