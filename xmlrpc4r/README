@@ -1,4 +1,4 @@
-$Id: README,v 1.18 2001/06/19 13:30:28 michael Exp $
+$Id: README,v 1.19 2001/07/02 15:01:57 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -8,17 +8,38 @@ For more information about XML-RPC look at http://www.xmlrpc.com.
 
 ACKNOWLEDGMENTS
 ===============
-I have included John W. Small's (jsmall@laser.net) ruby-generic-server 
-into this package, so that you'll not need to download it.
-For copyright notice and license, see file "lib/GServer.rb".
-It is available from RAA. Thanks for his implementation.
-For the documentation, I use the style-sheet of RWiki from NaHi.
+
+John W. Small (jsmall@laser.net):
+  I included this ruby-generic-server into this package and use it
+  as a base for the Standalone XML-RPC server. 
+  For copyright notice and license, see file "lib/GServer.rb". 
+  It is available from RAA.
+
+NAKAMURA Hiroshi (NaHi):
+  Many thanks to him, author of SOAP4R, for idea of marshalling Ruby objects
+  and it's implementation.
+  Helped to find some bugs.  
+
+Neil Conway:
+  Idea and helped implementing Introspection support
+
+Colin Steele
+  bug fix
+  mod_ruby (sorry not yet implemented)
+
+Thaddeus Covert
+  bug fix 
+
+and all the others I forgot :-) 
+  
+
 
 PREREQUISITES
 =============
-You need either NQXML (I use version 0.6.1) or XMLParser (I use version 0.6.1) from RAA, 
+You need either NQXML (tested with 0.6.1 and 1.0.3) or XMLParser (tested with version 0.6.1) from RAA, 
 and a Ruby version >= 1.6. 
-(No, it's not a typo. Both NQXML and XMLParser have the same version.)
+Note that you have to edit the config.rb file in directory lib if you want to change the used parser
+(default=XMLParser).
 
 TEST
 =====
