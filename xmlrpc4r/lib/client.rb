@@ -52,8 +52,6 @@ call on the remote-side and of course the parameters for the remote procedure.
     ((|args|)) on the XML-RPC server.
     The parameter ((|method|)) is converted into a (({String})) and should 
     be a valid XML-RPC method-name.  
-    The variable number of parameters given by ((|args|)) must be at least 
-    one parameter, because XML-RPC do not allow calls without paramter.
     Each parameter of ((|args|)) must be of one of the following types,
     where (({Hash})) and (({Array})) can contain any of these listed types:
     * (({Fixnum}))
@@ -84,7 +82,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.12 2001/01/27 19:58:41 michael Exp $
+    $Id: client.rb,v 1.13 2001/01/27 20:04:00 michael Exp $
 =end
 
 
