@@ -24,42 +24,16 @@ See ((<here|URL:ChangeLog.html>)).
 == Download
 xmlrpc4r can be downloaded from here:
 
-* Version 1.6.1:
+* Version 1.6.2:
 
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_6_1.tar.gz>))
+  ((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r/xmlrpc4r-1_6_2.tar.gz>))
 
-
-* Version 1.6:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_6.tar.gz>))
-
-
-* Version 1.5.4:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5_4.tar.gz>))
-
-* Version 1.5.3:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5_3.tar.gz>))
-
-
-* Version 1.5.2:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5_2.tar.gz>))
-
-* Version 1.5.1:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5_1.tar.gz>))
-
-* Version 1.5:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5.tar.gz>))
 
 == Further information
 For more information on installation and prerequisites read the (('README')) 
 file of the package.
 
 == History
-    $Id: index.rd,v 1.15 2001/04/20 16:09:44 michael Exp $
+    $Id: index.rd,v 1.16 2001/06/03 10:19:19 michael Exp $
 
 =end
