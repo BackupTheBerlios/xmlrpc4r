@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.3 2001/01/26 15:41:22 michael Exp $
+# $Id: client.rb,v 1.4 2001/01/27 11:27:01 michael Exp $
 #
 
 
@@ -11,7 +11,7 @@
 = Synopsis
    require "xmlrpc/client"
  
-   server = XMLRPC::Server.new("www.ruby-lang.org", 80, "/RPC2")
+   server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
    ok, params = server.call("michael.add", 4, 5)
    if ok then
      puts "4 + 5 = #{params[0]}"
@@ -30,11 +30,11 @@ require "net/http"
 
 module XMLRPC
 
-class Server
+class Client
  
-  USER_AGENT = "Ruby #{RUBY_VERSION}"
+  USER_AGENT = "Ruby #{RUBY_VERSION} ($Revision: 1.4 $)"
 
-  def initialize(host, port, path)
+  def initialize(host, path = "/RPC2", port = 80)
     @path = path
     @http = Net::HTTP.new(host, port)
   end
