@@ -1,6 +1,14 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.5 (2001-06-21)
+* modified multicall/multicall2 return value [1,2,3] instead of [[1], [2], [3]]
+* CGIServer works now with FastCGI (see samples/xml.fcgi)
+* renamed Server#stop to Server#shutdown
+* added XMLRPC::Marshallable, to marshall any Ruby object to a hash and
+  restore the object later from that hash.
+* fixed bug where <value>  </value> was stripped to ""
+
 :1.6.4 (2001-06-19)
 * clients can use Symbol as type which is converted to a String
 * added <nil/> (optionally) as well as BigInt (Bignum's > 32 bits)
@@ -63,5 +71,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.27 2001/06/19 14:02:11 michael Exp $
+  $Id: ChangeLog,v 1.28 2001/06/20 22:27:58 michael Exp $
 =end
