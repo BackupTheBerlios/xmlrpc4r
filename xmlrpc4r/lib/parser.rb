@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.18 2001/02/02 13:45:11 michael Exp $
+# $Id: parser.rb,v 1.19 2001/03/22 08:12:06 michael Exp $
 #
 
 
@@ -121,7 +121,20 @@ class Parser
 
     node.nodeValue.to_s
   end
+ 
+  # the node `node` has empty string or string
+  def text_zero_one(node)
+    nodes = node.childNodes.to_a.size
 
+    if nodes == 1
+      text(node.firstChild)
+    elsif nodes == 0
+      ""
+    else
+      raise "wrong xml-rpc (size)"
+    end
+  end
+ 
 
   def integer(node)
     #TODO: check string for float because to_i returnsa
@@ -146,9 +159,7 @@ class Parser
 
   def string(node)
     nodeMustBe(node, "string")    
-    hasOnlyOneChild(node)
-    
-    text(node.firstChild)
+    text_zero_one(node)
   end
 
   def double(node)
@@ -183,9 +194,9 @@ class Parser
 
   def base64(node)
     nodeMustBe(node, "base64")
-    hasOnlyOneChild(node)
+    #hasOnlyOneChild(node)
      
-    XMLRPC::Base64.new(text(node.firstChild), :enc)
+    XMLRPC::Base64.new(text_zero_one(node), :enc)
   end
 
   def struct(node)
@@ -208,8 +219,8 @@ class Parser
 
   def name(node)
     nodeMustBe(node, "name")
-    hasOnlyOneChild(node)
-    text(node.firstChild) 
+    #hasOnlyOneChild(node)
+    text_zero_one(node.firstChild) 
   end
 
   def array(node)
