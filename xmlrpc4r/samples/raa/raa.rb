@@ -4,14 +4,14 @@
 # This library provides access to the XML-RPC interface
 # of RAA (Ruby Application Archive)
 #
-# $Id: raa.rb,v 1.1 2001/03/23 18:41:41 michael Exp $
+# $Id: raa.rb,v 1.2 2001/03/23 18:59:09 michael Exp $
 #
 
 require "xmlrpc/client"
 
 class RAA
 
-  def initialize(host, path, port)
+  def initialize(host, path, port=80)
     @server = XMLRPC::Client.new(host, path, port)
     @raa = @server.proxy("raa")
   end
