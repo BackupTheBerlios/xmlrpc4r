@@ -194,7 +194,7 @@ class BasicServer
 
         # add all methods
         interface.get_methods.each do |name, meth, sig, help|
-          @handler << [prefix+name, obj.method(meth).to_proc, sig, help]
+          @handler << [prefix+name, obj_or_signature.method(meth).to_proc, sig, help]
         end
       else
         raise ArgumentError, "Wrong type for parameter 'prefix'"
@@ -577,6 +577,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.34 2001/07/03 13:16:27 michael Exp $    
+    $Id: server.rb,v 1.35 2001/07/03 13:20:59 michael Exp $    
 =end
 
