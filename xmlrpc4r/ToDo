@@ -1,5 +1,6 @@
-$Id: ToDo,v 1.8 2001/02/02 16:35:01 michael Exp $
+$Id: ToDo,v 1.9 2001/02/03 18:48:03 michael Exp $
 
+- Server: do method-lookup with Hash
 - Conversion-class which handles conversion from and to XMLRPC.
 - write test-cases
 - write documentation (3/4 done)
