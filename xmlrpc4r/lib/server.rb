@@ -39,10 +39,10 @@ Do not use this server, as this is/should be an abstract class.
         server.add_handler("michael.add") {|a,b| a+b}
     Here the ((|prefix|)) is the full name of the method. 
 
-    A handler method or code-block can return the types listed 
-    ((<here|URL:client.html#index:0>)). When a method fails, it can
-    tell it the client by throwing an (({XMLRPC::FaultException})) like
-    in this example:
+    A handler method or code-block can return the types listed at
+    ((<XMLRPC::Client#call|URL:client.html#index:0>)). 
+    When a method fails, it can tell it the client by throwing an 
+    (({XMLRPC::FaultException})) like in this example:
         s.add_handler("michael.div") do |a,b|
           if b == 0
             raise XMLRPC::FaultException.new(1, "division by zero")
@@ -169,7 +169,7 @@ end
     s.serve
 
 == Description
-Implements an CGI-based XML-RPC server.
+Implements a CGI-based XML-RPC server.
 
 == Superclass
 ((<XMLRPC::BasicServer>))
@@ -223,5 +223,5 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.7 2001/01/27 23:18:09 michael Exp $    
+    $Id: server.rb,v 1.8 2001/01/28 15:03:41 michael Exp $    
 =end
