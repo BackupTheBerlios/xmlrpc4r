@@ -4,7 +4,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.3 2001/01/29 11:47:03 michael Exp $
+# $Id: httpserver.rb,v 1.4 2001/01/29 13:06:06 michael Exp $
 #
 
 
@@ -32,7 +32,7 @@ class HttpServer < Server
     io.puts "Content-type: text/xml"
     io.puts "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})"
     io.puts
-    io.puts resp
+    io.print resp
   end
 
 
