@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.16 2001/01/27 20:34:27 michael Exp $
+# $Id: parser.rb,v 1.17 2001/01/30 21:18:15 michael Exp $
 #
 
 
@@ -51,8 +51,8 @@ class Parser
   private
 
   #
-  # remove all whitespace but the innerst 
-  # (could be e.g. a string!), and all comments
+  # remove all whitespaces but in the tags i4, int, boolean....
+  # and all comments
   #
   def removeWhitespacesAndComments(node)
     remove = []
@@ -60,9 +60,9 @@ class Parser
     childs.each do |nd|
       case nd.nodeType
       when XML::SimpleTree::Node::TEXT
-	if nd.nodeValue.strip == "" and childs.size != 1
-	   remove << nd
-	end
+        unless %w(i4 int boolean string double dateTime.iso8601 base64).include? node.nodeName 
+	  remove << nd if nd.nodeValue.strip == "" # and childs.size != 1
+        end
       when XML::SimpleTree::Node::COMMENT
 	remove << nd
       else
@@ -188,7 +188,7 @@ class Parser
 
   def struct(node)
     nodeMustBe(node, "struct")    
-    
+
     hash = {}
     node.childNodes do |me|
       n, v = member(me)  
