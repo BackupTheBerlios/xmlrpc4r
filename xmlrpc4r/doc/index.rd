@@ -18,11 +18,37 @@ See ((<here|URL:howto.html>)).
 * ((<Client|URL:client.html>)) 
 * ((<Server|URL:server.html>)) 
 
+== Features
+
+: Extensions
+  * Introspection 
+  * multiCall 
+  * optionally nil values and integers larger than 32 Bit 
+
+: Server
+  * Standalone XML-RPC server
+  * CGI-based (works with FastCGI)
+
+: Client
+  * synchronous/asynchronous calls
+  * Basic HTTP-401 Authentification
+  * HTTPS protocol (SSL)
+
+: General
+  * possible to choose between XMLParser Module (Expat wrapper) and NQXML (pure Ruby) parsers
+  * Marshalling Ruby objects to Hashs and reconstruct them later from a Hash
+  * SandStorm component architecture Client interface
+
+
 == ChangeLog
 See ((<here|URL:ChangeLog.html>)).
 
 == Download
 xmlrpc4r can be downloaded from here:
+
+* Version 1.6.7:
+
+  ((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r/xmlrpc4r-1_6_7.tar.gz>))
 
 * Version 1.6.6:
 
@@ -50,6 +76,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.20 2001/06/23 15:48:04 michael Exp $
+    $Id: index.rd,v 1.21 2001/07/02 15:01:20 michael Exp $
 
 =end
