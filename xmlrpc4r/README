@@ -1,4 +1,4 @@
-$Id: README,v 1.6 2001/01/26 17:19:12 michael Exp $
+$Id: README,v 1.7 2001/01/27 18:37:09 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -42,8 +42,7 @@ I use Time.gm(...) to create a Time object!
 TODO
 ----
 - write test-cases
-- API change
-- write documentation
+- write documentation (half done)
 - convert from DOM to SAX ?
 - declare exceptions (e.g. ParserException...)
 - a Java XMLRPC implementation had <nil\>. should implement?  
