@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.14 2001/01/27 20:13:36 michael Exp $
+# $Id: parser.rb,v 1.15 2001/01/27 20:32:55 michael Exp $
 #
 
 
@@ -291,7 +291,7 @@ class Parser
 
   def methodCall(node)
     nodeMustBe(node, "methodCall")
-    assert( 1..2 === node.childNodes.to_a.size ) 
+    assert( (1..2).include? node.childNodes.to_a.size ) 
     name = methodName(node[0])
 
     if node.childNodes.to_a.size == 2 then
