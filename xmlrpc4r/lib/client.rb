@@ -129,25 +129,26 @@ Don't use this class directly, but use instead method ((<XMLRPC::Client#proxy>))
     ((|server|)) must be of type (({XMLRPC::Client})), which is the XML-RPC server to be used
     for a XML-RPC call. ((|prefix|)) and ((|delim|)) will be prepended to the methodname
     called onto this object. If ((|call|)) is (({true})) then ((<XMLRPC::Client#call>)) is used,
-    otherwise ((<XMLRPC::Client#call2>)) is used. ((|args|)) are arguments which are automatically given
+    otherwise ((<XMLRPC::Client#call2>)). ((|args|)) are arguments which are automatically given
     to every XML-RPC call before the arguments provides through (({method_missing})).
     
 == Instance Methods
-    Every method call is forwarded to the XML-RPC server defined in ((<new|XMLRPC::Client::Proxy#new>)).
+Every method call is forwarded to the XML-RPC server defined in ((<new|XMLRPC::Client::Proxy#new>)).
     
-    Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names, because they get around
-          (({method_missing})). 
+Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names, because they get around
+(({method_missing})). 
           
 
 
 = History
     $Log: client.rb,v $
+    Revision 1.25  2001/03/22 20:22:07  michael
+    *** empty log message ***
+
     Revision 1.24  2001/03/22 19:59:42  michael
 
     added Client#proxy, Client#proxy2 and subclass Client::Proxy
 
-
-    $Id: client.rb,v 1.24 2001/03/22 19:59:42 michael Exp $
 =end
 
 
@@ -225,10 +226,13 @@ class Client
     end
 
     def method_missing(mid, *args)
+      pre = @prefix + mid.to_s
+      arg = @args + args
+
       if @call
-        @server.call (@prefix + mid, *(@args + args))
+        @server.call (pre, *arg)
       else
-        @server.call2(@prefix + mid, *(@args + args))
+        @server.call2(pre, *arg)
       end
     end
 
