@@ -1,26 +1,21 @@
 #!/usr/bin/env ruby
 
 
-require "xmlrpc/cgi_server"
+require "xmlrpc/server"
 
 
-s = XMLRPC::CGI_Server.new
-create = XMLRPC::Create.new
+s = XMLRPC::CGIServer.new
 
-resp = case s.method        # name of called method
-when "michael.add"
-  a,b = s.params
-  create.methodResponse(true, a+b) 
-when "michael.div"
-  a,b = s.params 
+s.add_handler("michael.add") {|a,b|
+  a+b
+}  
+s.add_handler("michael.div") {|a,b|
   if b == 0
-    create.methodResponse(false, {"faultCode" => 1, 
-                          "faultString" => "division by zero"})
+    raise XMLRPC::FaultException.new 1, "division by zero"
   else
-    create.methodResponse(true, a/b) 
+    a / b
   end
-end
+}
 
-print "Content-type: text/xml\n\n"
-puts resp
+s.serve
 
