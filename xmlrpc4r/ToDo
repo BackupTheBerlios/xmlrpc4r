@@ -1,5 +1,6 @@
-$Id: ToDo,v 1.13 2001/02/04 14:58:54 michael Exp $
+$Id: ToDo,v 1.14 2001/02/07 17:22:16 michael Exp $
 
+- raise exception, when DateTime.new or setters get parameters which are out of range (e.g. month=13)
 - Server: do method-lookup with Hash
 - Conversion-class which handles conversion from and to XMLRPC.
 - write test-cases
