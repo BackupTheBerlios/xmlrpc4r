@@ -8,9 +8,9 @@ Released under the same term of license as Ruby.
 You can currently use xmlrpc4r with two parsers, XMLParser and/or NQXML.
 Both are available at RAA (Ruby Application Archive - ((<URL:http://www.ruby-lang.org/en/raa.html>))).
 
-If you want to use XMLParser (Expat Module for Ruby), you need 
-James Clark's XML Parser Toolkit "expat" installed. I recommend using this parser, 
-because xmlrpc4r is better with it and XMLParser is much faster than NQXML.
+If you want to use XMLParser (Expat Module for Ruby), you have to install  
+James Clark's XML Parser Toolkit "expat". I recommend using XMLParser, 
+because xmlrpc4r is better tested with it and XMLParser is much faster than NQXML.
 The advantage of using NQXML is that it is written in pure Ruby.
 
 Then you'll need "xmlrpc4r" of course, which is available at
@@ -186,7 +186,10 @@ or:
   # ...
 
 
+You can change the XML Writer by calling (({#set_writer})).
+
+
 = History
-  $Id: howto.rd,v 1.3 2001/04/20 16:09:44 michael Exp $
+  $Id: howto.rd,v 1.4 2001/04/20 16:18:10 michael Exp $
 =end
 
