@@ -5,10 +5,11 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.1 2001/01/24 16:05:33 michael Exp $
+# $Id: create.rb,v 1.2 2001/01/24 19:43:19 michael Exp $
 #
 
 
+require "xmltreebuilder"
 require "xmltree"
 include XML::SimpleTree
 
