@@ -2,6 +2,7 @@
 = ChangeLog for xmlrpc4r
 
 :1.6.1
+* changed HOWTO (added information on how to use NQXML)
 * NQXML parser support
 * possibility to choose between different XML parsers and XML writers, with
   Client#set_parser/#set_writer and BasicServer#set_parser/#set_writer
@@ -44,5 +45,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.16 2001/04/20 15:53:46 michael Exp $
+  $Id: ChangeLog,v 1.17 2001/04/20 16:11:44 michael Exp $
 =end
