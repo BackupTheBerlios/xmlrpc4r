@@ -1,4 +1,4 @@
-$Id: README,v 1.1 2001/01/24 21:35:46 michael Exp $
+$Id: README,v 1.2 2001/01/25 22:49:39 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -16,9 +16,11 @@ a Ruby version >= 1.6.
 INSTALL
 -------
 If you want to use XML-RPC (why not :) then you have to
-copy cgi_server.rb, client.rb, create.rb and parser.rb to a
-directory which is in the Ruby loadpath. And of course you
-must have xmlparser installed.
+create a new directory "xmlrpc" in your "site_ruby/1.6" 
+(where 1.6 is your ruby-version) directory (on my computer 
+this is in /usr/pkg/lib/ruby) and copy all files from the 
+subdirectory "lib" into this (dir xmlrpc).
+And of course you must have xmlparser installed.
 
 
 SAMPLES
