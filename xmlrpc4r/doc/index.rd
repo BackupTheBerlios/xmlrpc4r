@@ -15,12 +15,11 @@ much easier. For more information see the XML-RPC homepage
 * ((<Client|URL:client.html>)) 
 * ((<Server|URL:server.html>)) 
 
+== ChangeLog
+See ((<here|ChangeLog.html>)).
+
 == Download
 xmlrpc4r can be downloaded from here:
-
-* Version 1.2:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_2.tar.gz>))
 
 * Version 1.3:
 
@@ -40,6 +39,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.6 2001/02/02 13:44:46 michael Exp $
+    $Id: index.rd,v 1.7 2001/02/02 16:43:32 michael Exp $
 
 =end
