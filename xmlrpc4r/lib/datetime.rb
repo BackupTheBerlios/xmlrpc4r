@@ -24,21 +24,25 @@ component. (({XMLRPC::DateTime})) is able to store a XMLRPC
 == Instance Methods
 --- XMLRPC::DateTime#year
 --- XMLRPC::DateTime#month
---- XMLRPC::DateTime#mon
 --- XMLRPC::DateTime#day
 --- XMLRPC::DateTime#hour
 --- XMLRPC::DateTime#min
 --- XMLRPC::DateTime#sec
     Return the value of the specified date/time component.
 
+--- XMLRPC::DateTime#mon
+    Alias for ((<XMLRPC::DateTime#month>)).
+
 --- XMLRPC::DateTime#year=
 --- XMLRPC::DateTime#month=
---- XMLRPC::DateTime#mon=
 --- XMLRPC::DateTime#day=
 --- XMLRPC::DateTime#hour=
 --- XMLRPC::DateTime#min=
 --- XMLRPC::DateTime#sec=
     Set the value of the specified date/time component.
+
+--- XMLRPC::DateTime#mon=
+    Alias for ((<XMLRPC::DateTime#month=>)).
 
 --- XMLRPC::DateTime#to_time
     Return a (({Time})) object of the date/time which (({self})) represents.
@@ -99,5 +103,5 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: datetime.rb,v 1.1 2001/02/02 13:26:11 michael Exp $
+    $Id: datetime.rb,v 1.2 2001/02/02 20:44:54 michael Exp $
 =end
