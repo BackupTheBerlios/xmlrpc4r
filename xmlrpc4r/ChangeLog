@@ -1,6 +1,18 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.6 (2001-06-25)
+* added Client-interface wrapper for SandStorm component architecture (see SourceForge.net).
+  See file samples/sandstorm/active.rb
+* added Basic HTTP (401) Authorization to Client and support for SSL.
+    Client#new(host, url, port, proxy_host, proxy_port, user, password, use_ssl)
+  For SSL you need the SSL package from RAA. 
+* added full support for Introspection (only proc-handlers are supported)
+* instance variables which value is  nil are not marshalled unless ENABLE_NIL_CREATE is true
+* Marshallable classes need not have method initialize without arguments (adapted from SOAP4R)
+* changed config.rb (made it simpler)
+* added two flags ENABLE_MULTICALL and ENABLE_INTROSPECTION to config.rb
+
 :1.6.5 (2001-06-21)
 * modified multicall/multicall2 return value [1,2,3] instead of [[1], [2], [3]]
 * CGIServer works now with FastCGI (see samples/xml.fcgi)
@@ -71,5 +83,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.28 2001/06/20 22:27:58 michael Exp $
+  $Id: ChangeLog,v 1.29 2001/06/25 11:41:21 michael Exp $
 =end
