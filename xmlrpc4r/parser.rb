@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.2 2001/01/24 15:47:12 michael Exp $
+# $Id: parser.rb,v 1.3 2001/01/24 18:02:16 michael Exp $
 #
 
 
@@ -18,7 +18,6 @@
 
 
 require "xmltreebuilder"
-
 
 #
 # remove all whitespace but the innerst 
