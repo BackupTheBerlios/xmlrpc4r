@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.25 2001/06/19 12:26:56 michael Exp $
+# $Id: parser.rb,v 1.26 2001/06/19 13:26:10 michael Exp $
 #
 
 
@@ -98,6 +98,7 @@ module XMLRPC
 	childs.each do |nd|
 	  case _nodeType(nd)
 	  when :TEXT
+            # TODO: add nil?
 	    unless %w(i4 int boolean string double dateTime.iso8601 base64).include? node.nodeName 
 	      remove << nd if nd.nodeValue.strip == ""  # and childs.size != 1
 	    end
@@ -181,6 +182,12 @@ module XMLRPC
 	else
 	  raise "RPC-value of type boolean is wrong" 
 	end
+      end
+
+      def v_nil(node)
+        nodeMustBe(node, "nil")
+	assert( node.childNodes.to_a.size == 0 )
+        nil
       end
 
       def string(node)
@@ -354,6 +361,12 @@ module XMLRPC
 	  when "base64"           then base64(child)
 	  when "struct"           then struct(child)
 	  when "array"            then array(child) 
+          when "nil"              
+            if Extensions::ENABLE_NIL_PARSER
+              v_nil(child) 
+            else
+	      raise "wrong/unknown XML-RPC type 'nil'"
+            end
 	  else 
 	    raise "wrong/unknown XML-RPC type"
 	  end

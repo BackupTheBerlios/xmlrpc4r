@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.19 2001/06/19 12:26:56 michael Exp $
+# $Id: create.rb,v 1.20 2001/06/19 13:26:10 michael Exp $
 #
 
 require "date"
@@ -40,7 +40,11 @@ module XMLRPC
 
       def element(name, attrs, *children)
 	raise "attributes not yet implemented" unless attrs.nil?
-	"<#{name}>" + children.join("") + "</#{name}>"
+        if children.empty?
+          "<#{name}/>" 
+        else
+          "<#{name}>" + children.join("") + "</#{name}>"
+        end
       end
 
       def text(txt)
@@ -171,17 +175,27 @@ module XMLRPC
 	  @writer.tag("i4", param.to_s)
 
 	when Bignum
-	  if param >= -(2**31) and param <= (2**31-1)
-	    @writer.tag("i4", param.to_s)
-	  else
-	    raise "Bignum is too big! Must be signed 32-bit integer!"
-	  end
-
+          if Extensions::ENABLE_BIGINT
+            @writer.tag("i4", param.to_s)
+          else
+            if param >= -(2**31) and param <= (2**31-1)
+              @writer.tag("i4", param.to_s)
+            else
+              raise "Bignum is too big! Must be signed 32-bit integer!"
+            end
+          end
 	when TrueClass, FalseClass
 	  @writer.tag("boolean", param ? "1" : "0")
 
 	when String 
 	  @writer.tag("string", param)
+
+        when NilClass
+          if Extensions::ENABLE_NIL_CREATE
+            @writer.ele("nil")
+          else
+            raise "Wrong type NilClass. Not allowed!"
+          end
 
 	when Float
 	  @writer.tag("double", param.to_s)
