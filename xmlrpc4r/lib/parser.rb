@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.8 2001/01/26 17:24:02 michael Exp $
+# $Id: parser.rb,v 1.9 2001/01/26 17:28:57 michael Exp $
 #
 
 
@@ -144,7 +144,7 @@ class Parser
     
     dt = text(node.firstChild)
     
-    if dt =~ /^(\d\d\d\d)(\d\d)(\d\d)T(\d\d):(\d\d):(\d\d)$/ then
+    if dt =~ /^(-?\d\d\d\d)(\d\d)(\d\d)T(\d\d):(\d\d):(\d\d)$/ then
       # TODO: Time.gm ??? .local ??? 
       a = [$1, $2, $3, $4, $5, $6].collect{|i| i.to_i}
       
