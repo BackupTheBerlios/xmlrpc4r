@@ -10,8 +10,8 @@ much easier. For more information see the XML-RPC homepage
 ((<URL:http://www.xmlrpc.com/>)).
 
 == Documentation
-* ((<Server|URL:server.html>)) 
 * ((<Client|URL:client.html>)) 
+* ((<Server|URL:server.html>)) 
 
 == Download
 xmlrpc4r can be downloaded from here:
@@ -29,6 +29,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.1 2001/01/27 23:40:12 michael Exp $
+    $Id: index.rd,v 1.2 2001/01/28 14:21:45 michael Exp $
 
 =end
