@@ -87,7 +87,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.17 2001/01/28 00:01:05 michael Exp $
+    $Id: client.rb,v 1.18 2001/01/28 16:51:49 michael Exp $
 =end
 
 
@@ -114,14 +114,16 @@ class Client
   end 
  
   def call2(method, *args)
-    create = Create.new
-    parser = Parser.new
+    create  = Create.new
+    parser  = Parser.new
+    request = create.methodCall(method, *args)
 
     resp, data = @http.post (
                    @path, 
-                   create.methodCall(method, *args),
-                   "User-Agent"   =>  USER_AGENT,
-                   "Content-Type" => "text/xml"
+                   request,
+                   "User-Agent"     =>  USER_AGENT,
+                   "Content-Type"   => "text/xml",
+                   "Content-Length" => request.size.to_s 
                  )
 
     @http.finish
