@@ -1,12 +1,10 @@
-#
-# Implements the client-side of XML-RPC
-# 
-# Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
-#
-# $Id: client.rb,v 1.7 2001/01/27 13:10:54 michael Exp $
-#
-
 =begin
+
+= XMLRPC::Client
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
+
+Released under the same term of license as Ruby.
+
 = Synopsis
     require "xmlrpc/client"
   
@@ -21,7 +19,12 @@
     end
 
 = Description
-Class (({XMLRPC::Client})) provides remote procedure calls to XML-RPC server.
+Class (({XMLRPC::Client})) provides remote procedure calls to a XML-RPC server.
+After setting the connection-parameters with ((<XMLRPC::Client.new>)) which
+creates a new (({XMLRPC::Client})) instance, you can execute a remote procedure 
+by sending the ((<call|XMLRPC::Client#call>)) message to this new instance, giving
+parameters that indicate which method to call on the remote-side and of course the 
+parameters for the remote procedure.
 
 = Class Methods
 --- XMLRPC::Client.new( host, path="/RPC2", port=80 )
@@ -58,7 +61,7 @@ Class (({XMLRPC::Client})) provides remote procedure calls to XML-RPC server.
     * A fault-structure is a (({Hash})) object containing a key (({"faultCode"})) which value is a (({Fixnum})) 
       and a key (({"faultString"})) which value is a (({String})).
 = History
-    $Id: client.rb,v 1.7 2001/01/27 13:10:54 michael Exp $
+    $Id: client.rb,v 1.8 2001/01/27 15:33:22 michael Exp $
 =end
 
 
@@ -75,10 +78,10 @@ class Client
 
   def initialize(host, path="/RPC2", port=80)
     @path = path
-    @http = Net::HTTP.new(host, port) end
+    @http = Net::HTTP.new(host, port)
+  end
 
   def call(method, *args)
-    
     create = Create.new
     parser = Parser.new
 
