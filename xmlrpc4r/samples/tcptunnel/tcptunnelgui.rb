@@ -3,7 +3,7 @@
 # TCP Tunnel
 # Copyright (c) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: tcptunnelgui.rb,v 1.4 2001/07/04 15:15:57 michael Exp $
+# $Id: tcptunnelgui.rb,v 1.5 2001/07/04 15:28:06 michael Exp $
 # 
 
 require "socket"
@@ -35,16 +35,26 @@ def forward(from, to, str, str2)
   }
 end
 
-root = TkRoot.new { title "Ruby TcpTunnel" }
+root = TkRoot.new { title "TCP Tunnel/Monitor: Tunneling #{LISTENHOST}:#{LISTENPORT} to #{TUNNELHOST}:#{TUNNELPORT}" }
 
 top    = TkFrame.new(root)
-bottom = TkFrame.new(root)
+bottom2 = TkFrame.new(root)
+
 
 top.pack 'side' => 'top', 'fill' => 'x'
-bottom.pack 'side' => 'bottom', 'fill' => 'both'  
+bottom2.pack 'side' => 'bottom', 'fill' => 'both'  
+
+bottom3 = TkFrame.new(bottom2)
+bottom  = TkFrame.new(bottom2)
+
+bottom.pack 'side' => 'top', 'fill' => 'both'
+bottom3.pack 'side' => 'bottom', 'fill' => 'x'  
+
+bot_label = TkLabel.new(bottom3) { text "Listening for connections on port #{LISTENPORT} for host #{LISTENHOST}" }
+bot_label.pack
 
 llabel = TkLabel.new(top) { text "From #{LISTENHOST}:#{LISTENPORT}" }
-rlabel = TkLabel.new(top) { text "To #{TUNNELHOST}:#{TUNNELPORT}  " }
+rlabel = TkLabel.new(top) { text "From #{TUNNELHOST}:#{TUNNELPORT}  " }
 rlabel.pack 'side' => 'right'
 llabel.pack 'side' => 'left' 
 TkButton.new(top) {
