@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.10 2001/01/26 17:27:28 michael Exp $
+# $Id: create.rb,v 1.11 2001/01/27 18:22:48 michael Exp $
 #
 
 require "date"
@@ -22,6 +22,7 @@ class Create
 
   def methodCall(name, *params)
     # TODO: check method_name
+    name = name.to_s
 
     parameter = params.collect do |param|
       El.new("param", nil, conv2value(param))
@@ -66,10 +67,10 @@ class Create
    
       resp = [El.new("params", nil, *resp)]
     else
-      if params.size != 1 or params[0] === Hash 
-	raise "no valid fault-structure given"
+      if params.size != 1 or params[0] === XMLRPC::FaultException 
+	raise ArgumentError, "no valid fault-structure given"
       end
-      resp = El.new("fault", nil, conv2value(params[0]))
+      resp = El.new("fault", nil, conv2value(params[0].to_h))
     end
 
       
