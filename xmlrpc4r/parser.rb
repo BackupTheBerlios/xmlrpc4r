@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.1 2001/01/24 15:25:53 michael Exp $
+# $Id: parser.rb,v 1.2 2001/01/24 15:47:12 michael Exp $
 #
 
 
@@ -226,9 +226,18 @@ end
 
 def methodResponse(node)
   nodeMustBe(node, "methodResponse")
-  # TODO: faults
-  hasOnlyOneChild(node, "params")
-  params(node.firstChild)  
+  hasOnlyOneChild(node, %w(params fault))
+  child = node.firstChild
+
+  case child.nodeName
+  when "params"
+    [ true, params(child) ] 
+  when "fault"
+    [ false, fault(child) ]
+  else
+    raise "unexpected error"
+  end
+
 end
 
 def methodCall(node)
@@ -251,6 +260,14 @@ def params(node)
   node.childNodes.to_a.collect do |n|
     param(n)
   end
+end
+
+
+def fault(node)
+  # TODO: fault do not proof if the value is a structure etc...
+  nodeMustBe(node, "fault")
+  hasOnlyOneChild(node, "value")
+  value(node.firstChild) 
 end
 
 
