@@ -1,7 +1,8 @@
 =begin
 = ChangeLog for xmlrpc4r
 
-:1.5.5
+:1.6
+* added XMLRPC::Client#proxy and #proxy2 as well as subclass Client::Proxy
 * fixed another empty string bug, which occured when an empty name-tag (hash-key) was used.
 
 : 1.5.4
@@ -34,5 +35,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.13 2001/03/22 17:52:26 michael Exp $
+  $Id: ChangeLog,v 1.14 2001/03/22 20:07:56 michael Exp $
 =end
