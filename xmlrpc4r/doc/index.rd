@@ -16,7 +16,7 @@ much easier. For more information see the XML-RPC homepage
 * ((<Server|URL:server.html>)) 
 
 == ChangeLog
-See ((<here|ChangeLog.html>)).
+See ((<here|URL:ChangeLog.html>)).
 
 == Download
 xmlrpc4r can be downloaded from here:
@@ -39,6 +39,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.7 2001/02/02 16:43:32 michael Exp $
+    $Id: index.rd,v 1.8 2001/02/02 16:51:18 michael Exp $
 
 =end
