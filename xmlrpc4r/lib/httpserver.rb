@@ -1,17 +1,17 @@
 #
 # Implements a simple HTTP-server by using John W. Small's (jsmall@laser.net) 
-# ruby-generic-server, which I have renamed from Server.rb to EServer.rb
+# ruby-generic-server.
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.6 2001/01/29 17:18:45 michael Exp $
+# $Id: httpserver.rb,v 1.7 2001/02/04 12:44:33 michael Exp $
 #
 
 
 
-require "xmlrpc/EServer"
+require "xmlrpc/GServer"
 
-class HttpServer < Server
+class HttpServer < GServer
 
   def http_error(status, message, io)
     io.puts "HTTP/1.0 #{status} #{message}"
@@ -80,10 +80,10 @@ class HttpServer < Server
   end
 
 
-  def initialize(handler, port=8080, maxConnections = 4, 
+  def initialize(handler, port = 8080, host = DEFAULT_HOST, maxConnections = 4, 
                  stdlog = $stdout, audit = true, debug = true)
     @handler = handler
-    super(port, maxConnections, stdlog, audit, debug)
+    super(port, host, maxConnections, stdlog, audit, debug)
   end
 
 end
