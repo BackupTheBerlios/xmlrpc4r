@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: raa_tk.rb,v 1.2 2001/03/22 23:27:35 michael Exp $
+# $Id: raa_tk.rb,v 1.3 2001/03/22 23:37:46 michael Exp $
 #
 
 require "tk"
@@ -87,7 +87,7 @@ list.bind("ButtonRelease-1") {
       $category[k].value = info["category"][k.to_s]  
     } 
 
-    $update.value = info["update"].to_s
+    $update.value = info["update"].to_time.to_s
   end
 }
 
@@ -126,59 +126,40 @@ def label_entry(parent, label, tkvar, row, klass_entry=TkEntry)
   }.grid('row' => row, 'column' => 1)
 end
 
+def label(parent, label, row)
+  TkLabel.new(parent) {
+    text label
+  }.grid('row' => row, 'column' => 1, 'sticky' => 'w')
+end
+  
 
 
 
-# product
-TkLabel.new(rframe) {
-  text "Product"
-  pack 'fill' => 'x'
-}.pack  
-
-prod = TkFrame.new(rframe)
-label_entry(prod, "Download", $product[:download], 0)
-label_entry(prod, "Status", $product[:status], 1)
-label_entry(prod, "Version", $product[:version], 2)
-label_entry(prod, "License", $product[:license], 3)
-label_entry(prod, "Name", $product[:name], 4)
-label_entry(prod, "Homepage", $product[:homepage], 5)
-label_entry(prod, "Description", $product[:description], 6)
-prod.pack  'fill' => 'x'
+prod = rframe
+label prod, "Product",0
+label_entry(prod, "Download", $product[:download], 1)
+label_entry(prod, "Status", $product[:status], 2)
+label_entry(prod, "Version", $product[:version], 3)
+label_entry(prod, "License", $product[:license], 4)
+label_entry(prod, "Name", $product[:name], 5)
+label_entry(prod, "Homepage", $product[:homepage], 6)
+label_entry(prod, "Description", $product[:description], 7)
 
 
-# owner
-TkLabel.new(rframe) {
-  text "Owner"
-  pack 'fill' => 'x'
-}.pack  
+owner = rframe
+label owner, "Owner",8
+label_entry(owner, "Email", $owner[:email], 9)
+label_entry(owner, "Name", $owner[:name], 10)
+label_entry(owner, "Id", $owner[:id], 11)
 
-owner = TkFrame.new(rframe)
-label_entry(owner, "Email", $owner[:email], 0)
-label_entry(owner, "Name", $owner[:name], 1)
-label_entry(owner, "Id", $owner[:id], 2)
-owner.pack  'fill' => 'x'
+categ = rframe
+label categ, "Category",12
+label_entry(categ, "Major", $category[:major], 13)
+label_entry(categ, "Minor", $category[:minor], 14)
 
-# category
-TkLabel.new(rframe) {
-  text "Category"
-  pack 'fill' => 'x'
-}.pack  
-
-categ = TkFrame.new(rframe)
-label_entry(categ, "Major", $category[:major], 0)
-label_entry(categ, "Minor", $category[:minor], 1)
-categ.pack  'fill' => 'x'
-
-# update
-TkLabel.new(rframe) {
-  text "Update"
-  pack 'fill' => 'x'
-}.pack  
-
-update = TkFrame.new(rframe)
-label_entry(update, "Update", $update, 0)
-update.pack  'fill' => 'x'
-
+label rframe, "Update",15
+label_entry(rframe, "Update", $update, 16)
+label rframe, "", 17
 
 
 
