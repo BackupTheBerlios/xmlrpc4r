@@ -2,6 +2,7 @@
 = ChangeLog for xmlrpc4r
 
 :1.6.1
+* a XMLRPC::Base64 object is no longer returned from a RPC, instead a Ruby String is returned.
 * changed HOWTO (added information on how to use NQXML)
 * NQXML parser support
 * possibility to choose between different XML parsers and XML writers, with
@@ -45,5 +46,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.17 2001/04/20 16:11:44 michael Exp $
+  $Id: ChangeLog,v 1.18 2001/05/13 19:48:18 michael Exp $
 =end
