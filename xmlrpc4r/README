@@ -1,4 +1,4 @@
-$Id: README,v 1.4 2001/01/26 14:28:52 michael Exp $
+$Id: README,v 1.5 2001/01/26 16:57:18 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -33,11 +33,21 @@ into your cgi-bin directory of your web-server.
 the URL /cgi-bin/xml.cgi in samples/call.rb if it points to the cgi-based
 server-script)
 
+PROBLEMS
+--------
+Calling a remote procedure with a "Date" object, which is not in the range of
+a Time object ( only values > 1970, IRC) it will fail. 
+The same happens if a dateTime.iso8601 is returned from a remote procedure call 
+which is not in this range.
+
+Another problem is that XML-RPC do not specify the timezone. 
+I use Time.gm(...) to create a Time object!
+
 
 TODO
 ----
+- add Date <-> Time conversions (see Problems) 
 - write documentation
-- dateTime.iso8601 type
 - convert from DOM to SAX ?
 - declare exceptions (e.g. ParserException...)
- 
+- a Java XMLRPC implementation had <nil\>. should implement?  
