@@ -145,13 +145,6 @@ call on the remote-side and of course the parameters for the remote procedure.
     Should be an instance of a class from module (({XMLRPC::XMLParser})).
     If this method is not called, then (({XMLRPC::Config::DEFAULT_PARSER})) is used.
 
---- XMLRPC::Client#user
---- XMLRPC::Client#password
---- XMLRPC::Client#user= (user)
---- XMLRPC::Client#password (password)
-
-    Sets/gets the user or password used for Authentification.
-
 
 = XMLRPC::Client::Proxy
 == Synopsis
@@ -191,7 +184,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.39 2001/06/25 11:16:02 michael Exp $
+    $Id: client.rb,v 1.40 2001/06/29 21:14:51 michael Exp $
 
 =end
 
@@ -211,52 +204,49 @@ module XMLRPC
 
     include ParserWriterChooseMixin
 
-    def initialize(host=nil, path=nil, port=nil, proxy_addr=nil, proxy_port=nil, user=nil, password=nil, use_ssl=false)
+    def initialize(host=nil, path=nil, port=nil, proxy_addr=nil, proxy_port=nil, 
+                   user=nil, password=nil, use_ssl=false)
 
-      host ||= "localhost"
+      @host       = host || "localhost"
+      @path       = path || "/RPC2"
+      @proxy_addr = proxy_addr
+      @proxy_port = proxy_port
+      @use_ssl    = use_ssl 
+
       if use_ssl
         require "net/https"
-        port ||= 443
+        @port = port || 443
       else
-        port ||= 80
+        @port = port || 80
       end
-       
-      @path = path || "/RPC2"
-      Net::HTTP.version_1_1
-      @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
-      @http.use_ssl = true if use_ssl
+
+      if user != nil and password != nil
+        @auth = ("Basic " + ["#{user}:#{password}"].pack("m")).chomp
+      else
+        @auth = nil
+      end
 
       @parser = nil
       @create = nil
-
-      @user     = user
-      @password = password
-      @auth     = nil  # no authentification at the beginning (first if 401)
     end
-
-    attr_reader :user, :password
-
-    def user=(user) 
-      @user = user
-      @auth = nil
-    end
-
-    def password=(password) 
-      @password = password 
-      @auth     = nil
-    end 
-    
 
     def call(method, *args)
       ok, param = call2(method, *args) 
-      return param if ok
-      raise param
+      if ok
+        param
+      else
+        raise param
+      end
     end 
   
+
     def multicall(*methods)
       ok, params = multicall2(*methods)
-      return params if ok
-      raise params 
+      if ok
+        params
+      else
+        raise params
+      end
     end
 
     def multicall2(*methods)
@@ -279,47 +269,63 @@ module XMLRPC
       return ok, params
     end
 
+
  
     def call2(method, *args)
       request = create().methodCall(method, *args)
-      try = 0
+      data = do_rpc(request)
+      parser().parseMethodResponse(data)
+    end
 
-      loop do
-        try += 1
+    
+    def proxy(prefix, *args)
+      Proxy.new(self, prefix, args)
+    end
 
-        header = {  
-         "User-Agent"     =>  USER_AGENT,
-         "Content-Type"   => "text/xml",
-         "Content-Length" => request.size.to_s 
-        }
+    def proxy2(prefix, *args)
+      Proxy.new(self, prefix, args, false)
+    end
 
+
+    # NOTE: block parameters like xxxx2 method!!!
+    def async_call(method, *args)
+      Thread.start {
+        yield call2(method, *args) 
+      }
+    end
+
+    # NOTE: block parameters like xxxx2 method!!!
+    def async_multicall(*methods)
+      Thread.start {
+        yield multicall2(*methods) 
+      }
+    end
+
+    private # ------------------------------------
+
+    def do_rpc(request)
+      header = {  
+       "User-Agent"     =>  USER_AGENT,
+       "Content-Type"   => "text/xml",
+       "Content-Length" => request.size.to_s 
+      }
+
+      if @auth != nil
         # add authorization header
-        unless @auth.nil?
-          raise "Authentification expected but no username or password specified." if @user.nil? or @password.nil?
-          if @auth == "Basic"
-            header["Authorization"] = ("Basic " + ["#{@user}:#{@password}"].pack("m")).chomp
-          else
-            raise "Other authorization methods than Basic not yet implemented"
-          end
-        end
-
-        # post request
-        resp = @http.post2( @path, request, header ) 
-        data = resp.body
-        @http.finish
+        header["Authorization"] = @auth
+      end
+ 
+      data = nil
+      # post request
+      HTTP.version_1_2
+      HTTP.start(@host, @port, @proxy_addr, @proxy_port) do |http|
+        http.use_ssl = @use_ssl
+        resp = http.post2(@path, request, header) 
+        data = response.body
 
         if resp.code == "401"
           # Authorization Required
-          raise "Authorization failed.\nHTTP-Error: #{resp.code} #{resp.message}" if try >= 2
-
-          auth = resp["WWW-AUTHENTICATE"].split(/\s+/)
-          if auth[0] == "Basic"
-            @auth = "Basic"
-            next   # try once more (loop)
-          else
-            raise "Authorization method #{auth[0]} not yet implemented."
-          end
-
+          raise "Authorization failed.\nHTTP-Error: #{resp.code} #{resp.message}" 
         elsif resp.code[0,1] != "2"
           raise "HTTP-Error: #{resp.code} #{resp.message}" 
         end
@@ -336,21 +342,10 @@ module XMLRPC
         if data.nil? or data.size == 0 or expected.to_i != data.size
           raise "Wrong size. Was #{data.size}, should be #{expected}"
         end
+      end # start
 
-        return parser().parseMethodResponse(data)
-
-      end # loop
+      return data
     end
-
-    
-    def proxy(prefix, *args)
-      Proxy.new(self, prefix, args)
-    end
-
-    def proxy2(prefix, *args)
-      Proxy.new(self, prefix, args, false)
-    end
-
 
 
     class Proxy
@@ -367,7 +362,7 @@ module XMLRPC
 	arg = @args + args
 
 	if @call
-	  @server.call (pre, *arg)
+	  @server.call(pre, *arg)
 	else
 	  @server.call2(pre, *arg)
 	end
