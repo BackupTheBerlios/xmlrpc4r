@@ -5,7 +5,7 @@ Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 
 Released under the same term of license as Ruby.
 
-= Synopsis
+== Synopsis
     require "xmlrpc/client"
 
     server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
@@ -32,7 +32,7 @@ or
       puts param.faultString
     end
 
-= Description
+== Description
 Class (({XMLRPC::Client})) provides remote procedure calls to a XML-RPC server.
 After setting the connection-parameters with ((<XMLRPC::Client.new>)) which
 creates a new (({XMLRPC::Client})) instance, you can execute a remote procedure 
@@ -40,7 +40,7 @@ by sending the ((<call|XMLRPC::Client#call>)) or ((<call2|XMLRPC::Client#call2>)
 message to this new instance. The given parameters indicate which method to 
 call on the remote-side and of course the parameters for the remote procedure.
 
-= Class Methods
+== Class Methods
 --- XMLRPC::Client.new( host, path="/RPC2", port=80 )
     Creates an object which represents the remote XML-RPC server on the 
     given host ((|host|)). If the server is CGI-based, ((|path|)) is the
@@ -48,14 +48,14 @@ call on the remote-side and of course the parameters for the remote procedure.
     case of a standalone server) ((|path|)) should be (({"/RPC2"})).
     Finally ((|port|)) is the port on which the XML-RPC server listens.
 
-= Instance Methods
+== Instance Methods
 --- XMLRPC::Client#call( method, *args )
     Invokes the method named ((|method|)) with the parameters given by 
     ((|args|)) on the XML-RPC server.
     The parameter ((|method|)) is converted into a (({String})) and should 
     be a valid XML-RPC method-name.  
     Each parameter of ((|args|)) must be of one of the following types,
-    where (({Hash})) and (({Array})) can contain any of these listed types:
+    where (({Hash})) and (({Array})) can contain any of these listed ((:types:)):
     * (({Fixnum}))
     * (({TrueClass})), (({FalseClass})) ((({true})), (({false})))
     * (({String}))
@@ -83,7 +83,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.14 2001/01/27 20:50:45 michael Exp $
+    $Id: client.rb,v 1.15 2001/01/27 23:04:59 michael Exp $
 =end
 
 
