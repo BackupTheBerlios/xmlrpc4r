@@ -1,7 +1,10 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+
+* standalone-server (XMLRPC::Server) works correctly (changed \n to \r\n), and validates
 * XMLRPC::Server.new has now a second paramter "host" to specify the host to listen on
+
 : 1.5
 * allow BigNum's that fit in 32-bit
 * now, always check the parity of a method before calling it
@@ -13,8 +16,9 @@
 * added validator sample
 * fixed a bug in parser, which causes the validator-suite to fail
 * started writing ChangeLog
+
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.4 2001/02/04 12:50:34 michael Exp $
+  $Id: ChangeLog,v 1.5 2001/02/04 14:13:19 michael Exp $
 =end
