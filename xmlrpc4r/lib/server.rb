@@ -1,10 +1,18 @@
 =begin
-
-= XMLRPC::BasicServer
+= server.rb
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 
 Released under the same term of license as Ruby.
 
+= History
+    $Id: server.rb,v 1.6 2001/01/27 23:14:17 michael Exp $    
+
+= Classes
+* ((<XMLRPC::BasicServer>))
+* ((<XMLRPC::CGIServer>))
+
+
+= XMLRPC::BasicServer
 == Description
 Is the base class for all XML-RPC server-types (CGI, standalone).
 You can add handler and set a default handler. 
@@ -144,10 +152,6 @@ end
 
 =begin
 = XMLRPC::CGIServer
-Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
-
-Released under the same term of license as Ruby.
-
 == Synopsis
     require "xmlrpc/server"
  
@@ -187,8 +191,6 @@ Implements an CGI-based XML-RPC server.
     back to the client. 
     Make sure that you don't write to standard-output in a handler, or in
     any other part of your program, this would case a CGI-based server to fail!
-= History
-    $Id: server.rb,v 1.5 2001/01/27 23:05:17 michael Exp $    
 =end
 
 class CGIServer < BasicServer
