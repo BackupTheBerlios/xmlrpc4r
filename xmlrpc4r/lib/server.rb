@@ -75,6 +75,9 @@ the same class.
     no handler for a method-name is found. ((|handler|)) is a code-block.
     The default-handler is called with the (XML-RPC) method-name as first argument, and
     the other arguments are the parameters given by the client-call.
+  
+    If no block is specified the default of (({XMLRPC::BasicServer})) is used, which is it's 
+    method default_handler.
 
 
 --- XMLRPC::BasicServer#set_writer( writer )
@@ -93,6 +96,26 @@ the same class.
     Note that method method names of class-handlers which occur in (({Object})) are not
     shown.
 
+--- XMLRPC::BasicServer#get_service_hook
+    Returns the service-hook, which is called on each service request (RPC) unless it's (({nil})).
+
+--- XMLRPC::BasicServer#set_service_hook ( &handler )
+    A service-hook is called for each service request (RPC).
+    You can use a service-hook for example to wrap existing methods and catch exceptions of them or
+    convert values to values recognized by XMLRPC. You can disable it by passing (({nil})) as parameter  
+    ((|handler|)) .
+
+    The service-hook is called with a (({Proc})) object and with the parameters for this (({Proc})).
+    An example:
+
+       server.set_service_hook {|obj, *args|
+         begin
+           ret = obj.call(*args)  # call the original service-method
+           # could convert the return value 
+         resuce
+           # rescue exceptions
+         end
+       }
 
 =end
 
@@ -115,6 +138,7 @@ class BasicServer
   def initialize(class_delim=".")
     @handler = []
     @default_handler = method( :default_handler).to_proc
+    @service_hook = nil
 
     @class_delim = class_delim
     @create = nil
@@ -137,18 +161,27 @@ class BasicServer
     end
   end
 
-  
+  def get_service_hook
+    @service_hook
+  end
+
+  def set_service_hook(&handler)
+    @service_hook = handler
+  end
+ 
   def get_default_handler
     @default_handler
   end
 
   def set_default_handler (&handler)
     if handler.nil? 
-      raise ArgumentError, "No block given"
+      @default_handler = method( :default_handler).to_proc
     else
       @default_handler = handler
     end
   end  
+
+  
 
   def add_introspection(prefix="system")
     add_handler(prefix + @class_delim + "listMethods") do
@@ -185,8 +218,14 @@ class BasicServer
 	next unless methodname =~ /^#{name}(.+)$/
 	obj = obj.method($1) if obj.respond_to? $1
       end
-      
-      return obj.call(*args) if check_arity(obj, args.size)
+
+      if check_arity(obj, args.size)
+        if @service_hook.nil?
+          return obj.call(*args) 
+        else
+          return @service_hook.call(obj, *args)
+        end
+      end
     end 
  
     @default_handler.call(methodname, *args) 
@@ -428,6 +467,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.24 2001/06/09 17:07:32 michael Exp $    
+    $Id: server.rb,v 1.25 2001/06/09 18:09:24 michael Exp $    
 =end
 

@@ -3,6 +3,7 @@
 
 :1.6.3
 * added Introspection (BasicServer#add_introspection) (by Neil Conway)
+* added service-hook (which is called for each RPC)
 
 :1.6.2 (2001-06-03)
 * fixed bug; in create.rb XMLWrite::Simple did not escape text, thanx to Colin Steele
@@ -52,5 +53,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.22 2001/06/09 17:07:27 michael Exp $
+  $Id: ChangeLog,v 1.23 2001/06/09 18:10:07 michael Exp $
 =end
