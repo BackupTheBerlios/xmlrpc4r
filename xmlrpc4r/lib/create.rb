@@ -3,180 +3,239 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.15 2001/02/05 00:19:55 michael Exp $
+# $Id: create.rb,v 1.16 2001/04/20 12:17:43 michael Exp $
 #
 
 require "date"
-require "xmltreebuilder"
 require "xmlrpc/base64"
 
 module XMLRPC
 
-class Create
+  module XMLWriter
 
-  El = XML::SimpleTree::Element
-  Pi = XML::SimpleTree::ProcessingInstruction
-  Tx = XML::SimpleTree::Text
-  Do = XML::SimpleTree::Document
+    class Abstract
+      def ele(name, *children)
+	element(name, nil, *children)
+      end
 
-
-  def methodCall(name, *params)
-    name = name.to_s
-
-    if name !~ /[a-zA-Z0-9_.:\/]+/
-      raise ArgumentError, "Wrong XML-RPC method-name"
+      def tag(name, txt)
+	element(name, nil, text(txt))
+      end
     end
 
-    parameter = params.collect do |param|
-      El.new("param", nil, conv2value(param))
+
+    class Simple < Abstract
+
+      def document_to_str(doc)
+	doc
+      end
+
+      def document(*params)
+	params.join("")
+      end
+
+      def pi(name, *params)
+	"<?#{name} " + params.join(" ") + " ?>"
+      end
+
+      def element(name, attrs, *children)
+	raise "attributes not yet implemented" unless attrs.nil?
+	"<#{name}>" + children.join("") + "</#{name}>"
+      end
+
+      def text(txt)
+        txt
+      end
+
+    end # class Simple
+
+
+    class XMLParser < Abstract
+
+      def initialize
+	require "xmltreebuilder"
+      end
+
+      def document_to_str(doc)
+	doc.to_s
+      end
+
+      def document(*params)
+	XML::SimpleTree::Document.new(*params) 
+      end
+
+      def pi(name, *params)
+	XML::SimpleTree::ProcessingInstruction.new(name, *params)
+      end
+
+      def element(name, attrs, *children)
+	XML::SimpleTree::Element.new(name, attrs, *children)
+      end
+
+      def text(txt)
+	XML::SimpleTree::Text.new(txt)
+      end
+
+    end # class XMLParser
+
+  end # module XMLWriter
+
+  class Create
+
+    def initialize(xml_writer = XMLWriter::Simple.new)
+      @writer = xml_writer
     end
 
-    if not parameter.empty? then
-      parameter = [El.new("params", nil, *parameter)]
-    end
 
-      
-    tree = Do.new(
-	     Pi.new("xml", 'version="1.0"'),
-	     El.new("methodCall", nil,  
-	       El.new("methodName", nil,
-		 Tx.new(name)
-	       ),
-	       *parameter    # is nothing when == []
+    def methodCall(name, *params)
+      name = name.to_s
+
+      if name !~ /[a-zA-Z0-9_.:\/]+/
+	raise ArgumentError, "Wrong XML-RPC method-name"
+      end
+
+      parameter = params.collect do |param|
+	@writer.ele("param", conv2value(param))
+      end
+
+      if not parameter.empty? then
+	parameter = [@writer.ele("params", *parameter)]
+      end
+
+	
+      tree = @writer.document(
+	       @writer.pi("xml", 'version="1.0"'),
+	       @writer.ele("methodCall",   
+		 @writer.tag("methodName", name),
+		 *parameter    # is nothing when == []
+	       )
 	     )
-	   )
 
-    tree.to_s + "\n"
-  end
-
-
-
-  #
-  # generates a XML-RPC methodResponse document
-  #
-  # if is_ret == false then the params array must
-  # contain only one element, which is a structure
-  # of a fault return-value.
-  # 
-  # if is_ret == true then a normal 
-  # return-value of all the given params is created.
-  #
-  def methodResponse(is_ret, *params)
-
-    if is_ret 
-      resp = params.collect do |param|
-	El.new("param", nil, conv2value(param))
-      end
-   
-      resp = [El.new("params", nil, *resp)]
-    else
-      if params.size != 1 or params[0] === XMLRPC::FaultException 
-	raise ArgumentError, "no valid fault-structure given"
-      end
-      resp = El.new("fault", nil, conv2value(params[0].to_h))
+      @writer.document_to_str(tree) + "\n"
     end
 
-      
-    tree = Do.new(
-	     Pi.new("xml", 'version="1.0"'),
-	     El.new("methodResponse", nil, resp) 
-	   )
-
-    tree.to_s + "\n"
-  end
 
 
+    #
+    # generates a XML-RPC methodResponse document
+    #
+    # if is_ret == false then the params array must
+    # contain only one element, which is a structure
+    # of a fault return-value.
+    # 
+    # if is_ret == true then a normal 
+    # return-value of all the given params is created.
+    #
+    def methodResponse(is_ret, *params)
 
-  #####################################
-  private
-  #####################################
-
-  def ele(e, txt)
-    El.new(e, nil, Tx.new(txt))
-  end
-
-  #
-  # converts a Ruby object into
-  # a XML-RPC <value> tag
-  #
-  def conv2value(param)
-
-      val = case param
-      when Fixnum 
-	ele("i4", param.to_s)
-
-      when Bignum
-        if param >= -(2**31) and param <= (2**31-1)
-          ele("i4", param.to_s)
-        else
-          raise "Bignum is too big! Must be signed 32-bit integer!"
-        end
-
-      when TrueClass, FalseClass
-	ele("boolean", param ? "1" : "0")
-
-      when String 
-	ele("string", param)
-
-      when Float
-	ele("double", param.to_s)
-
-      when Struct
-        h = param.members.collect do |key| 
-          value = param[key]
-       	  El.new("member", nil,
-	    ele("name", key.to_s),
-	    conv2value(value) 
-	  )
+      if is_ret 
+	resp = params.collect do |param|
+	  @writer.ele("param", conv2value(param))
 	end
-
-	El.new("struct", nil, *h) 
-
-      when Hash
-	# TODO: can a Hash be empty?
-	
-	h = param.collect do |key, value|
-	  El.new("member", nil,
-	    ele("name", key.to_s),
-	    conv2value(value) 
-	  )
+     
+	resp = [@writer.ele("params", *resp)]
+      else
+	if params.size != 1 or params[0] === XMLRPC::FaultException 
+	  raise ArgumentError, "no valid fault-structure given"
 	end
-
-	El.new("struct", nil, *h) 
-
-      when Array
-	# TODO: can an Array be empty?
-	a = param.collect {|v| conv2value(v) }
-	
-	El.new("array", nil,
-	  El.new("data", nil, *a)
-	)
-
-      when Date
-        t = param
-        ele("dateTime.iso8601", 
-          format("%.4d%02d%02dT00:00:00", t.year, t.month, t.day))
-
-      when Time
-        ele("dateTime.iso8601", param.strftime("%Y%m%dT%H:%M:%S"))  
-
-      when XMLRPC::DateTime
-        ele("dateTime.iso8601", 
-          format("%.4d%02d%02dT%02d:%02d:%02d", *param.to_a))
- 
-      when XMLRPC::Base64
-	ele("base64", param.encoded) 
-
-      else 
-	raise "Wrong type: not yet working!"
+	resp = @writer.ele("fault", conv2value(params[0].to_h))
       end
-       
-      El.new("value", nil, val)
-  end
+
+	
+      tree = @writer.document(
+	       @writer.pi("xml", 'version="1.0"'),
+	       @writer.ele("methodResponse", resp) 
+	     )
+
+      @writer.document_to_str(tree) + "\n"
+    end
 
 
-  end
 
+    #####################################
+    private
+    #####################################
+
+    #
+    # converts a Ruby object into
+    # a XML-RPC <value> tag
+    #
+    def conv2value(param)
+
+	val = case param
+	when Fixnum 
+	  @writer.tag("i4", param.to_s)
+
+	when Bignum
+	  if param >= -(2**31) and param <= (2**31-1)
+	    @writer.tag("i4", param.to_s)
+	  else
+	    raise "Bignum is too big! Must be signed 32-bit integer!"
+	  end
+
+	when TrueClass, FalseClass
+	  @writer.tag("boolean", param ? "1" : "0")
+
+	when String 
+	  @writer.tag("string", param)
+
+	when Float
+	  @writer.tag("double", param.to_s)
+
+	when Struct
+	  h = param.members.collect do |key| 
+	    value = param[key]
+	    @writer.ele("member", 
+	      @writer.tag("name", key.to_s),
+	      conv2value(value) 
+	    )
+	  end
+
+	  @writer.ele("struct", *h) 
+
+	when Hash
+	  # TODO: can a Hash be empty?
+	  
+	  h = param.collect do |key, value|
+	    @writer.ele("member", 
+	      @writer.tag("name", key.to_s),
+	      conv2value(value) 
+	    )
+	  end
+
+	  @writer.ele("struct", *h) 
+
+	when Array
+	  # TODO: can an Array be empty?
+	  a = param.collect {|v| conv2value(v) }
+	  
+	  @writer.ele("array", 
+	    @writer.ele("data", *a)
+	  )
+
+	when Date
+	  t = param
+	  @writer.tag("dateTime.iso8601", 
+	    format("%.4d%02d%02dT00:00:00", t.year, t.month, t.day))
+
+	when Time
+	  @writer.tag("dateTime.iso8601", param.strftime("%Y%m%dT%H:%M:%S"))  
+
+	when XMLRPC::DateTime
+	  @writer.tag("dateTime.iso8601", 
+	    format("%.4d%02d%02dT%02d:%02d:%02d", *param.to_a))
+   
+	when XMLRPC::Base64
+	  @writer.tag("base64", param.encoded) 
+
+	else 
+	  raise "Wrong type: not yet working!"
+	end
+	 
+	@writer.ele("value", val)
+    end
+
+  end # class Create
 
 end # module XMLRPC
 
