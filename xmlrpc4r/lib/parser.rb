@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.12 2001/01/27 18:21:56 michael Exp $
+# $Id: parser.rb,v 1.13 2001/01/27 19:41:35 michael Exp $
 #
 
 
@@ -280,7 +280,7 @@ class Parser
 
     case child.nodeName
     when "params"
-      [ true, params(child) ] 
+      [ true, params(child,false) ] 
     when "fault"
       [ false, fault(child) ]
     else
@@ -303,11 +303,16 @@ class Parser
   end
 
 
-  def params(node)
+  def params(node, call=true)
     nodeMustBe(node, "params")
 
-    node.childNodes.to_a.collect do |n|
-      param(n)
+    if call 
+      node.childNodes.to_a.collect do |n|
+        param(n)
+      end
+    else # response (only one param)
+      hasOnlyOneChild(node)
+      param(node.childNode)
     end
   end
 
