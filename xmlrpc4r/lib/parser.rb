@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.3 2001/01/26 14:41:12 michael Exp $
+# $Id: parser.rb,v 1.4 2001/01/26 14:56:40 michael Exp $
 #
 
 
@@ -18,20 +18,17 @@ class Parser
 
   public
 
-  def parseMethodResponse
+  def parseMethodResponse(str)
     methodResponse_document(createCleanedTree(str))
   end
 
-  def parseMethodCall
+  def parseMethodCall(str)
     methodCall_document(createCleanedTree(str))
   end
 
 
 
   private
-
-  def initialize
-  end
 
   #
   # remove all whitespace but the innerst 
@@ -150,7 +147,7 @@ class Parser
     nodeMustBe(node, "base64")
     hasOnlyOneChild(node)
      
-    Base64.new(text(node.firstChild), :enc)
+    XMLRPC::Base64.new(text(node.firstChild), :enc)
   end
 
   def struct(node)

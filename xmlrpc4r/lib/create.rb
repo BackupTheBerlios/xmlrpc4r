@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.2 2001/01/26 14:28:07 michael Exp $
+# $Id: create.rb,v 1.3 2001/01/26 14:56:40 michael Exp $
 #
 
 require "xmltreebuilder"
@@ -102,7 +102,6 @@ end
 def conv2value(param)
 
     # TODO: dateTime.iso8601
-    #       base64 ??
  
     val = case param
     when Fixnum 
