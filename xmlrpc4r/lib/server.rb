@@ -310,8 +310,8 @@ class CGIServer < BasicServer
     h['Content-length'] ||= body.size.to_s 
 
     str = ""
-    h.each {|key, value| str += "#{key}: #{value}\r\n"}
-    str += "\r\n#{body}"
+    h.each {|key, value| str << "#{key}: #{value}\r\n"}
+    str << "\r\n#{body}"
 
     print str
   end
@@ -403,6 +403,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.22 2001/04/20 13:38:02 michael Exp $    
+    $Id: server.rb,v 1.23 2001/05/08 13:02:27 michael Exp $    
 =end
 
