@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.10 2001/01/27 18:16:13 michael Exp $
+# $Id: parser.rb,v 1.11 2001/01/27 18:17:13 michael Exp $
 #
 
 
