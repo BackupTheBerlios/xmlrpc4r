@@ -1,5 +1,7 @@
-$Id: ToDo,v 1.23 2001/06/19 13:27:31 michael Exp $
+$Id: ToDo,v 1.24 2001/06/20 22:26:56 michael Exp $
 
+- convertion-hook
+- Apache Mod Server
 - Service Registry that creates WSDL (Web Service Description Languag)
 - Mix-in for service classes
 - Server: do method-lookup with Hash
@@ -14,6 +16,7 @@ $Id: ToDo,v 1.23 2001/06/19 13:27:31 michael Exp $
 - XML pretty print?
 - write more/better samples
 
+* FastCGI server
 * a Java XMLRPC implementation had <nil\>. should implement?  
 * implement new features of non-standard XML-RPC extensions
 * service introspection
