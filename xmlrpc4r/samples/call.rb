@@ -1,4 +1,6 @@
-require "xmlrpc/client.rb"
+#!/usr/bin/env ruby
+
+require "xmlrpc/client"
  
 server = XMLRPC::Server.new("localhost", 80, "/cgi-bin/xml.cgi")
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 
-require "xmlrpc/cgi_server.rb"
+require "xmlrpc/cgi_server"
 
 
 s = XMLRPC::CGI_Server.new
