@@ -4,11 +4,11 @@
 # An implementation of tests for the the first validator suite
 # (validator1) as shown on http://www.xmlrpc.com/validator1Docs 
 # For validated hosts, see http://validator.xmlrpc.com where
-# 149.225.142.138 was my host.
+# 149.225.142.138, 149.225.145.228 and 149.225.114.66 were my hosts.
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: validator1.rb,v 1.2 2001/02/02 14:13:55 michael Exp $
+# $Id: validator1.rb,v 1.3 2001/02/04 14:32:09 michael Exp $
 #
 
 
