@@ -24,6 +24,10 @@ See ((<here|URL:ChangeLog.html>)).
 == Download
 xmlrpc4r can be downloaded from here:
 
+* Version 1.6.3:
+
+  ((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r/xmlrpc4r-1_6_3.tar.gz>))
+
 * Version 1.6.2:
 
   ((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r/xmlrpc4r-1_6_2.tar.gz>))
@@ -34,6 +38,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.16 2001/06/03 10:19:19 michael Exp $
+    $Id: index.rd,v 1.17 2001/06/12 10:22:14 michael Exp $
 
 =end
