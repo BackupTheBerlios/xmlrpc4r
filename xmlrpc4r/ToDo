@@ -1,4 +1,4 @@
-$Id: ToDo,v 1.1 2001/01/29 17:09:51 michael Exp $
+$Id: ToDo,v 1.2 2001/01/29 17:11:04 michael Exp $
 
 - write test-cases
 - write documentation (3/4 done)
@@ -11,6 +11,7 @@ $Id: ToDo,v 1.1 2001/01/29 17:09:51 michael Exp $
   or define argument_error_handler.
 - XML pretty print?
 - "400 Bad Request" on not valid XML ?
+- write more/better samples
 * add Date <-> Time conversions
 * base64 type
 * dateTime.iso8601 type
