@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.28 2001/06/20 10:35:11 michael Exp $
+# $Id: parser.rb,v 1.29 2001/06/21 11:38:12 michael Exp $
 #
 
 
@@ -343,7 +343,7 @@ module XMLRPC
 
         # convert to marhalled object
         klass = hash["___class___"]
-        if klass.nil? or Extensions::ENABLE_MARSHALLING == false 
+        if klass.nil? or Config::ENABLE_MARSHALLING == false 
 	  hash
         else
           begin
@@ -386,7 +386,7 @@ module XMLRPC
 	  when "struct"           then struct(child)
 	  when "array"            then array(child) 
           when "nil"              
-            if Extensions::ENABLE_NIL_PARSER
+            if Config::ENABLE_NIL_PARSER
               v_nil(child) 
             else
 	      raise "wrong/unknown XML-RPC type 'nil'"

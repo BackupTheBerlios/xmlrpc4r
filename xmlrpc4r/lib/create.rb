@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.23 2001/06/20 10:35:10 michael Exp $
+# $Id: create.rb,v 1.24 2001/06/21 11:38:12 michael Exp $
 #
 
 require "date"
@@ -90,7 +90,7 @@ module XMLRPC
 
   class Create
 
-    def initialize(xml_writer = XMLWriter::DEFAULT_WRITER.new)
+    def initialize(xml_writer = Config::DEFAULT_WRITER.new)
       @writer = xml_writer
     end
 
@@ -175,7 +175,7 @@ module XMLRPC
 	  @writer.tag("i4", param.to_s)
 
 	when Bignum
-          if Extensions::ENABLE_BIGINT
+          if Config::ENABLE_BIGINT
             @writer.tag("i4", param.to_s)
           else
             if param >= -(2**31) and param <= (2**31-1)
@@ -194,7 +194,7 @@ module XMLRPC
 	  @writer.tag("string", param.to_s)
 
         when NilClass
-          if Extensions::ENABLE_NIL_CREATE
+          if Config::ENABLE_NIL_CREATE
             @writer.ele("nil")
           else
             raise "Wrong type NilClass. Not allowed!"
@@ -250,7 +250,7 @@ module XMLRPC
 	  @writer.tag("base64", param.encoded) 
 
 	else 
-          if Extensions::ENABLE_MARSHALLING and param.class.included_modules.include? XMLRPC::Marshallable
+          if Config::ENABLE_MARSHALLING and param.class.included_modules.include? XMLRPC::Marshallable
             # convert Ruby object into Hash
             ret = {"___class___" => param.class.name}
             param.__get_instance_variables.each {|name, val| ret[name] = val}

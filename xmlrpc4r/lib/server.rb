@@ -83,12 +83,12 @@ the same class.
 --- XMLRPC::BasicServer#set_writer( writer )
     Sets the XML writer to use for generating XML output.
     Should be an instance of a class from module (({XMLRPC::XMLWriter})).
-    If this method is not called, then (({XMLRPC::XMLWriter::DEFAULT_WRITER})) is used. 
+    If this method is not called, then (({XMLRPC::Config::DEFAULT_WRITER})) is used. 
 
 --- XMLRPC::BasicServer#set_parser( parser )
     Sets the XML parser to use for parsing XML documents.
     Should be an instance of a class from module (({XMLRPC::XMLParser})).
-    If this method is not called, then (({XMLRPC::XMLParser::DEFAULT_WRITER})) is used.
+    If this method is not called, then (({XMLRPC::Config::DEFAULT_PARSER})) is used.
 
 --- XMLRPC::BasicServer#add_introspection
     Adds the introspection handlers "system.listMethods", "system.methodSignature" and "system.methodHelp", 
@@ -155,6 +155,9 @@ class BasicServer
     @class_delim = class_delim
     @create = nil
     @parser = nil
+
+    add_multicall     if Config::ENABLE_MULTICALL
+    add_introspection if Config::ENABLE_INTROSPECTION
   end
 
   def add_handler(prefix, obj=nil, &block)
@@ -523,6 +526,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.30 2001/06/20 12:02:45 michael Exp $    
+    $Id: server.rb,v 1.31 2001/06/21 11:38:12 michael Exp $    
 =end
 

@@ -72,7 +72,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     * (({Array}))
     * (({Date})), (({Time})), (({XMLRPC::DateTime}))
     * (({XMLRPC::Base64})) 
-    * A Ruby object which class includes XMLRPC::Marshallable (only if Extensions::ENABLE_MARSHALLABLE is (({true}))). 
+    * A Ruby object which class includes XMLRPC::Marshallable (only if Config::ENABLE_MARSHALLABLE is (({true}))). 
       That object is converted into a hash, with one additional key/value pair "___class___" which contains the class name
       for restoring later that object.
     
@@ -128,12 +128,12 @@ call on the remote-side and of course the parameters for the remote procedure.
 --- XMLRPC::Client#set_writer( writer )
     Sets the XML writer to use for generating XML output.
     Should be an instance of a class from module (({XMLRPC::XMLWriter})).
-    If this method is not called, then (({XMLRPC::XMLWriter::DEFAULT_WRITER})) is used. 
+    If this method is not called, then (({XMLRPC::Config::DEFAULT_WRITER})) is used. 
 
 --- XMLRPC::Client#set_parser( parser )
     Sets the XML parser to use for parsing XML documents.
     Should be an instance of a class from module (({XMLRPC::XMLParser})).
-    If this method is not called, then (({XMLRPC::XMLParser::DEFAULT_WRITER})) is used.
+    If this method is not called, then (({XMLRPC::Config::DEFAULT_PARSER})) is used.
 
 
 = XMLRPC::Client::Proxy
@@ -174,7 +174,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.36 2001/06/20 20:38:53 michael Exp $
+    $Id: client.rb,v 1.37 2001/06/21 11:38:11 michael Exp $
 
 =end
 
