@@ -1,5 +1,6 @@
-$Id: ToDo,v 1.17 2001/03/22 20:08:06 michael Exp $
+$Id: ToDo,v 1.18 2001/03/23 18:40:18 michael Exp $
 
+- access XML-RPC server via Proxy
 - Server: do method-lookup with Hash
 - Conversion-class which handles conversion from and to XMLRPC.
 - write test-cases
