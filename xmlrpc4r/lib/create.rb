@@ -3,9 +3,10 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.6 2001/01/26 15:41:22 michael Exp $
+# $Id: create.rb,v 1.7 2001/01/26 16:43:47 michael Exp $
 #
 
+require "date"
 require "xmltreebuilder"
 require "xmlrpc/base64"
 
@@ -96,8 +97,6 @@ class Create
   #
   def conv2value(param)
 
-      # TODO: dateTime.iso8601
-   
       val = case param
       when Fixnum 
 	ele("i4", param.to_s)
@@ -125,6 +124,11 @@ class Create
 	El.new("array", nil,
 	  El.new("data", nil, *a)
 	)
+      when Date, Time
+        # TODO: Time.gm??? .local???
+        t = param
+        t = Time.gm(t.year, t.month, t.day) if t === Date
+        ele("dateTime.iso8601", t.strftime("%Y%m%dT%H:%M:%S"))  
       when XMLRPC::Base64
 	ele("base64", param.encoded) 
       else 
