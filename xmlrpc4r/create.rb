@@ -5,13 +5,13 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.3 2001/01/24 19:58:01 michael Exp $
+# $Id: create.rb,v 1.4 2001/01/24 20:02:00 michael Exp $
 #
 
 require "xmltreebuilder"
 
 
-
+module XMLRPC
 
 class Create
 
@@ -140,4 +140,7 @@ end
 
 
 end
+
+
+end # module
 

@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.3 2001/01/24 18:01:36 michael Exp $
+# $Id: client.rb,v 1.4 2001/01/24 20:00:39 michael Exp $
 #
 
 
@@ -13,7 +13,7 @@
 = Synopsis
    require "client.rb"
  
-   server = Server.new("www.ruby-lang.org", 80, "/RPC2")
+   server = XMLRPC::Server.new("www.ruby-lang.org", 80, "/RPC2")
    ok, params = server.call("michael.add", 4, 5)
    if ok then
      puts "4 + 5 = #{params[0]}"
@@ -30,6 +30,7 @@ require "parser.rb"
 require "create.rb"
 require "net/http"
 
+module XMLRPC
 
 class Server
  
@@ -55,4 +56,5 @@ class Server
 
 end
 
+end # module
 
