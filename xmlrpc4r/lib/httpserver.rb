@@ -1,10 +1,10 @@
 #
-# Implements a simple HTTP-server by using John W. Small's (jsmall@laser.net) generic-server, 
-# which I have renamed from server.rb to EServer.rb
+# Implements a simple HTTP-server by using John W. Small's (jsmall@laser.net) 
+# ruby-generic-server, which I have renamed from Server.rb to EServer.rb
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.2 2001/01/28 17:58:52 michael Exp $
+# $Id: httpserver.rb,v 1.3 2001/01/29 11:47:03 michael Exp $
 #
 
 
