@@ -153,7 +153,7 @@ class BasicServer
   # responsible for the request
   #
   def def_handler(methodname, *args)
-    raise XMLRPC::FaultException.new(-99, "Method #{methodname} missing!")
+    raise XMLRPC::FaultException.new(-99, "Method <#{methodname}> missing!")
   end
 
 end
@@ -358,6 +358,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.14 2001/01/29 17:25:12 michael Exp $    
+    $Id: server.rb,v 1.15 2001/01/29 17:27:03 michael Exp $    
 =end
 
