@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.13 2001/02/02 13:38:20 michael Exp $
+# $Id: create.rb,v 1.14 2001/02/02 16:31:57 michael Exp $
 #
 
 require "date"
@@ -104,6 +104,13 @@ class Create
       val = case param
       when Fixnum 
 	ele("i4", param.to_s)
+
+      when Bignum
+        if param >= -(2**31) and param <= (2**31-1)
+          ele("i4", param.to_s)
+        else
+          raise "Bignum is too big! Must be signed 32-bit integer!"
+        end
 
       when TrueClass, FalseClass
 	ele("boolean", param ? "1" : "0")
