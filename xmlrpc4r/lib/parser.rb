@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.22 2001/04/20 16:10:26 michael Exp $
+# $Id: parser.rb,v 1.23 2001/05/13 19:48:42 michael Exp $
 #
 
 
@@ -222,7 +222,7 @@ module XMLRPC
 	nodeMustBe(node, "base64")
 	#hasOnlyOneChild(node)
 	 
-	XMLRPC::Base64.new(text_zero_one(node), :enc)
+	XMLRPC::Base64.decode(text_zero_one(node))
       end
 
       def member(node)

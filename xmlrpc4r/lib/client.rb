@@ -79,7 +79,8 @@ call on the remote-side and of course the parameters for the remote procedure.
     only that a (({Bignum})) is only allowed when it fits in 32-bit and
     that a XML-RPC (('dateTime.iso8601')) type is always returned as
     a ((<(({XMLRPC::DateTime}))|URL:datetime.html>)) object and 
-    a (({Struct})) is never returned, only a (({Hash})).
+    a (({Struct})) is never returned, only a (({Hash})). A (({XMLRPC::Base64}))
+    is returned as a (({String})) from xmlrpc4r version 1.6.1 on.
     
     If the remote procedure returned a fault-structure, then a 
     (({XMLRPC::FaultException})) exception is raised, which has two accessor-methods
@@ -154,7 +155,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.30 2001/04/20 13:38:02 michael Exp $
+    $Id: client.rb,v 1.31 2001/05/13 19:48:42 michael Exp $
 
 =end
 
