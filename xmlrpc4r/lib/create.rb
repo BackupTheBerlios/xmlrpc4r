@@ -5,11 +5,11 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.1 2001/01/25 22:36:50 michael Exp $
+# $Id: create.rb,v 1.2 2001/01/26 14:28:07 michael Exp $
 #
 
 require "xmltreebuilder"
-
+require "xmlrpc/base64.rb"
 
 module XMLRPC
 
@@ -131,6 +131,8 @@ def conv2value(param)
       El.new("array", nil,
         El.new("data", nil, *a)
       )
+    when XMLRPC::Base64
+      ele("base64", XMLRPC::Base64.new(param)) 
     else 
       raise "Wrong type: not yet working!"
     end
