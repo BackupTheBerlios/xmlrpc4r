@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.5 2001/01/24 20:06:39 michael Exp $
+# $Id: client.rb,v 1.6 2001/01/24 20:09:55 michael Exp $
 #
 
 
@@ -48,7 +48,7 @@ class Server
 
     resp, data = @http.post (
                    @path, 
-                   create.MethodCall(method, *args),
+                   create.methodCall(method, *args),
                    "User-Agent"   =>  USER_AGENT,
                    "Content-Type" => "text/xml"
                  )
