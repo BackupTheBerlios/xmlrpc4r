@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.24 2001/06/21 11:38:12 michael Exp $
+# $Id: create.rb,v 1.25 2001/06/23 09:58:08 michael Exp $
 #
 
 require "date"
@@ -253,7 +253,13 @@ module XMLRPC
           if Config::ENABLE_MARSHALLING and param.class.included_modules.include? XMLRPC::Marshallable
             # convert Ruby object into Hash
             ret = {"___class___" => param.class.name}
-            param.__get_instance_variables.each {|name, val| ret[name] = val}
+            param.__get_instance_variables.each {|name, val| 
+              if val.nil?
+                ret[name] = val if Config::ENABLE_NIL_CREATE
+              else
+                ret[name] = val
+              end
+            }
             return conv2value(ret)
           else 
             ok, pa = wrong_type(param)
