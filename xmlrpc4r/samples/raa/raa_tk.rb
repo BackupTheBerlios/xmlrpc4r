@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: raa_tk.rb,v 1.3 2001/03/22 23:37:46 michael Exp $
+# $Id: raa_tk.rb,v 1.4 2001/03/23 18:41:04 michael Exp $
 #
 
 require "tk"
@@ -24,7 +24,7 @@ INDENT = "    "
 raa = RAA.new(HOST, PATH, PORT)
 
 
-root  = TkRoot.new { title "TkRAA"; width "600"}
+root  = TkRoot.new { title "TkRAA (XML-RPC)"; width "600"}
 lframe = TkFrame.new(root)
 rframe = TkFrame.new(root)
 
@@ -133,35 +133,46 @@ def label(parent, label, row)
 end
   
 
+rtframe = TkFrame.new(rframe)
+rbframe = TkFrame.new(rframe)
 
 
-prod = rframe
+TkButton.new(rtframe) {
+  text "Exit"
+  command { exit }
+  pack 'side' => 'left'
+}
+
+
+prod = rbframe
 label prod, "Product",0
-label_entry(prod, "Download", $product[:download], 1)
-label_entry(prod, "Status", $product[:status], 2)
-label_entry(prod, "Version", $product[:version], 3)
-label_entry(prod, "License", $product[:license], 4)
 label_entry(prod, "Name", $product[:name], 5)
+label_entry(prod, "Version", $product[:version], 3)
+label_entry(prod, "Status", $product[:status], 2)
+label_entry(prod, "License", $product[:license], 4)
 label_entry(prod, "Homepage", $product[:homepage], 6)
+label_entry(prod, "Download", $product[:download], 1)
 label_entry(prod, "Description", $product[:description], 7)
 
 
-owner = rframe
+owner = rbframe
 label owner, "Owner",8
-label_entry(owner, "Email", $owner[:email], 9)
 label_entry(owner, "Name", $owner[:name], 10)
+label_entry(owner, "Email", $owner[:email], 9)
 label_entry(owner, "Id", $owner[:id], 11)
 
-categ = rframe
+categ = rbframe
 label categ, "Category",12
 label_entry(categ, "Major", $category[:major], 13)
 label_entry(categ, "Minor", $category[:minor], 14)
 
-label rframe, "Update",15
-label_entry(rframe, "Update", $update, 16)
-label rframe, "", 17
+label rbframe, "Update",15
+label_entry(rbframe, "Update", $update, 16)
+label rbframe, "", 17
 
 
+rtframe.pack 'side' => 'top', 'fill' => 'both'
+rbframe.pack 'side' => 'bottom', 'fill' => 'both'
 
 
 lframe.pack 'side' => 'left', 'fill' => 'both', 'expand' => 'yes'
