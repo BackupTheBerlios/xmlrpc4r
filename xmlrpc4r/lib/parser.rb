@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.5 2001/01/26 15:41:22 michael Exp $
+# $Id: parser.rb,v 1.6 2001/01/26 16:49:46 michael Exp $
 #
 
 
@@ -138,7 +138,17 @@ class Parser
   end
 
   def dateTime(node)
-    raise "not yet implemented"
+    nodeMustBe(node, "dateTime.iso8601")
+    hasOnlyOneChild(node)
+    
+    dt = text(node.firstChild)
+    
+    if dt =~ /^(\d\d\d\d)(\d\d)(\d\d)T(\d\d):(\d\d):(\d\d)$/ then
+      # TODO: Time.gm ??? .local ??? 
+      Time.gm($1.to_i, $2.to_i, $3.to_i, $4.to_i, $5.to_i, $6.to_i)
+    else
+      raise "wrong dateTime.iso8601 format"
+    end
   end
 
   def base64(node)
