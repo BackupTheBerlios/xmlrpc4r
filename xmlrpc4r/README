@@ -1,4 +1,4 @@
-$Id: README,v 1.16 2001/03/12 10:22:11 michael Exp $
+$Id: README,v 1.17 2001/04/20 15:56:38 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -16,8 +16,9 @@ For the documentation, I use the style-sheet of RWiki from NaHi.
 
 PREREQUISITES
 =============
-You need xmlparser (I use version 0.6.1) from RAA, and 
-a Ruby version >= 1.6.
+You need either NQXML (I use version 0.6.1) or XMLParser (I use version 0.6.1) from RAA, 
+and a Ruby version >= 1.6. 
+(No, it's not a typo. Both NQXML and XMLParser have the same version.)
 
 TEST
 =====
