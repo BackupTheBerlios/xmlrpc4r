@@ -1,11 +1,8 @@
 =begin
-= server.rb
+= xmlrpc/server.rb
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 
 Released under the same term of license as Ruby.
-
-= History
-    $Id: server.rb,v 1.6 2001/01/27 23:14:17 michael Exp $    
 
 = Classes
 * ((<XMLRPC::BasicServer>))
@@ -223,3 +220,8 @@ end
 
 end # module XMLRPC
 
+
+=begin
+= History
+    $Id: server.rb,v 1.7 2001/01/27 23:18:09 michael Exp $    
+=end

@@ -1,4 +1,12 @@
 =begin
+= xmlrpc/client.rb
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
+
+Released under the same term of license as Ruby.
+
+= Classes
+* ((<XMLRPC::Client>))
+
 
 = XMLRPC::Client
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -83,7 +91,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.15 2001/01/27 23:04:59 michael Exp $
+    $Id: client.rb,v 1.16 2001/01/27 23:18:09 michael Exp $
 =end
 
 
