@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>client.rb</TITLE>
+</HEAD>
+<BODY>
+<H1><A NAME="label:0">xmlrpc/client.rb
+</A></H1><!-- RDLabel: "xmlrpc/client.rb" -->
+<P>
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
+</P>
+<P>
+Released under the same term of license as Ruby.
+</P>
+<H1><A NAME="label:1">Classes
+</A></H1><!-- RDLabel: "Classes" -->
+<UL>
+<LI><A HREF="#label:2">XMLRPC::Client</A>
+</UL>
+<H1><A NAME="label:2">XMLRPC::Client
+</A></H1><!-- RDLabel: "XMLRPC::Client" -->
+<P>
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
+</P>
+<P>
+Released under the same term of license as Ruby.
+</P>
+<H2><A NAME="label:3">Synopsis
+</A></H2><!-- RDLabel: "Synopsis" -->
+<PRE>
+require "xmlrpc/client"
+
+server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
+begin
+  param = server.call("michael.add", 4, 5)
+  puts "4 + 5 = #{param}"
+rescue XMLRPC::FaultException =&gt; e
+  puts "Error:"
+  puts e.faultCode
+  puts e.faultString
+end
+</PRE>
+<P>
+or
+</P>
+<PRE>
+require "xmlrpc/client"
+
+server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
+ok, param = server.call2("michael.add", 4, 5)
+if ok then
+  puts "4 + 5 = #{param}"
+else
+  puts "Error:"
+  puts param.faultCode
+  puts param.faultString
+end
+</PRE>
+<H2><A NAME="label:4">Description
+</A></H2><!-- RDLabel: "Description" -->
+<P>
+Class <CODE>XMLRPC::Client</CODE> provides remote procedure calls to a XML-RPC server.
+After setting the connection-parameters with <A HREF="#XMLRPC::Client_S_new">XMLRPC::Client.new</A> which
+creates a new <CODE>XMLRPC::Client</CODE> instance, you can execute a remote procedure 
+by sending the <A HREF="#XMLRPC::Client_call">call</A> or <A HREF="#XMLRPC::Client_call2">call2</A>
+message to this new instance. The given parameters indicate which method to 
+call on the remote-side and of course the parameters for the remote procedure.
+</P>
+<H2><A NAME="label:5">Class Methods
+</A></H2><!-- RDLabel: "Class Methods" -->
+<DL>
+<DT><A NAME="XMLRPC::Client_S_new"><CODE>XMLRPC::Client.new( <var>host</var>, <var>path</var>="/<var>RPC2</var>", <var>port</var>=<var>80</var> )</CODE></A><!-- RDLabel: "XMLRPC::Client.new" -->
+<DD>
+<P>
+Creates an object which represents the remote XML-RPC server on the 
+given host <VAR>host</VAR>. If the server is CGI-based, <VAR>path</VAR> is the
+path to the CGI-script, which will be called, otherwise (in the
+case of a standalone server) <VAR>path</VAR> should be <CODE>"/RPC2"</CODE>.
+Finally <VAR>port</VAR> is the port on which the XML-RPC server listens.
+</P>
+</DD>
+</DL>
+<H2><A NAME="label:6">Instance Methods
+</A></H2><!-- RDLabel: "Instance Methods" -->
+<DL>
+<DT><A NAME="XMLRPC::Client_call"><CODE>XMLRPC::Client#call( <var>method</var>, *<var>args</var> )</CODE></A><!-- RDLabel: "XMLRPC::Client#call" -->
+<DD>
+<P>
+Invokes the method named <VAR>method</VAR> with the parameters given by 
+<VAR>args</VAR> on the XML-RPC server.
+The parameter <VAR>method</VAR> is converted into a <CODE>String</CODE> and should 
+be a valid XML-RPC method-name.  
+Each parameter of <VAR>args</VAR> must be of one of the following types,
+where <CODE>Hash</CODE> and <CODE>Array</CODE> can contain any of these listed <A NAME="index:0">types</A>:
+</P>
+
+<UL>
+<LI><CODE>Fixnum</CODE>
+<LI><CODE>TrueClass</CODE>, <CODE>FalseClass</CODE> (<CODE>true</CODE>, <CODE>false</CODE>)
+<LI><CODE>String</CODE>
+<LI><CODE>Float</CODE>
+<LI><CODE>Hash</CODE>
+<LI><CODE>Array</CODE>
+<LI><CODE>Date</CODE>, <CODE>Time</CODE>
+<LI><CODE>XMLRPC::Base64</CODE> 
+</UL>
+
+<P>
+The method returns the return-value from the RPC <A NAME="footnote:1" HREF="#foottext:1"><SUP><SMALL>*1</SMALL></SUP></A>. 
+The type of the return-value is one of the above shown,
+only that a XML-RPC dateTime.iso8601 type is, when possible, 
+returned as a Ruby <CODE>Time</CODE> object and only if the range disallows as 
+a <CODE>Date</CODE>. 
+If the remote procedure returned a fault-structure, then a 
+<CODE>XMLRPC::FaultException</CODE> exception is raised, which has two accessor-methods
+<CODE>faultCode</CODE> and <CODE>faultString</CODE> of type <CODE>Integer</CODE> and <CODE>String</CODE>.
+</P>
+</DD>
+<DT><A NAME="XMLRPC::Client_call2"><CODE>XMLRPC::Client#call2( <var>method</var>, *<var>args</var> )</CODE></A><!-- RDLabel: "XMLRPC::Client#call2" -->
+<DD>
+<P>
+The difference between this method and <A HREF="#XMLRPC::Client_call">call</A> is, that
+this method do <EM>not</EM> raise a <CODE>XMLRPC::FaultException</CODE> exception.
+The method returns an array of two values. The first value indicates if 
+the second value is a return-value (<CODE>true</CODE>) or an object of type
+<CODE>XMLRPC::FaultException</CODE>. 
+Both are explained in <A HREF="#XMLRPC::Client_call">call</A>.
+</P>
+</DD>
+</DL>
+<H1><A NAME="label:7">History
+</A></H1><!-- RDLabel: "History" -->
+<PRE>
+$Id: client.html,v 1.1 2001/01/27 23:41:38 michael Exp $
+</PRE>
+
+<HR>
+<P>
+<A NAME="foottext:1" HREF="#footnote:1"><SUP><SMALL>*1</SMALL></SUP></A><SMALL>stands for Remote Procedure Call</SMALL><BR>
+</P>
+</BODY>
+</HTML>

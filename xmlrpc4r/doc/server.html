@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>server.rb</TITLE>
+</HEAD>
+<BODY>
+<H1><A NAME="label:0">xmlrpc/server.rb
+</A></H1><!-- RDLabel: "xmlrpc/server.rb" -->
+<P>
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
+</P>
+<P>
+Released under the same term of license as Ruby.
+</P>
+<H1><A NAME="label:1">Classes
+</A></H1><!-- RDLabel: "Classes" -->
+<UL>
+<LI><A HREF="#label:2">XMLRPC::BasicServer</A>
+<LI><A HREF="#label:6">XMLRPC::CGIServer</A>
+</UL>
+<H1><A NAME="label:2">XMLRPC::BasicServer
+</A></H1><!-- RDLabel: "XMLRPC::BasicServer" -->
+<H2><A NAME="label:3">Description
+</A></H2><!-- RDLabel: "Description" -->
+<P>
+Is the base class for all XML-RPC server-types (CGI, standalone).
+You can add handler and set a default handler. 
+Do not use this server, as this is/should be an abstract class.
+</P>
+<H2><A NAME="label:4">Class Methods
+</A></H2><!-- RDLabel: "Class Methods" -->
+<DL>
+<DT><A NAME="XMLRPC::BasicServer_S_new"><CODE>XMLRPC::BasicServer.new( <var>class_delim</var>="." )</CODE></A><!-- RDLabel: "XMLRPC::BasicServer.new" -->
+<DD>
+<P>
+Creates a new <CODE>XMLRPC::BasicServer</CODE> instance, which should not be 
+done, because <CODE>XMLRPC::BasicServer</CODE> is an abstract class. This
+method should be called from a subclass indirectly by a <CODE>super</CODE> call
+in the method <CODE>initialize</CODE>. The paramter <VAR>class_delim</VAR> is used
+in <A HREF="#XMLRPC::BasicServer_add_handler">add_handler</A> when an object is
+added as handler, to delimit the object-prefix and the method-name.
+</P>
+</DD>
+</DL>
+<H2><A NAME="label:5">Instance Methods
+</A></H2><!-- RDLabel: "Instance Methods" -->
+<DL>
+<DT><A NAME="XMLRPC::BasicServer_add_handler"><CODE>XMLRPC::BasicServer#add_handler( <var>prefix</var>, <var>obj</var>=<var>nil</var>, &<var>amp</var>;<var>block</var> )</CODE></A><!-- RDLabel: "XMLRPC::BasicServer#add_handler" -->
+<DD>
+<P>
+This method has two forms, one for adding an object and one to
+add a code block as a handler of a XML-RPC call.
+To add an object write:
+</P>
+
+<PRE>
+server.add_handler("michael", MyHandlerClass.new)
+</PRE>
+
+<P>
+All public methods of <CODE>MyHandlerClass</CODE> are accessible to
+the XML-RPC clients by michael."name&nbsp;of&nbsp;method". This is 
+where the <VAR>class_delim</VAR> in <A HREF="#XMLRPC::BasicServer_S_new">new</A> 
+has it's role, a XML-RPC method-name is defined by 
+<VAR>prefix</VAR> + <VAR>class_delim</VAR> + "name&nbsp;of&nbsp;method". 
+To add a code block as a handler, write:
+</P>
+
+<PRE>
+server.add_handler("michael.add") {|a,b| a+b}
+</PRE>
+
+<P>
+Here the <VAR>prefix</VAR> is the full name of the method. 
+</P>
+
+<P>
+A handler method or code-block can return the types listed 
+<A HREF="client.html#index:0">here</A>. When a method fails, it can
+tell it the client by throwing an <CODE>XMLRPC::FaultException</CODE> like
+in this example:
+</P>
+
+<PRE>
+s.add_handler("michael.div") do |a,b|
+  if b == 0
+    raise XMLRPC::FaultException.new(1, "division by zero")
+  else
+    a / b 
+  end
+end 
+</PRE>
+
+<P>
+The client gets in the case of <CODE>b==0</CODE> an object back of type
+<CODE>XMLRPC::FaultException</CODE> that has a <VAR>faultCode</VAR> and <VAR>faultString</VAR>
+field.
+</P>
+</DD>
+<DT><A NAME="XMLRPC::BasicServer_default_handler"><CODE>XMLRPC::BasicServer#default_handler</CODE></A><!-- RDLabel: "XMLRPC::BasicServer#default_handler" -->
+<DD>
+<P>
+Returns the default-handler, which is called when no handler for
+a method-name is found.
+It is a <CODE>Proc</CODE> object.
+</P>
+</DD>
+<DT><A NAME="XMLRPC::BasicServer_default_handler_eq"><CODE>XMLRPC::BasicServer#default_handler= ( <var>handler</var> )</CODE></A><!-- RDLabel: "XMLRPC::BasicServer#default_handler=" -->
+<DD>
+<P>
+Sets <VAR>handler</VAR> as the default-handler, which is called when 
+no handler for a method-name is found. <VAR>handler</VAR> should be a 
+<CODE>Proc</CODE> object.
+</P>
+</DD>
+</DL>
+<H1><A NAME="label:6">XMLRPC::CGIServer
+</A></H1><!-- RDLabel: "XMLRPC::CGIServer" -->
+<H2><A NAME="label:7">Synopsis
+</A></H2><!-- RDLabel: "Synopsis" -->
+<PRE>
+require "xmlrpc/server"
+
+s = XMLRPC::CGIServer.new     
+
+s.add_handler("michael.add") do |a,b|
+  a + b
+end
+
+s.add_handler("michael.div") do |a,b|
+  if b == 0
+    raise XMLRPC::FaultException.new(1, "division by zero")
+  else
+    a / b 
+  end
+end 
+
+s.serve
+</PRE>
+<H2><A NAME="label:3">Description
+</A></H2><!-- RDLabel: "Description" -->
+<P>
+Implements an CGI-based XML-RPC server.
+</P>
+<H2><A NAME="label:8">Superclass
+</A></H2><!-- RDLabel: "Superclass" -->
+<P>
+<A HREF="#label:2">XMLRPC::BasicServer</A>
+</P>
+<H2><A NAME="label:4">Class Methods
+</A></H2><!-- RDLabel: "Class Methods" -->
+<DL>
+<DT><A NAME="XMLRPC::CGIServer_S_new"><CODE>XMLRPC::CGIServer.new( *<var>a</var> )</CODE></A><!-- RDLabel: "XMLRPC::CGIServer.new" -->
+<DD>
+<P>
+Creates a new <CODE>XMLRPC::CGIServer</CODE> instance. All parameters given
+are by-passed to <A HREF="#XMLRPC::BasicServer_S_new">XMLRPC::BasicServer.new</A>. You can only create 
+<EM>one</EM> <CODE>XMLRPC::CGIServer</CODE> instance, because more than one makes
+no sense.
+</P>
+</DD>
+</DL>
+<H2><A NAME="label:5">Instance Methods
+</A></H2><!-- RDLabel: "Instance Methods" -->
+<DL>
+<DT><A NAME="XMLRPC::CGIServer_serve"><CODE>XMLRPC::CGIServer#serve</CODE></A><!-- RDLabel: "XMLRPC::CGIServer#serve" -->
+<DD>
+<P>
+Call this after you have added all you handlers to the server.
+This method processes a XML-RPC methodCall and sends the answer
+back to the client. 
+Make sure that you don't write to standard-output in a handler, or in
+any other part of your program, this would case a CGI-based server to fail!
+</P>
+</DD>
+</DL>
+<H1><A NAME="label:9">History
+</A></H1><!-- RDLabel: "History" -->
+<PRE>
+$Id: server.html,v 1.1 2001/01/27 23:41:38 michael Exp $    
+</PRE>
+
+</BODY>
+</HTML>
