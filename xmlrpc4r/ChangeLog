@@ -1,6 +1,9 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.9 
+* improved HttpServer (used for standalone server)
+
 :1.6.8 (2001-07-06)
 * added server-side support for mod_ruby (XMLRPC::ModRubyServer)
 * added Service::PublicInstanceMethodsInterface, or short form with method XMLRPC::iPIMethods, which 
@@ -99,5 +102,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.31 2001/07/06 11:33:04 michael Exp $
+  $Id: ChangeLog,v 1.32 2001/07/11 20:36:54 michael Exp $
 =end
