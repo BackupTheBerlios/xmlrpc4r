@@ -1,6 +1,13 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.8 (2001-07-06)
+* added server-side support for mod_ruby (XMLRPC::ModRubyServer)
+* added Service::PublicInstanceMethodsInterface, or short form with method XMLRPC::iPIMethods, which 
+  allows to add all instance methods of a class as handlers to a server 
+* added Service::Interface class (or method XMLRPC::interface) and a third
+  form of BasicServer#add_handler(interface, obj)
+
 :1.6.7 (2001-07-02)
 * Client: added two new constructors: 
   * Client.new2(uri, proxy=nil, timeout=nil)
@@ -92,5 +99,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.30 2001/07/02 15:01:57 michael Exp $
+  $Id: ChangeLog,v 1.31 2001/07/06 11:33:04 michael Exp $
 =end

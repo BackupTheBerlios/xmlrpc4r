@@ -24,9 +24,11 @@ See ((<here|URL:howto.html>)).
 * Introspection
 * multiCall
 * optionally nil values and integers larger than 32 Bit
+
 : Server
 * Standalone XML-RPC server
 * CGI-based (works with FastCGI)
+* Apache mod_ruby server
 
 : Client
 * synchronous/asynchronous calls
@@ -44,6 +46,10 @@ See ((<here|URL:ChangeLog.html>)).
 
 == Download
 xmlrpc4r can be downloaded from here:
+
+* Version 1.6.8:
+
+  ((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r/xmlrpc4r-1_6_8.tar.gz>))
 
 * Version 1.6.7:
 
@@ -75,6 +81,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.22 2001/07/02 15:17:42 michael Exp $
+    $Id: index.rd,v 1.23 2001/07/06 11:33:08 michael Exp $
 
 =end
