@@ -6,6 +6,7 @@ Released under the same term of license as Ruby.
 
 = Classes
 * ((<XMLRPC::Client>))
+* ((<XMLRPC::Client::Proxy>))
 
 
 = XMLRPC::Client
@@ -89,8 +90,64 @@ call on the remote-side and of course the parameters for the remote procedure.
     (({XMLRPC::FaultException})). 
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
+--- XMLRPC::Client#proxy( prefix, *args )
+    Returns an object of class (({XMLRPC::Client::Proxy})), initialized with
+    ((|prefix|)) and ((|args|)). A proxy object returned by this method behaves
+    like ((<XMLRPC::Client#call>)), i.e. a call on that object will raise a
+    (({XMLRPC::FaultException})) when a fault-structure is returned by that call. 
+
+--- XMLRPC::Client#proxy2( prefix, *args )
+    Almost the same like ((<XMLRPC::Client#proxy>)) only that a call on the returned
+    (({XMLRPC::Client::Proxy})) object behaves like ((<XMLRPC::Client#call2>)), i.e.
+    a call on that object will return two parameters. 
+
+
+
+= XMLRPC::Client::Proxy
+== Synopsis
+    require "xmlrpc/client"
+
+    server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
+
+    michael  = server.proxy("michael")
+    michael2 = server.proxy("michael", 4)
+
+    # both calls should return the same value '9'.
+    p michael.add(4,5)
+    p michael2.add(5)
+
+== Description
+Class (({XMLRPC::Client::Proxy})) makes XML-RPC calls look nicer!
+You can call any method onto objects of that class - the object handles 
+(({method_missing})) and will forward the method call to a XML-RPC server.
+Don't use this class directly, but use instead method ((<XMLRPC::Client#proxy>)) or
+((<XMLRPC::Client#proxy2>)).
+
+== Class Methods
+--- XMLRPC::Client::Proxy.new( server, prefix, args=[], call=true, delim="." ) 
+    Creates an object which provides (({method_missing})).
+    ((|server|)) must be of type (({XMLRPC::Client})), which is the XML-RPC server to be used
+    for a XML-RPC call. ((|prefix|)) and ((|delim|)) will be prepended to the methodname
+    called onto this object. If ((|call|)) is (({true})) then ((<XMLRPC::Client#call>)) is used,
+    otherwise ((<XMLRPC::Client#call2>)) is used. ((|args|)) are arguments which are automatically given
+    to every XML-RPC call before the arguments provides through (({method_missing})).
+    
+== Instance Methods
+    Every method call is forwarded to the XML-RPC server defined in ((<new|XMLRPC::Client::Proxy#new>)).
+    
+    Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names, because they get around
+          (({method_missing})). 
+          
+
+
 = History
-    $Id: client.rb,v 1.23 2001/02/05 00:25:02 michael Exp $
+    $Log: client.rb,v $
+    Revision 1.24  2001/03/22 19:59:42  michael
+
+    added Client#proxy, Client#proxy2 and subclass Client::Proxy
+
+
+    $Id: client.rb,v 1.24 2001/03/22 19:59:42 michael Exp $
 =end
 
 
@@ -145,7 +202,42 @@ class Client
     parser.parseMethodResponse(data)
   end
 
-end
+  
+  def proxy(prefix, *args)
+    Proxy.new(self, prefix, args)
+  end
+
+  def proxy2(prefix, *args)
+    Proxy.new(self, prefix, args, false)
+  end
+
+
+
+
+
+  class Proxy
+
+    def initialize(server, prefix, args=[], call=true, delim=".")
+      @server = server
+      @prefix = prefix + delim
+      @call   = call
+      @args   = args 
+    end
+
+    def method_missing(mid, *args)
+      if @call
+        @server.call (@prefix + mid, *(@args + args))
+      else
+        @server.call2(@prefix + mid, *(@args + args))
+      end
+    end
+
+  end # class Proxy
+
+
+
+
+end # class Client
 
 end # module XMLRPC
 
