@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.26 2001/06/19 13:26:10 michael Exp $
+# $Id: parser.rb,v 1.27 2001/06/20 09:56:05 michael Exp $
 #
 
 
@@ -99,8 +99,15 @@ module XMLRPC
 	  case _nodeType(nd)
 	  when :TEXT
             # TODO: add nil?
-	    unless %w(i4 int boolean string double dateTime.iso8601 base64).include? node.nodeName 
-	      remove << nd if nd.nodeValue.strip == ""  # and childs.size != 1
+            unless %w(i4 int boolean string double dateTime.iso8601 base64).include? node.nodeName
+
+               if node.nodeName == "value" 
+                 if not node.childNodes.to_a.detect {|n| _nodeType(n) == :ELEMENT}.nil?
+                   remove << nd if nd.nodeValue.strip == "" 
+                 end
+               else
+                 remove << nd if nd.nodeValue.strip == ""
+               end
 	    end
 	  when :COMMENT
 	    remove << nd
