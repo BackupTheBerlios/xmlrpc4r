@@ -2,6 +2,7 @@
 = ChangeLog for xmlrpc4r
 
 :1.6
+* added RAA (Ruby Application Archive) XML-RPC example TkRAA
 * added XMLRPC::Client#proxy and #proxy2 as well as subclass Client::Proxy
 * fixed another empty string bug, which occured when an empty name-tag (hash-key) was used.
 
@@ -35,5 +36,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.14 2001/03/22 20:07:56 michael Exp $
+  $Id: ChangeLog,v 1.15 2001/03/23 18:48:04 michael Exp $
 =end
