@@ -384,21 +384,24 @@ class CGIServer < BasicServer
   end
   
   def serve
-    length = ENV['CONTENT_LENGTH'].to_i
+    catch(:exit_serve) {
+      length = ENV['CONTENT_LENGTH'].to_i
 
-    http_error(405, "Method Not Allowed") unless ENV['REQUEST_METHOD'] == "POST" 
-    http_error(400, "Bad Request")        unless ENV['CONTENT_TYPE'] == "text/xml"
-    http_error(411, "Length Required")    unless length > 0 
+      http_error(405, "Method Not Allowed") unless ENV['REQUEST_METHOD'] == "POST" 
+      http_error(400, "Bad Request")        unless ENV['CONTENT_TYPE'] == "text/xml"
+      http_error(411, "Length Required")    unless length > 0 
 
-    $stdin.binmode
-    data = $stdin.read(length)
+      # TODO: do we need a call to binmode?
+      $stdin.binmode if $stdin.respond_to? :binmode
+      data = $stdin.read(length)
 
-    http_error(400, "Bad Request")        if data.nil? or data.size != length
+      http_error(400, "Bad Request")        if data.nil? or data.size != length
 
-    method, params = parser().parseMethodCall(data) 
+      method, params = parser().parseMethodCall(data) 
 
-    resp = handle(method, *params)
-    http_write(resp, "Content-type" => "text/xml")
+      resp = handle(method, *params)
+      http_write(resp, "Content-type" => "text/xml")
+    }
   end
 
 
@@ -419,7 +422,7 @@ class CGIServer < BasicServer
     MSGEND
 
     http_write(msg, "Status" => err, "Content-type" => "text/html")
-    exit 
+    throw :exit_serve # exit from the #serve method
   end
 
   def http_write(body, header)
@@ -465,7 +468,8 @@ end
     s.serve
 
 == Description
-Implements a standalone XML-RPC server.
+Implements a standalone XML-RPC server. The method (({serve}))) is left if a SIGHUP is sent to the
+program.
 
 == Superclass
 ((<XMLRPC::BasicServer>))
@@ -519,6 +523,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.29 2001/06/19 20:21:27 michael Exp $    
+    $Id: server.rb,v 1.30 2001/06/20 12:02:45 michael Exp $    
 =end
 
