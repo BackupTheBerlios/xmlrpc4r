@@ -21,10 +21,6 @@ See ((<here|URL:ChangeLog.html>)).
 == Download
 xmlrpc4r can be downloaded from here:
 
-* Version 1.3:
-
-  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_3.tar.gz>))
-
 * Version 1.4:
 
   ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_4.tar.gz>))
@@ -33,12 +29,17 @@ xmlrpc4r can be downloaded from here:
 
   ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5.tar.gz>))
 
+* Version 1.5.1:
+
+  ((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r/xmlrpc4r-1_5_1.tar.gz>))
+
+
 
 == Further information
 For more information on installation and prerequisites read the (('README')) 
 file of the package.
 
 == History
-    $Id: index.rd,v 1.8 2001/02/02 16:51:18 michael Exp $
+    $Id: index.rd,v 1.9 2001/02/04 14:41:00 michael Exp $
 
 =end
