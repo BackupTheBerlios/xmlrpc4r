@@ -1,5 +1,9 @@
-$Id: ToDo,v 1.5 2001/01/29 21:29:39 michael Exp $
+$Id: ToDo,v 1.6 2001/02/02 12:58:03 michael Exp $
 
+- conform to validator1 suite
+- XMLRPC::DateTime class (? date3.rb) 
+- Conversion-class which handles conversion from and to XMLRPC.
+- add fastcgi server
 - write test-cases
 - write documentation (3/4 done)
 - convert from DOM to SAX ? (faster)
@@ -7,8 +11,8 @@ $Id: ToDo,v 1.5 2001/01/29 21:29:39 michael Exp $
 - a Java XMLRPC implementation had <nil\>. should implement?  
 - add the method-name to the FaultException?
 - client do not handle HTTP 301 redirects
-- XML pretty print?
 - "400 Bad Request" on not valid XML ?
+- XML pretty print?
 - write more/better samples
 - Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
 * check arity (if check_arity is true) before calling hanlder
