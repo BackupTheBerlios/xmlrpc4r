@@ -1,6 +1,5 @@
-$Id: ToDo,v 1.12 2001/02/04 14:14:23 michael Exp $
+$Id: ToDo,v 1.13 2001/02/04 14:58:54 michael Exp $
 
-- make it work under Windows
 - Server: do method-lookup with Hash
 - Conversion-class which handles conversion from and to XMLRPC.
 - write test-cases
@@ -14,6 +13,7 @@ $Id: ToDo,v 1.12 2001/02/04 14:14:23 michael Exp $
 - XML pretty print?
 - write more/better samples
 
+* make it work under Windows
 * test validation with standalone server
 * TCPServer.new(host, port) in EServer.rb
 * Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
