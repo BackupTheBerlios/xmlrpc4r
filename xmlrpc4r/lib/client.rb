@@ -144,7 +144,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.27 2001/03/30 19:29:11 michael Exp $
+    $Id: client.rb,v 1.28 2001/04/09 17:07:15 michael Exp $
 
 =end
 
@@ -162,6 +162,7 @@ class Client
 
   def initialize(host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil)
     @path = path
+    Net::HTTP.version_1_1
     @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
   end
 
