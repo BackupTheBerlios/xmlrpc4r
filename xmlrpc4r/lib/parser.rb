@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.19 2001/03/22 08:12:06 michael Exp $
+# $Id: parser.rb,v 1.20 2001/03/22 17:51:04 michael Exp $
 #
 
 
@@ -220,7 +220,7 @@ class Parser
   def name(node)
     nodeMustBe(node, "name")
     #hasOnlyOneChild(node)
-    text_zero_one(node.firstChild) 
+    text_zero_one(node) 
   end
 
   def array(node)
