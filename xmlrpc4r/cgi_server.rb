@@ -5,14 +5,13 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: cgi_server.rb,v 1.2 2001/01/24 18:01:00 michael Exp $
+# $Id: cgi_server.rb,v 1.3 2001/01/24 19:47:22 michael Exp $
 #
 
 
 =begin
 = Synopsis
    require "cgi_server.rb"
-   require "create.rb"
  
    s = CGI_Server.new     
    resp = case s.method        # name of called method
