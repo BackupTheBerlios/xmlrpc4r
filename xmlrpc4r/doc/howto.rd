@@ -14,11 +14,11 @@ because xmlrpc4r is better tested with it and XMLParser is much faster than NQXM
 The advantage of using NQXML is that it is written in pure Ruby.
 
 Then you'll need "xmlrpc4r" of course, which is available at
-((<URL:http://www.s-direktnet.de/homepages/neumann/xmlrpc4r>)).
+((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r>)).
 
 To install xmlrpc4r:
-  tar -xvzf xmlrpc4r-1_6_1.tar.gz
-  cd xmlrpc4r-1_6_1
+  tar -xvzf xmlrpc4r-1_6_2.tar.gz
+  cd xmlrpc4r-1_6_2
   su root -c "ruby install.rb"
 
 
@@ -190,6 +190,6 @@ You can change the XML Writer by calling (({#set_writer})).
 
 
 = History
-  $Id: howto.rd,v 1.4 2001/04/20 16:18:10 michael Exp $
+  $Id: howto.rd,v 1.5 2001/06/03 10:22:41 michael Exp $
 =end
 
