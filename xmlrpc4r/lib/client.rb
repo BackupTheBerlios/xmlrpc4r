@@ -66,7 +66,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     where (({Hash})), (({Struct})) and (({Array})) can contain any of these listed ((:types:)):
     * (({Fixnum})), (({Bignum}))
     * (({TrueClass})), (({FalseClass})) ((({true})), (({false})))
-    * (({String}))
+    * (({String})), (({Symbol}))
     * (({Float}))
     * (({Hash})), (({Struct}))
     * (({Array}))
@@ -79,8 +79,9 @@ call on the remote-side and of course the parameters for the remote procedure.
     only that a (({Bignum})) is only allowed when it fits in 32-bit and
     that a XML-RPC (('dateTime.iso8601')) type is always returned as
     a ((<(({XMLRPC::DateTime}))|URL:datetime.html>)) object and 
-    a (({Struct})) is never returned, only a (({Hash})). A (({XMLRPC::Base64}))
-    is returned as a (({String})) from xmlrpc4r version 1.6.1 on.
+    a (({Struct})) is never returned, only a (({Hash})), the same for a (({Symbol})), where
+    always a (({String})) is returned. 
+    A (({XMLRPC::Base64})) is returned as a (({String})) from xmlrpc4r version 1.6.1 on.
     
     If the remote procedure returned a fault-structure, then a 
     (({XMLRPC::FaultException})) exception is raised, which has two accessor-methods
@@ -170,7 +171,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.33 2001/06/19 12:26:55 michael Exp $
+    $Id: client.rb,v 1.34 2001/06/19 14:01:31 michael Exp $
 
 =end
 
