@@ -486,7 +486,15 @@ end
 
 =begin
 = XMLRPC::ModRubyServer
+== Description
+Implements a XML-RPC server, which works with Apache mod_ruby.
+
+Use it in the same way as CGIServer!
+
+== Superclass
+((<XMLRPC::BasicServer>))
 =end 
+
 class ModRubyServer < BasicServer
   @@obj = nil
 
@@ -651,6 +659,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.37 2001/07/06 11:21:10 michael Exp $    
+    $Id: server.rb,v 1.38 2001/07/06 11:25:00 michael Exp $    
 =end
 
