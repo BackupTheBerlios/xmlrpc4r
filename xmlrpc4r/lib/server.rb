@@ -36,19 +36,14 @@ the same class.
     added as handler, to delimit the object-prefix and the method-name.
 
 == Instance Methods
---- XMLRPC::BasicServer#add_handler( prefix, obj=nil, &block )
-    This method has two forms, one for adding an object and one to
-    add a code block as a handler of a XML-RPC call.
-    To add an object write:
-        server.add_handler("michael", MyHandlerClass.new)
-    All public methods of (({MyHandlerClass})) are accessible to
-    the XML-RPC clients by (('michael."name of method"')). This is 
-    where the ((|class_delim|)) in ((<new|XMLRPC::BasicServer.new>)) 
-    has it's role, a XML-RPC method-name is defined by 
-    ((|prefix|)) + ((|class_delim|)) + (('"name of method"')). 
-    To add a code block as a handler, write:
-        server.add_handler("michael.add") {|a,b| a+b}
-    Here the ((|prefix|)) is the full name of the method. 
+--- XMLRPC::BasicServer#add_handler( name, signature=nil, help=nil ) { aBlock }
+    Adds ((|aBlock|)) to the list of handlers, with ((|name|)) as the name of the method.
+    Parameters ((|signature|)) and ((|help|)) are used by the Introspection method if specified, 
+    where ((|signature|)) is either an Array containing strings each representing a type of it's 
+    signature (the first is the return value) or an Array of Arrays if the method has multiple 
+    signatures. Value type-names are "int, boolean, double, string, dateTime.iso8601, base64, array, struct".
+
+    Parameter ((|help|)) is a String with informations about how to call this method etc.
 
     A handler method or code-block can return the types listed at
     ((<XMLRPC::Client#call|URL:client.html#index:0>)). 
@@ -64,6 +59,17 @@ the same class.
     The client gets in the case of (({b==0})) an object back of type
     (({XMLRPC::FaultException})) that has a ((|faultCode|)) and ((|faultString|))
     field.
+
+
+--- XMLRPC::BasicServer#add_handler( prefix, obj )
+    This is the second form of ((<add_handler|XMLRPC::BasicServer#add_handler>)).
+    To add an object write:
+        server.add_handler("michael", MyHandlerClass.new)
+    All public methods of (({MyHandlerClass})) are accessible to
+    the XML-RPC clients by (('michael."name of method"')). This is 
+    where the ((|class_delim|)) in ((<new|XMLRPC::BasicServer.new>)) 
+    has it's role, a XML-RPC method-name is defined by 
+    ((|prefix|)) + ((|class_delim|)) + (('"name of method"')). 
 
 --- XMLRPC::BasicServer#get_default_handler
     Returns the default-handler, which is called when no handler for
@@ -160,19 +166,14 @@ class BasicServer
     add_introspection if Config::ENABLE_INTROSPECTION
   end
 
-  def add_handler(prefix, obj=nil, &block)
-    if obj.nil? and block.nil? 
-      raise ArgumentError, "Too few parameters"
-    elsif ! obj.nil? and ! block.nil?
-      raise ArgumentError, "Too many parameters"
+  def add_handler(prefix, obj_or_signature=nil, help=nil, &block)
+    if block_given?
+      # proc-handler
+      @handler << [prefix, block, obj_or_signature, help]   
     else
-      if ! obj.nil?
-        @handler << [prefix + @class_delim, obj]
-      elsif ! block.nil?
-        @handler << [prefix, block]   
-      else
-        raise "Unexpected error"
-      end
+      # class-handler
+      raise ArgumentError, "Expected non-nil value" if obj_or_signature.nil?
+      @handler << [prefix + @class_delim, obj_or_signature]
     end
   end
 
@@ -193,7 +194,7 @@ class BasicServer
   end  
 
   def add_multicall
-    add_handler("system.multicall") do |arrStructs|
+    add_handler("system.multicall", %w(array array), "Multicall Extension") do |arrStructs|
       unless arrStructs.is_a? Array 
         raise XMLRPC::FaultException.new(ERR_MC_WRONG_PARAM, "system.multicall expects an array")
       end
@@ -234,7 +235,7 @@ class BasicServer
   end
 
   def add_introspection
-    add_handler("system.listMethods") do
+    add_handler("system.listMethods",%w(array), "List methods available on this XML-RPC server") do
       methods = []
       @handler.each do |name, obj|
         if obj.kind_of? Proc
@@ -246,13 +247,33 @@ class BasicServer
       methods
     end
 
-    add_handler("system.methodSignature") do |meth|
-      "Not implemented"
+    add_handler("system.methodSignature", %w(array string), "Returns method signature") do |meth|
+      sigs = []
+      @handler.each do |name, obj, sig|
+        if obj.kind_of? Proc and sig != nil and name == meth
+          if sig[0].kind_of? Array
+            # sig contains multiple signatures, e.g. [["array"], ["array", "string"]]
+            sig.each {|s| sigs << s}
+          else
+            # sig is a single signature, e.g. ["array"]
+            sigs << sig 
+          end
+        end
+      end
+      sigs.uniq! || sigs  # remove eventually duplicated signatures
     end
 
-    add_handler("system.methodHelp") do |meth|
-      "Not implemented"
+    add_handler("system.methodHelp", %w(string string), "Returns help on using this method") do |meth|
+      help = nil 
+      @handler.each do |name, obj, sig, hlp|
+        if obj.kind_of? Proc and name == meth 
+          help = hlp
+          break      
+        end
+      end
+      help || ""
     end
+
   end
  
   private # --------------------------------------------------------------
@@ -526,6 +547,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.31 2001/06/21 11:38:12 michael Exp $    
+    $Id: server.rb,v 1.32 2001/06/24 20:07:26 michael Exp $    
 =end
 
