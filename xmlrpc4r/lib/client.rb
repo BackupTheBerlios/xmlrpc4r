@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.4 2001/01/27 11:27:01 michael Exp $
+# $Id: client.rb,v 1.5 2001/01/27 11:34:16 michael Exp $
 #
 
 
@@ -32,7 +32,7 @@ module XMLRPC
 
 class Client
  
-  USER_AGENT = "Ruby #{RUBY_VERSION} ($Revision: 1.4 $)"
+  USER_AGENT = "XMLRPC::Client (Ruby #{RUBY_VERSION})"
 
   def initialize(host, path = "/RPC2", port = 80)
     @path = path
