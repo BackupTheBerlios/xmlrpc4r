@@ -30,7 +30,9 @@ Do not use this server, as this is/should be an abstract class.
     A handler is only called if it accepts the number of arguments, otherwise the search 
     for another handler will go on. When at the end no handler was found, 
     the ((<default_handler|XMLRPC::BasicServer#set_default_handler>)) will be called.
-    
+    With this technique it is possible to do overloading by number of parameters, but
+    only for (({Proc})) handler, because you cannot define two methods of the same name in
+    the same class. 
 
 == Instance Methods
 --- XMLRPC::BasicServer#add_handler( prefix, obj=nil, &block )
@@ -421,6 +423,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.17 2001/01/29 22:08:36 michael Exp $    
+    $Id: server.rb,v 1.18 2001/01/29 22:15:11 michael Exp $    
 =end
 
