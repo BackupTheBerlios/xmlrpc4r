@@ -84,7 +84,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.11 2001/01/27 19:57:35 michael Exp $
+    $Id: client.rb,v 1.12 2001/01/27 19:58:41 michael Exp $
 =end
 
 
@@ -105,9 +105,9 @@ class Client
   end
 
   def call(method, *args)
-    ok, params = call2(method, *args) 
-    return params if ok
-    raise params
+    ok, param = call2(method, *args) 
+    return param if ok
+    raise param
   end 
  
   def call2(method, *args)
