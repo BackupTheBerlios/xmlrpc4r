@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.9 2001/01/26 17:28:57 michael Exp $
+# $Id: parser.rb,v 1.10 2001/01/27 18:16:13 michael Exp $
 #
 
 
@@ -12,6 +12,21 @@ require "xmltreebuilder"
 require "xmlrpc/base64"
 
 module XMLRPC
+
+
+class FaultException < Exception
+  attr_reader :faultCode, :faultString
+
+  def initialize(faultCode, faultString)
+    @faultCode   = faultCode
+    @faultString = faultString
+  end
+end
+
+
+
+
+
 
 class Parser
 
@@ -292,10 +307,17 @@ class Parser
 
 
   def fault(node)
-    # TODO: fault do not proof if the value is a structure etc...
     nodeMustBe(node, "fault")
     hasOnlyOneChild(node, "value")
-    value(node.firstChild) 
+    f = value(node.firstChild) 
+    assert( f.kind_of? Hash )
+    assert( f.size == 2 )
+    assert( f.has_key? "faultCode" )
+    assert( f.has_key? "faultString" )
+    assert( f["faultCode"].kind_of? Fixnum )
+    assert( f["faultString"].kind_of? String )
+
+    XMLRPC::FaultException.new(f["faultCode"], f["faultString"]) 
   end
 
 
