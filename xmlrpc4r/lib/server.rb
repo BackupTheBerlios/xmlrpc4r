@@ -93,8 +93,6 @@ the same class.
 --- XMLRPC::BasicServer#add_introspection( prefix="system" )
     Adds the introspection handlers "listMethods", "methodSignature" and "methodHelp", 
     where only the first one works.
-    Note that method method names of class-handlers which occur in (({Object})) are not
-    shown.
 
 --- XMLRPC::BasicServer#get_service_hook
     Returns the service-hook, which is called on each service request (RPC) unless it's (({nil})).
@@ -190,7 +188,7 @@ class BasicServer
         if obj.kind_of? Proc
           methods << name
         else
-          (obj.methods - Object.methods).each {|meth| methods << name + meth}
+          obj.methods.each {|meth| methods << name + meth}
         end
       end
       methods
@@ -467,6 +465,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.25 2001/06/09 18:09:24 michael Exp $    
+    $Id: server.rb,v 1.26 2001/06/11 16:33:53 michael Exp $    
 =end
 
