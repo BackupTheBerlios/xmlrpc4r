@@ -3,14 +3,13 @@
 #
 # An implementation of tests for the the first validator suite
 # (validator1) as shown on http://www.xmlrpc.com/validator1Docs 
+# For validated hosts, see http://validator.xmlrpc.com where
+# 149.225.142.138 was my host.
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: validator1.rb,v 1.1 2001/01/30 20:16:02 michael Exp $
+# $Id: validator1.rb,v 1.2 2001/02/02 14:13:55 michael Exp $
 #
-
-
-
 
 
 class Validator1
@@ -91,7 +90,7 @@ class Validator1
   # The entry for April 1, 2000 contains three elements "moe", "larry"
   # and "curly". Return the sum of these three elements.
   #
-  def nestedStrucTest(stuc)
+  def nestedStructTest(struc)
     s = struc["2000"]["04"]["01"]
     s["moe"] + s["larry"] + s["curly"]
   end
@@ -112,6 +111,8 @@ class Validator1
   end
 
 end
+
+
 
 
 if __FILE__ == $0
