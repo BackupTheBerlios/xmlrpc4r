@@ -3,13 +3,56 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.21 2001/04/20 13:38:02 michael Exp $
+# $Id: parser.rb,v 1.22 2001/04/20 16:10:26 michael Exp $
 #
 
 
 require "date"
 require "xmlrpc/base64"
 require "xmlrpc/datetime"
+
+
+# add some methods to NQXML::Node
+module NQXML
+    class Node
+
+      def removeChild(node)
+	@children.delete(node)
+      end
+      def childNodes
+	@children
+      end
+      def hasChildNodes
+	not @children.empty?
+      end
+      def [] (index)
+	@children[index]
+      end
+
+
+      def nodeType
+	if @entity.instance_of? NQXML::Text then :TEXT
+	elsif @entity.instance_of? NQXML::Comment then :COMMENT
+	#elsif @entity.instance_of? NQXML::Element then :ELEMENT
+	elsif @entity.instance_of? NQXML::Tag then :ELEMENT
+	else :ELSE
+	end
+      end
+
+      def nodeValue
+	#TODO: error when wrong Entity-type
+	@entity.text
+      end
+      def nodeName
+	#TODO: error when wrong Entity-type
+	@entity.name
+      end
+    end
+end
+
+
+
+
 
 module XMLRPC
 
@@ -31,13 +74,8 @@ module XMLRPC
 
   module XMLParser
 
-    class XMLParser
 
-      public
-
-      def initialize
-        require "xmltreebuilder"
-      end
+    class Abstract
 
       def parseMethodResponse(str)
 	methodResponse_document(createCleanedTree(str))
@@ -47,9 +85,8 @@ module XMLRPC
 	methodCall_document(createCleanedTree(str))
       end
 
-
-
       private
+
 
       #
       # remove all whitespaces but in the tags i4, int, boolean....
@@ -59,12 +96,12 @@ module XMLRPC
 	remove = []
 	childs = node.childNodes.to_a
 	childs.each do |nd|
-	  case nd.nodeType
-	  when XML::SimpleTree::Node::TEXT
+	  case _nodeType(nd)
+	  when :TEXT
 	    unless %w(i4 int boolean string double dateTime.iso8601 base64).include? node.nodeName 
-	      remove << nd if nd.nodeValue.strip == "" # and childs.size != 1
+	      remove << nd if nd.nodeValue.strip == ""  # and childs.size != 1
 	    end
-	  when XML::SimpleTree::Node::COMMENT
+	  when :COMMENT
 	    remove << nd
 	  else
 	    removeWhitespacesAndComments(nd)
@@ -74,7 +111,7 @@ module XMLRPC
 	remove.each { |i| node.removeChild(i) }
       end
 
-       
+
       def nodeMustBe(node, name)
 	cmp = case name
 	when Array 
@@ -111,17 +148,6 @@ module XMLRPC
 	end
       end
 
-      ################
-
-
-      def text(node)
-	assert( node.nodeType == XML::SimpleTree::Node::TEXT )
-	assert( node.hasChildNodes == false )
-	assert( node.nodeValue != nil )
-
-	node.nodeValue.to_s
-      end
-     
       # the node `node` has empty string or string
       def text_zero_one(node)
 	nodes = node.childNodes.to_a.size
@@ -199,17 +225,6 @@ module XMLRPC
 	XMLRPC::Base64.new(text_zero_one(node), :enc)
       end
 
-      def struct(node)
-	nodeMustBe(node, "struct")    
-
-	hash = {}
-	node.childNodes do |me|
-	  n, v = member(me)  
-	  hash[n] = v
-	end 
-	hash
-      end
-
       def member(node)
 	nodeMustBe(node, "member")
 	assert( node.childNodes.to_a.size == 2 ) 
@@ -237,54 +252,12 @@ module XMLRPC
 	end 
       end
 
-      def value(node)
-	nodeMustBe(node, "value")
-	hasOnlyOneChild(node) 
-
-	child = node.firstChild
-	
-	case child.nodeType
-	when XML::SimpleTree::Node::TEXT
-	  text(child)
-	when XML::SimpleTree::Node::ELEMENT
-	  case child.nodeName
-	  when "i4", "int"        then integer(child)
-	  when "boolean"          then boolean(child)
-	  when "string"           then string(child)
-	  when "double"           then double(child)
-	  when "dateTime.iso8601" then dateTime(child)
-	  when "base64"           then base64(child)
-	  when "struct"           then struct(child)
-	  when "array"            then array(child) 
-	  else 
-	    raise "wrong/unknown XML-RPC type"
-	  end
-	else
-	  raise "wrong type of node"
-	end
-
-      end
-
       def param(node)
 	nodeMustBe(node, "param")
 	hasOnlyOneChild(node, "value")
 	value(node.firstChild) 
       end
-       
-      def methodResponse_document(node)
-	assert( node.nodeType == XML::SimpleTree::Node::DOCUMENT )
-	hasOnlyOneChild(node, "methodResponse")
-	
-	methodResponse(node.firstChild)
-      end
-
-      def methodCall_document(node)
-	assert( node.nodeType == XML::SimpleTree::Node::DOCUMENT )
-	hasOnlyOneChild(node, "methodCall")
-	
-	methodCall(node.firstChild)
-      end
-
+ 
       def methodResponse(node)
 	nodeMustBe(node, "methodResponse")
 	hasOnlyOneChild(node, %w(params fault))
@@ -299,19 +272,6 @@ module XMLRPC
 	  raise "unexpected error"
 	end
 
-      end
-
-      def methodCall(node)
-	nodeMustBe(node, "methodCall")
-	assert( (1..2).include? node.childNodes.to_a.size ) 
-	name = methodName(node[0])
-
-	if node.childNodes.to_a.size == 2 then
-	  pa = params(node[1])
-	else # no parameters given
-	  pa = []
-	end
-	[name, pa]
       end
 
       def methodName(node)
@@ -333,7 +293,6 @@ module XMLRPC
 	end
       end
 
-
       def fault(node)
 	nodeMustBe(node, "fault")
 	hasOnlyOneChild(node, "value")
@@ -348,6 +307,109 @@ module XMLRPC
 	XMLRPC::FaultException.new(f["faultCode"], f["faultString"]) 
       end
 
+
+
+      # _nodeType is defined in the subclass
+      def text(node)
+	assert( _nodeType(node) == :TEXT )
+	assert( node.hasChildNodes == false )
+	assert( node.nodeValue != nil )
+
+	node.nodeValue.to_s
+      end
+
+      def struct(node)
+	nodeMustBe(node, "struct")    
+
+	hash = {}
+	node.childNodes.to_a.each do |me|
+	  n, v = member(me)  
+	  hash[n] = v
+	end 
+	hash
+      end
+
+
+      def value(node)
+	nodeMustBe(node, "value")
+	hasOnlyOneChild(node) 
+
+	child = node.firstChild
+	
+	case _nodeType(child)
+	when :TEXT
+	  text(child)
+	when :ELEMENT
+	  case child.nodeName
+	  when "i4", "int"        then integer(child)
+	  when "boolean"          then boolean(child)
+	  when "string"           then string(child)
+	  when "double"           then double(child)
+	  when "dateTime.iso8601" then dateTime(child)
+	  when "base64"           then base64(child)
+	  when "struct"           then struct(child)
+	  when "array"            then array(child) 
+	  else 
+	    raise "wrong/unknown XML-RPC type"
+	  end
+	else
+	  raise "wrong type of node"
+	end
+
+      end
+
+
+      def methodCall(node)
+	nodeMustBe(node, "methodCall")
+	assert( (1..2).include? node.childNodes.to_a.size ) 
+	name = methodName(node[0])
+
+	if node.childNodes.to_a.size == 2 then
+	  pa = params(node[1])
+	else # no parameters given
+	  pa = []
+	end
+	[name, pa]
+      end
+
+
+
+    end
+
+
+
+    class XMLParser < Abstract
+
+      def initialize
+        require "xmltreebuilder"
+      end
+
+      private
+
+      def _nodeType(node)
+	tp = node.nodeType
+	if tp == XML::SimpleTree::Node::TEXT then :TEXT
+	elsif tp == XML::SimpleTree::Node::COMMENT then :COMMENT 
+	elsif tp == XML::SimpleTree::Node::ELEMENT then :ELEMENT 
+	else :ELSE
+	end
+      end
+
+
+      def methodResponse_document(node)
+	assert( node.nodeType == XML::SimpleTree::Node::DOCUMENT )
+	hasOnlyOneChild(node, "methodResponse")
+	
+	methodResponse(node.firstChild)
+      end
+
+      def methodCall_document(node)
+	assert( node.nodeType == XML::SimpleTree::Node::DOCUMENT )
+	hasOnlyOneChild(node, "methodCall")
+	
+	methodCall(node.firstChild)
+      end
+
       def createCleanedTree(str)
 	doc = XML::SimpleTreeBuilder.new.parse(str)
 	doc.documentElement.normalize
@@ -356,6 +418,38 @@ module XMLRPC
       end
 
     end # class XMLParser
+
+
+    class NQXMLParser < Abstract
+
+      def initialize
+        require "nqxml/treeparser"
+      end
+
+      private
+
+      def _nodeType(node)
+	node.nodeType
+      end
+
+      
+      def methodResponse_document(node)
+	methodResponse(node)
+      end
+
+      def methodCall_document(node)
+	methodCall(node)
+      end
+
+      def createCleanedTree(str)
+        doc = NQXML::TreeParser.new(str).document.rootNode 
+	removeWhitespacesAndComments(doc)
+	doc
+      end
+
+    end # class NQXML
+
+
 
     DEFAULT_PARSER = XMLParser
 
