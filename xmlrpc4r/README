@@ -1,4 +1,4 @@
-$Id: README,v 1.12 2001/02/02 14:15:16 michael Exp $
+$Id: README,v 1.13 2001/02/04 12:45:29 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -9,8 +9,8 @@ For more information about XML-RPC look at http://www.xmlrpc.com.
 ACKNOWLEDGMENTS
 ---------------
 I have included John W. Small's (jsmall@laser.net) ruby-generic-server 
-into this package, so that you'll not need to download it, and rename it. 
-For copyright notice and license, see file "lib/EServer.rb".
+into this package, so that you'll not need to download it.
+For copyright notice and license, see file "lib/GServer.rb".
 It is available from RAA. Thanks for his implementation.
 
 
