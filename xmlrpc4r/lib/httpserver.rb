@@ -4,81 +4,13 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.8 2001/02/04 13:33:54 michael Exp $
+# $Id: httpserver.rb,v 1.9 2001/07/11 20:33:27 michael Exp $
 #
-
 
 
 require "xmlrpc/GServer"
 
 class HttpServer < GServer
-
-  def http_error(status, message, io)
-    io.print "HTTP/1.0 #{status} #{message}\r\n"
-    io.print "Connection: close\r\n" 
-    io.print "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})\r\n"
-    io.print "\r\n"
-  end
-
-  def serve(io)
-    if io.gets =~ /^(\S+)\s+(\S+)\s+(\S+)/
-      method = $1
-      path = $2
-      proto = $3
-    else
-      http_error(400, "Bad Request", io) 
-      return 
-    end
-
-    if method != "POST" 
-      http_error(405, "Method Not Allowed", io)
-      return
-    end
-
-    header = {}
-    while (line=io.gets) !~ /^(\n|\r)/
-      if line =~ /^([\w-]+):\s*(.*)$/
-	header[$1.capitalize] = $2.strip
-      end
-    end
-
-    length = header['Content-length'].to_i
-
-    if header['Content-type'] != "text/xml"
-      http_error(400, "Bad Request", io)
-      return
-    end 
-    unless length > 0
-      http_error(411, "Length Required", io)
-      return
-    end
-
-    io.binmode
-    data = io.read(length)
-
-    if data.nil? or data.size != length
-      http_error(400, "Bad Request", io)
-      return
-    end
-
-    begin
-      resp = @handler.call(data) 
-      raise if resp.nil? or resp.size <= 0
-    rescue Exception => e
-      http_error(500, "Internal Server Error", io)
-      return
-    end
-    
-    io.print "HTTP/1.0 200 OK\r\n"
-    io.print "Connection: close\r\n" 
-    io.print "Content-Length: #{resp.size}\r\n" 
-    io.print "Content-type: text/xml\r\n"
-    io.print "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})\r\n"
-    io.print "\r\n"
-    io.print resp
-
-  end
-
 
   def initialize(handler, port = 8080, host = DEFAULT_HOST, maxConnections = 4, 
                  stdlog = $stdout, audit = true, debug = true)
@@ -86,6 +18,152 @@ class HttpServer < GServer
     super(port, host, maxConnections, stdlog, audit, debug)
   end
 
-end
+private
 
+  # Constants -----------------------------------------------
+  
+  CRLF        = "\r\n"
+  HTTP_PROTO  = "HTTP/1.0"
+  SERVER_NAME = "HttpServer (Ruby #{RUBY_VERSION})"
+
+  DEFAULT_HEADER = {
+    "Server" => SERVER_NAME
+  }
+
+  ##
+  # Mapping of status code and error message
+  #
+  StatusCodeMapping = {
+    200 => "OK",
+    400 => "Bad Request",
+    405 => "Method Not Allowed",
+    411 => "Length Required",
+    500 => "Internal Server Error"
+  }
+
+  # Classes -------------------------------------------------
+  
+  class Request
+    attr_reader :data, :header, :method, :path, :proto
+    
+    def initialize(data, method=nil, path=nil, proto=nil)
+      @header, @data = Table.new, data
+      @method, @path, @proto = method, path, proto
+    end
+    
+    def content_length
+      len = @header['Content-Length']
+      return nil if len.nil?
+      return len.to_i 
+    end
+    
+  end
+  
+  class Response
+    attr_reader   :header
+    attr_accessor :body, :status, :status_message
+    
+    def initialize(status=200)
+      @status = status
+      @header = Table.new
+    end
+  end
+
+
+  ##
+  # a case-insensitive Hash class for HTTP header
+  #
+  class Table
+    include Enumerable
+
+    def initialize(hash={})
+      @hash = hash 
+      update(hash)
+    end
+
+    def [](key)
+      @hash[key.to_s.capitalize]
+    end
+
+    def []=(key, value)
+      @hash[key.to_s.capitalize] = value
+    end
+
+    def update(hash)
+      hash.each {|k,v| self[k] = v}
+      self
+    end
+
+    def each
+      @hash.each {|k,v| yield k.capitalize, v }
+    end
+
+    def writeTo(port)
+      each { |k,v| port << "#{k}: #{v}" << CRLF }
+    end
+  end # class Table
+
+
+  # Helper Methods ------------------------------------------
+
+  def http_header(header=nil)
+    new_header = Table.new(DEFAULT_HEADER)
+    new_header.update(header) unless header.nil? 
+
+    new_header["Connection"] = "close"
+    new_header["Date"]       = http_date(Time.now)
+
+    new_header
+  end
+
+  def http_date( aTime )
+    aTime.gmtime.strftime( "%a, %d %b %Y %H:%M:%S GMT" )
+  end
+
+  def http_resp(status_code, status_message=nil, header=nil, body=nil)
+    status_message ||= StatusCodeMapping[status_code]
+    
+    str = ""
+    str << "#{HTTP_PROTO} #{status_code} #{status_message}" << CRLF
+    http_header(header).writeTo(str)
+    str << CRLF
+    str << body unless body.nil?
+    str
+  end
+  
+  
+  # Main Serve Loop -----------------------------------------
+  
+  def serve(io)  
+
+    # parse first line
+    if io.gets =~ /^(\S+)\s+(\S+)\s+(\S+)/
+      request = Request.new(io, $1, $2, $3)
+    else
+      io << http_resp(400, "Bad Request") 
+      return
+    end
+     
+    # parse HTTP headers
+    while (line=io.gets) !~ /^(\n|\r)/
+      if line =~ /^([\w-]+):\s*(.*)$/
+	request.header[$1] = $2.strip
+      end
+    end
+
+    io.binmode    
+    response = Response.new
+
+    # execute script handler
+    @handler.call(request, response)
+   
+    # write response back to the client
+    io << http_resp(response.status, response.status_message,
+                    response.header, response.body) 
+
+  rescue Exception => e
+    io << http_resp(500, "Internal Server Error")
+  end
+
+end # class HttpServer
 
