@@ -105,6 +105,16 @@ call on the remote-side and of course the parameters for the remote procedure.
     a call on that object will return two parameters. 
 
 
+--- XMLRPC::Client#set_writer( writer )
+    Sets the XML writer to use for generating XML output.
+    Should be an instance of a class from module (({XMLRPC::XMLWriter})).
+    If this method is not called, then (({XMLRPC::XMLWriter::DEFAULT_WRITER})) is used. 
+
+--- XMLRPC::Client#set_parser( parser )
+    Sets the XML parser to use for parsing XML documents.
+    Should be an instance of a class from module (({XMLRPC::XMLParser})).
+    If this method is not called, then (({XMLRPC::XMLParser::DEFAULT_WRITER})) is used.
+
 
 = XMLRPC::Client::Proxy
 == Synopsis
@@ -144,7 +154,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.28 2001/04/09 17:07:15 michael Exp $
+    $Id: client.rb,v 1.29 2001/04/20 13:16:05 michael Exp $
 
 =end
 
@@ -164,6 +174,9 @@ class Client
     @path = path
     Net::HTTP.version_1_1
     @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
+
+    @parser = nil
+    @create = nil
   end
 
   def call(method, *args)
@@ -173,9 +186,8 @@ class Client
   end 
  
   def call2(method, *args)
-    create  = Create.new
-    parser  = Parser.new
-    request = create.methodCall(method, *args)
+
+    request = create().methodCall(method, *args)
 
     resp, data = @http.post (
                    @path, 
@@ -198,7 +210,7 @@ class Client
       raise "Wrong content-type"
     end
 
-    parser.parseMethodResponse(data)
+    parser().parseMethodResponse(data)
   end
 
   
@@ -211,7 +223,32 @@ class Client
   end
 
 
+  def set_writer(writer)
+    @create = Create.new(writer)
+  end
 
+  def set_parser(parser)
+    @parser = parser
+  end
+
+
+  private
+
+  def create
+    # if set_writer was not already called then call it now
+    if @create.nil? then
+      set_writer(XMLWriter::DEFAULT_WRITER.new)
+    end
+    @create
+  end
+
+  def parser
+    # if set_parser was not already called then call it now
+    if @parser.nil? then
+      set_parser(XMLParser::DEFAULT_PARSER.new)
+    end
+    @parser
+  end
 
 
   class Proxy
