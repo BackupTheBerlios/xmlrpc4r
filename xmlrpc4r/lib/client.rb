@@ -7,6 +7,18 @@ Released under the same term of license as Ruby.
 
 = Synopsis
     require "xmlrpc/client"
+
+    server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
+    begin
+      params = server.call("michael.add", 4, 5)
+      puts "4 + 5 = #{params[0]}"
+    rescue XMLRPC::FaultException => e
+      puts "Error:"
+      puts e.faultCode
+      puts e.faultString
+    end
+or
+    require "xmlrpc/client"
   
     server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
     ok, params = server.call("michael.add", 4, 5)
@@ -22,9 +34,9 @@ Released under the same term of license as Ruby.
 Class (({XMLRPC::Client})) provides remote procedure calls to a XML-RPC server.
 After setting the connection-parameters with ((<XMLRPC::Client.new>)) which
 creates a new (({XMLRPC::Client})) instance, you can execute a remote procedure 
-by sending the ((<call|XMLRPC::Client#call>)) message to this new instance, giving
-parameters that indicate which method to call on the remote-side and of course the 
-parameters for the remote procedure.
+by sending the ((<call|XMLRPC::Client#call>)) or ((<call2|XMLRPC::Client#call2>))
+message to this new instance, giving parameters that indicate which method to 
+call on the remote-side and of course the parameters for the remote procedure.
 
 = Class Methods
 --- XMLRPC::Client.new( host, path="/RPC2", port=80 )
@@ -36,12 +48,12 @@ parameters for the remote procedure.
 
 = Instance Methods
 --- XMLRPC::Client#call( method, *args )
-    Invokes the method named ((|method|)) with the parameters given by ((|args|)) 
-    on the XML-RPC server.
-    The parameter ((|method|)) is converted into a (({String})) and should be a valid 
-    XML-RPC method-name.  
-    The variable number of parameters given by ((|args|)) must be at least one parameter, 
-    because XML-RPC do not allow calls without paramter.
+    Invokes the method named ((|method|)) with the parameters given by 
+    ((|args|)) on the XML-RPC server.
+    The parameter ((|method|)) is converted into a (({String})) and should 
+    be a valid XML-RPC method-name.  
+    The variable number of parameters given by ((|args|)) must be at least 
+    one parameter, because XML-RPC do not allow calls without paramter.
     Each parameter of ((|args|)) must be of one of the following types,
     where (({Hash})) and (({Array})) can contain any of these listed types:
     * (({Fixnum}))
@@ -53,15 +65,26 @@ parameters for the remote procedure.
     * (({Date})), (({Time}))
     * (({XMLRPC::Base64})) 
     
-    The method returns an array of two values. The first value indicates if the second value 
-    is a return-value ((({true}))) or a fault-structure ((({false}))).
-    * A return-value is an array containing all the return-values from the RPC. The types are the
-      same as above, only that a XML-RPC (('dateTime.iso8601')) type is, when possible, returned as
-      a Ruby (({Time})) object and only if the range disallows as a (({Date})). 
-    * A fault-structure is a (({Hash})) object containing a key (({"faultCode"})) which value is a (({Fixnum})) 
-      and a key (({"faultString"})) which value is a (({String})).
+    The method returns an array containing all the return-values from the RPC
+    ((-stands for Remote Procedure Call-)). The types are the same as above, 
+    only that a XML-RPC (('dateTime.iso8601')) type is, when possible, 
+    returned as a Ruby (({Time})) object and only if the range disallows as 
+    a (({Date})). 
+    If the remote procedure returned a fault-structure, then a 
+    (({XMLRPC::FaultException})) exception is raised, which has two accessor-methods
+    (({XMLRPC::FaultException#faultCode})) and 
+    (({XMLRPC::FaultException#faultString})) of type (({Integer})) and (({String})).
+
+--- XMLRPC::Client#call2( method, *args )
+    The difference between this method and ((<call|XMLRPC::Client#call>)) is, that
+    this method do ((*not*)) raise a (({XMLRPC::FaultException})) exception.
+    The method returns an array of two values. The first value indicates if 
+    the second value is a return-value ((({true}))) or an object of type
+    (({XMLRPC::FaultException})). 
+    For both see ((<call|XMLRPC::Client#call>)).
+
 = History
-    $Id: client.rb,v 1.8 2001/01/27 15:33:22 michael Exp $
+    $Id: client.rb,v 1.9 2001/01/27 18:32:55 michael Exp $
 =end
 
 
@@ -82,6 +105,12 @@ class Client
   end
 
   def call(method, *args)
+    ok, params = call2(method, *args) 
+    return params if ok
+    raise params
+  end 
+ 
+  def call2(method, *args)
     create = Create.new
     parser = Parser.new
 
@@ -94,7 +123,7 @@ class Client
 
     @http.finish
     parser.parseMethodResponse(data)
-  end 
+  end
 
 end
 
