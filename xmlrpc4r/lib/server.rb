@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: server.rb,v 1.2 2001/01/27 19:24:31 michael Exp $
+# $Id: server.rb,v 1.3 2001/01/27 19:42:55 michael Exp $
 #
 
 
@@ -69,7 +69,7 @@ class BasicServer
     rescue XMLRPC::FaultException => e  
       [false, e]  
     end
-    @create.methodResponse(res) 
+    @create.methodResponse(*res) 
   end
 
   #
