@@ -4,7 +4,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.7 2001/02/04 12:44:33 michael Exp $
+# $Id: httpserver.rb,v 1.8 2001/02/04 13:33:54 michael Exp $
 #
 
 
@@ -14,10 +14,10 @@ require "xmlrpc/GServer"
 class HttpServer < GServer
 
   def http_error(status, message, io)
-    io.puts "HTTP/1.0 #{status} #{message}"
-    io.puts "Connection: close" 
-    io.puts "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})"
-    io.puts
+    io.print "HTTP/1.0 #{status} #{message}\r\n"
+    io.print "Connection: close\r\n" 
+    io.print "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})\r\n"
+    io.print "\r\n"
   end
 
   def serve(io)
@@ -69,12 +69,12 @@ class HttpServer < GServer
       return
     end
     
-    io.puts "HTTP/1.0 200 OK"
-    io.puts "Connection: close" 
-    io.puts "Content-Length: #{resp.size}" 
-    io.puts "Content-type: text/xml"
-    io.puts "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})"
-    io.puts
+    io.print "HTTP/1.0 200 OK\r\n"
+    io.print "Connection: close\r\n" 
+    io.print "Content-Length: #{resp.size}\r\n" 
+    io.print "Content-type: text/xml\r\n"
+    io.print "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})\r\n"
+    io.print "\r\n"
     io.print resp
 
   end
