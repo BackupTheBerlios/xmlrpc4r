@@ -154,7 +154,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.29 2001/04/20 13:16:05 michael Exp $
+    $Id: client.rb,v 1.30 2001/04/20 13:38:02 michael Exp $
 
 =end
 
@@ -162,121 +162,97 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 require "xmlrpc/parser"
 require "xmlrpc/create"
+require "xmlrpc/utils"     # ParserWriterChooseMixin
 require "net/http"
 
 module XMLRPC
 
-class Client
- 
-  USER_AGENT = "XMLRPC::Client (Ruby #{RUBY_VERSION})"
+  class Client
+   
+    USER_AGENT = "XMLRPC::Client (Ruby #{RUBY_VERSION})"
 
-  def initialize(host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil)
-    @path = path
-    Net::HTTP.version_1_1
-    @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
+    include ParserWriterChooseMixin
 
-    @parser = nil
-    @create = nil
-  end
+    def initialize(host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil)
+      @path = path
+      Net::HTTP.version_1_1
+      @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
 
-  def call(method, *args)
-    ok, param = call2(method, *args) 
-    return param if ok
-    raise param
-  end 
- 
-  def call2(method, *args)
-
-    request = create().methodCall(method, *args)
-
-    resp, data = @http.post (
-                   @path, 
-                   request,
-                   "User-Agent"     =>  USER_AGENT,
-                   "Content-Type"   => "text/xml",
-                   "Content-Length" => request.size.to_s 
-                 )
-    @http.finish
-
-    if resp.code[0,1] != "2"
-      raise "HTTP-Error: #{resp.code} #{resp.message}" 
+      @parser = nil
+      @create = nil
     end
 
-    if data.nil? or data.size == 0 or resp["Content-Length"].to_i != data.size
-      raise "Wrong size"
-    end
+    def call(method, *args)
+      ok, param = call2(method, *args) 
+      return param if ok
+      raise param
+    end 
+   
+    def call2(method, *args)
 
-    if resp["Content-Type"] != "text/xml"
-      raise "Wrong content-type"
-    end
+      request = create().methodCall(method, *args)
 
-    parser().parseMethodResponse(data)
-  end
+      resp, data = @http.post (
+		     @path, 
+		     request,
+		     "User-Agent"     =>  USER_AGENT,
+		     "Content-Type"   => "text/xml",
+		     "Content-Length" => request.size.to_s 
+		   )
+      @http.finish
 
-  
-  def proxy(prefix, *args)
-    Proxy.new(self, prefix, args)
-  end
-
-  def proxy2(prefix, *args)
-    Proxy.new(self, prefix, args, false)
-  end
-
-
-  def set_writer(writer)
-    @create = Create.new(writer)
-  end
-
-  def set_parser(parser)
-    @parser = parser
-  end
-
-
-  private
-
-  def create
-    # if set_writer was not already called then call it now
-    if @create.nil? then
-      set_writer(XMLWriter::DEFAULT_WRITER.new)
-    end
-    @create
-  end
-
-  def parser
-    # if set_parser was not already called then call it now
-    if @parser.nil? then
-      set_parser(XMLParser::DEFAULT_PARSER.new)
-    end
-    @parser
-  end
-
-
-  class Proxy
-
-    def initialize(server, prefix, args=[], call=true, delim=".")
-      @server = server
-      @prefix = prefix + delim
-      @call   = call
-      @args   = args 
-    end
-
-    def method_missing(mid, *args)
-      pre = @prefix + mid.to_s
-      arg = @args + args
-
-      if @call
-        @server.call (pre, *arg)
-      else
-        @server.call2(pre, *arg)
+      if resp.code[0,1] != "2"
+	raise "HTTP-Error: #{resp.code} #{resp.message}" 
       end
+
+      if data.nil? or data.size == 0 or resp["Content-Length"].to_i != data.size
+	raise "Wrong size"
+      end
+
+      if resp["Content-Type"] != "text/xml"
+	raise "Wrong content-type"
+      end
+
+      parser().parseMethodResponse(data)
     end
 
-  end # class Proxy
+    
+    def proxy(prefix, *args)
+      Proxy.new(self, prefix, args)
+    end
+
+    def proxy2(prefix, *args)
+      Proxy.new(self, prefix, args, false)
+    end
+
+
+
+    class Proxy
+
+      def initialize(server, prefix, args=[], call=true, delim=".")
+	@server = server
+	@prefix = prefix + delim
+	@call   = call
+	@args   = args 
+      end
+
+      def method_missing(mid, *args)
+	pre = @prefix + mid.to_s
+	arg = @args + args
+
+	if @call
+	  @server.call (pre, *arg)
+	else
+	  @server.call2(pre, *arg)
+	end
+      end
+
+    end # class Proxy
 
 
 
 
-end # class Client
+  end # class Client
 
 end # module XMLRPC
 

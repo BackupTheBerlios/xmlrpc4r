@@ -76,6 +76,19 @@ the same class.
     The default-handler is called with the (XML-RPC) method-name as first argument, and
     the other arguments are the parameters given by the client-call.
 
+
+--- XMLRPC::BasicServer#set_writer( writer )
+    Sets the XML writer to use for generating XML output.
+    Should be an instance of a class from module (({XMLRPC::XMLWriter})).
+    If this method is not called, then (({XMLRPC::XMLWriter::DEFAULT_WRITER})) is used. 
+
+--- XMLRPC::BasicServer#set_parser( parser )
+    Sets the XML parser to use for parsing XML documents.
+    Should be an instance of a class from module (({XMLRPC::XMLParser})).
+    If this method is not called, then (({XMLRPC::XMLParser::DEFAULT_WRITER})) is used.
+
+
+
 =end
 
 
@@ -83,18 +96,25 @@ the same class.
 require "xmlrpc/parser"
 require "xmlrpc/create"
 require "xmlrpc/httpserver"
+require "xmlrpc/utils"         # ParserWriterChooseMixin
+
+
 
 module XMLRPC
 
 
 class BasicServer
 
+  include ParserWriterChooseMixin
+
   def initialize(class_delim=".")
     @handler = []
     @default_handler = method( :default_handler).to_proc
 
-    @create = XMLRPC::Create.new
     @class_delim = class_delim
+
+    @create = nil
+    @parser = nil
   end
 
   def add_handler(prefix, obj=nil, &block)
@@ -170,7 +190,7 @@ class BasicServer
     rescue XMLRPC::FaultException => e  
       [false, e]  
     end
-    @create.methodResponse(*res) 
+    create().methodResponse(*res) 
   end
 
   #
@@ -242,9 +262,9 @@ class CGIServer < BasicServer
 
   def initialize(*a)
     super(*a)
-
-    parser = Parser.new
-   
+  end
+  
+  def serve
     length = ENV['CONTENT_LENGTH'].to_i
 
     http_error(405, "Method Not Allowed") unless ENV['REQUEST_METHOD'] == "POST" 
@@ -256,11 +276,9 @@ class CGIServer < BasicServer
 
     http_error(400, "Bad Request")        if data.nil? or data.size != length
 
-    @method, @params = parser.parseMethodCall(data) 
-  end
-  
-  def serve
-    resp = handle(@method, *@params)
+    method, params = parser().parseMethodCall(data) 
+
+    resp = handle(method, *params)
     http_write(resp, "Content-type" => "text/xml")
   end
 
@@ -355,7 +373,6 @@ class Server < BasicServer
   def initialize(port=8080, host="127.0.0.1", *a)
     super(*a)
     @server = ::HttpServer.new(proc {|data| request_handler(data)}, port, host)
-    @parser = Parser.new
   end
   
   def serve
@@ -375,7 +392,7 @@ class Server < BasicServer
 
   def request_handler(data)
     $stderr.puts "in request_handler" if $DEBUG
-    method, params = @parser.parseMethodCall(data) 
+    method, params = parser().parseMethodCall(data) 
     handle(method, *params)
    end
   
@@ -386,6 +403,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.21 2001/02/04 12:49:29 michael Exp $    
+    $Id: server.rb,v 1.22 2001/04/20 13:38:02 michael Exp $    
 =end
 
