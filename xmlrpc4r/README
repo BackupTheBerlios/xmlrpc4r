@@ -1,0 +1,42 @@
+$Id: README,v 1.1 2001/01/24 21:35:46 michael Exp $
+
+XML-RPC for Ruby
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
+License is the same as Ruby's
+
+For more information about XML-RPC look at http://www.xmlrpc.com.
+
+
+PREREQUISITES
+-------------
+You need xmlparser (I use version 0.6.1) from RAA, and 
+a Ruby version >= 1.6.
+
+
+INSTALL
+-------
+If you want to use XML-RPC (why not :) then you have to
+copy cgi_server.rb, client.rb, create.rb and parser.rb to a
+directory which is in the Ruby loadpath. And of course you
+must have xmlparser installed.
+
+
+SAMPLES
+-------
+I've included one example of an XML-RPC cgi-based server and
+a ruby-program which calles it.
+"samples/xml.cgi" is the cgi-based server, which should be placed
+into your cgi-bin directory of your web-server.
+"sampels/call.rb" is the client-side which calls the server (check 
+the URL /cgi/xml.cgi in samples/call.rb if it points to the cgi-based
+server-script)
+
+
+TODO
+----
+- write documentation
+- base64 type
+- dateTime.iso8601 type
+- convert from DOM to SAX ?
+- declare exceptions (e.g. ParserException...)
+ 
