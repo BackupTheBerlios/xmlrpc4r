@@ -60,7 +60,6 @@ the same class.
     (({XMLRPC::FaultException})) that has a ((|faultCode|)) and ((|faultString|))
     field.
 
-
 --- XMLRPC::BasicServer#add_handler( prefix, obj )
     This is the second form of ((<add_handler|XMLRPC::BasicServer#add_handler>)).
     To add an object write:
@@ -70,6 +69,19 @@ the same class.
     where the ((|class_delim|)) in ((<new|XMLRPC::BasicServer.new>)) 
     has it's role, a XML-RPC method-name is defined by 
     ((|prefix|)) + ((|class_delim|)) + (('"name of method"')). 
+
+--- XMLRPC::BasicServer#add_handler( interface, obj )
+    This is the third form of ((<add_handler|XMLRPC::BasicServer#add_handler>)).
+
+    Use (({XMLRPC::interface})) to generate an ServiceInterface object, which
+    represents an interface (with signature and help text) for a handler class.
+
+    Parameter ((|interface|)) must be of type (({XMLRPC::ServiceInterface})).
+    Adds all methods of ((|obj|)) which are defined in ((|interface|)) to the
+    server.
+
+    This is the recommended way of adding services to a server!
+
 
 --- XMLRPC::BasicServer#get_default_handler
     Returns the default-handler, which is called when no handler for
@@ -171,9 +183,22 @@ class BasicServer
       # proc-handler
       @handler << [prefix, block, obj_or_signature, help]   
     else
-      # class-handler
-      raise ArgumentError, "Expected non-nil value" if obj_or_signature.nil?
-      @handler << [prefix + @class_delim, obj_or_signature]
+      if prefix.kind_of? String
+        # class-handler
+        raise ArgumentError, "Expected non-nil value" if obj_or_signature.nil?
+        @handler << [prefix + @class_delim, obj_or_signature]
+      elsif prefix.kind_of? XMLRPC::ServiceInterface
+        # class-handler with interface
+        interface = prefix
+        prefix    = interface.get_prefix + @class_delim
+
+        # add all methods
+        interface.get_methods.each do |name, meth, sig, help|
+          @handler << [prefix+name, obj.method(meth).to_proc, sig, help]
+        end
+      else
+        raise ArgumentError, "Wrong type for parameter 'prefix'"
+      end
     end
   end
 
@@ -552,6 +577,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.33 2001/06/29 21:13:33 michael Exp $    
+    $Id: server.rb,v 1.34 2001/07/03 13:16:27 michael Exp $    
 =end
 

@@ -6,7 +6,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: utils.rb,v 1.4 2001/07/03 13:02:52 michael Exp $ 
+# $Id: utils.rb,v 1.5 2001/07/03 13:16:27 michael Exp $ 
 #
 
 module XMLRPC
@@ -69,7 +69,13 @@ module XMLRPC
       instance_eval &p
     end
 
-    attr_reader :prefix, :methods
+    def get_prefix
+      @prefix
+    end
+
+    def get_methods
+      @methods
+    end
 
     def add_method(sig, help=nil, meth_name=nil)
       mname = nil
