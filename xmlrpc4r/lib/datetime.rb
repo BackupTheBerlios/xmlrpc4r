@@ -20,6 +20,8 @@ component. (({XMLRPC::DateTime})) is able to store a XMLRPC
     Creates a new (({XMLRPC::DateTime})) instance with the
     parameters ((|year|)), ((|month|)), ((|day|)) as date and 
     ((|hour|)), ((|min|)), ((|sec|)) as time.
+    Raises (({ArgumentError})) if a parameter is out of range, or ((|year|)) is not
+    of type (({Integer})).
     
 == Instance Methods
 --- XMLRPC::DateTime#year
@@ -33,15 +35,17 @@ component. (({XMLRPC::DateTime})) is able to store a XMLRPC
 --- XMLRPC::DateTime#mon
     Alias for ((<XMLRPC::DateTime#month>)).
 
---- XMLRPC::DateTime#year=
---- XMLRPC::DateTime#month=
---- XMLRPC::DateTime#day=
---- XMLRPC::DateTime#hour=
---- XMLRPC::DateTime#min=
---- XMLRPC::DateTime#sec=
-    Set the value of the specified date/time component.
+--- XMLRPC::DateTime#year= (value) 
+--- XMLRPC::DateTime#month= (value)
+--- XMLRPC::DateTime#day= (value)
+--- XMLRPC::DateTime#hour= (value)
+--- XMLRPC::DateTime#min= (value)
+--- XMLRPC::DateTime#sec= (value)
+    Set ((|value|)) as the new date/time component.
+    Raises (({ArgumentError})) if ((|value|)) is out of range, or in the case
+    of (({XMLRPC::DateTime#year=})) if ((|value|)) is not of type (({Integer})).
 
---- XMLRPC::DateTime#mon=
+--- XMLRPC::DateTime#mon= (value)
     Alias for ((<XMLRPC::DateTime#month=>)).
 
 --- XMLRPC::DateTime#to_time
@@ -65,18 +69,45 @@ module XMLRPC
 
 class DateTime
   
-  attr_accessor :year, :month, :day, :hour, :min, :sec
+  attr_reader :year, :month, :day, :hour, :min, :sec
+
+  def year= (value)
+    raise ArgumentError, "date/time out of range" unless value.is_a? Integer
+    @year = value
+  end
+
+  def month= (value)
+    raise ArgumentError, "date/time out of range" unless (1..12).include? value
+    @month = value
+  end
+
+  def day= (value)
+    raise ArgumentError, "date/time out of range" unless (1..31).include? value
+    @day = value
+  end
+
+  def hour= (value)
+    raise ArgumentError, "date/time out of range" unless (0..24).include? value
+    @hour = value
+  end
+
+  def min= (value)
+    raise ArgumentError, "date/time out of range" unless (0..59).include? value
+    @min = value
+  end
+
+  def sec= (value)
+    raise ArgumentError, "date/time out of range" unless (0..59).include? value
+    @sec = value
+  end
 
   alias mon  month
   alias mon= month= 
  
+
   def initialize(year, month, day, hour, min, sec)
-    @year  = year
-    @month = month
-    @day   = day
-    @hour  = hour
-    @min   = min
-    @sec   = sec
+    self.year, self.month, self.day = year, month, day
+    self.hour, self.min, self.sec   = hour, min, sec
   end
  
   def to_time
@@ -103,5 +134,5 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: datetime.rb,v 1.3 2001/02/05 22:18:58 michael Exp $
+    $Id: datetime.rb,v 1.4 2001/02/07 18:36:37 michael Exp $
 =end
