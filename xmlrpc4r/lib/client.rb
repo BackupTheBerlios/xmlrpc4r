@@ -174,7 +174,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.37 2001/06/21 11:38:11 michael Exp $
+    $Id: client.rb,v 1.38 2001/06/24 20:07:06 michael Exp $
 
 =end
 
@@ -253,13 +253,19 @@ module XMLRPC
 	raise "HTTP-Error: #{resp.code} #{resp.message}" 
       end
 
-      if data.nil? or data.size == 0 or resp["Content-Length"].to_i != data.size
-	raise "Wrong size"
+      if resp["Content-Type"] != "text/xml"
+        if resp["Content-Type"] == "text/html"
+          raise "Wrong content-type: \n#{data}"
+        else
+          raise "Wrong content-type"
+        end
       end
 
-      if resp["Content-Type"] != "text/xml"
-	raise "Wrong content-type"
+      expected = resp["Content-Length"] || "<unknown>"
+      if data.nil? or data.size == 0 or expected.to_i != data.size
+	raise "Wrong size. Was #{data.size}, should be #{expected}"
       end
+
 
       parser().parseMethodResponse(data)
     end
