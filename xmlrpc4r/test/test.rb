@@ -12,7 +12,9 @@ end
 
 require "runit/cui/testrunner"
 require "test_datetime"
+require "test_parser"
 
 
 RUNIT::CUI::TestRunner.run(Test_DateTime.suite)
+RUNIT::CUI::TestRunner.run(Test_Parser.suite)
 
