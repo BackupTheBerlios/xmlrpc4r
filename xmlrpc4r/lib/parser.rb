@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.23 2001/05/13 19:48:42 michael Exp $
+# $Id: parser.rb,v 1.24 2001/06/11 16:02:46 michael Exp $
 #
 
 
@@ -332,13 +332,18 @@ module XMLRPC
 
       def value(node)
 	nodeMustBe(node, "value")
-	hasOnlyOneChild(node) 
+	nodes = node.childNodes.to_a.size
+        if nodes == 0 
+          return ""
+        elsif nodes > 1 
+	  raise "wrong xml-rpc (size)"
+        end
 
 	child = node.firstChild
-	
+
 	case _nodeType(child)
 	when :TEXT
-	  text(child)
+          text_zero_one(node)
 	when :ELEMENT
 	  case child.nodeName
 	  when "i4", "int"        then integer(child)
