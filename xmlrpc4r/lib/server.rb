@@ -7,6 +7,7 @@ Released under the same term of license as Ruby.
 = Classes
 * ((<XMLRPC::BasicServer>))
 * ((<XMLRPC::CGIServer>))
+* ((<XMLRPC::ModRubyServer>))
 * ((<XMLRPC::Server>))
 
 = XMLRPC::BasicServer
@@ -659,6 +660,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.38 2001/07/06 11:25:00 michael Exp $    
+    $Id: server.rb,v 1.39 2001/07/06 11:37:07 michael Exp $    
 =end
 
