@@ -54,15 +54,16 @@ Do not use this server, as this is/should be an abstract class.
     (({XMLRPC::FaultException})) that has a ((|faultCode|)) and ((|faultString|))
     field.
 
---- XMLRPC::BasicServer#default_handler
+--- XMLRPC::BasicServer#get_default_handler
     Returns the default-handler, which is called when no handler for
     a method-name is found.
     It is a (({Proc})) object.
 
---- XMLRPC::BasicServer#default_handler= ( handler )
+--- XMLRPC::BasicServer#set_default_handler ( &handler )
     Sets ((|handler|)) as the default-handler, which is called when 
-    no handler for a method-name is found. ((|handler|)) should be a 
-    (({Proc})) object.
+    no handler for a method-name is found. ((|handler|)) is a code-block.
+    The default-handler is called with the method-name as first argument, and
+    the other arguments are the parameters given by the client-call.
 
 
 =end
@@ -77,8 +78,6 @@ module XMLRPC
 
 
 class BasicServer
-
-  attr_accessor :default_handler
 
   def initialize(class_delim=".")
     @handler = []
@@ -103,6 +102,18 @@ class BasicServer
     end
   end
 
+  
+  def get_default_handler
+    @default_handler
+  end
+
+  def set_default_handler (&handler)
+    if handler.nil? 
+      raise ArgumentError, "No block given"
+    else
+      @default_handler = handler
+    end
+  end  
 
   private
  
@@ -142,6 +153,7 @@ class BasicServer
   # responsible for the request
   #
   def def_handler(methodname, *args)
+    #raise XMLRPC::FaultException.new(-99, "Method #{methodname} missing!")
     raise "Method missing"
   end
 
@@ -167,6 +179,10 @@ end
       end
     end 
 
+    s.set_default_handler do |name, *args|
+      raise XMLRPC::FaultException.new(-99, "Method #{name} missing")
+    end
+  
     s.serve
 
 == Description
@@ -279,6 +295,10 @@ end
       end
     end 
 
+    s.set_default_handler do |name, *args|
+      raise XMLRPC::FaultException.new(-99, "Method #{name} missing")
+    end
+ 
     s.serve
 
 == Description
@@ -339,6 +359,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.11 2001/01/29 13:14:33 michael Exp $    
+    $Id: server.rb,v 1.12 2001/01/29 15:07:41 michael Exp $    
 =end
 
