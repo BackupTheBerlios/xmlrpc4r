@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: server.rb,v 1.3 2001/01/27 19:42:55 michael Exp $
+# $Id: server.rb,v 1.4 2001/01/27 20:22:33 michael Exp $
 #
 
 
@@ -17,10 +17,11 @@ class BasicServer
 
   attr_accessor :default_handler
 
-  def initialize
+  def initialize(class_delim=".")
     @handler = []
     @default_handler = proc {|*a| def_handler(*a)} 
     @create = XMLRPC::Create.new
+    @class_delim = class_delim
   end
 
   def add_handler(prefix, obj=nil, &block)
@@ -29,7 +30,13 @@ class BasicServer
     elsif ! obj.nil? and ! block.nil?
       raise ArgumentError, "Too much parameters"
     else
-      @handler << [prefix, obj || block ]   
+      if ! obj.nil?
+        @handler << [prefix + @class_delim, obj]
+      elsif ! block.nil?
+        @handler << [prefix, block]   
+      else
+        raise "unexpected error"
+      end
     end
   end
 
@@ -115,8 +122,8 @@ class CGIServer < BasicServer
     @@obj
   end
 
-  def initialize
-    super
+  def initialize(*a)
+    super(*a)
     $stdin.binmode
     data = $stdin.read(ENV['CONTENT_LENGTH'].to_i)
     parser = Parser.new
