@@ -1,9 +1,6 @@
-$Id: ToDo,v 1.6 2001/02/02 12:58:03 michael Exp $
+$Id: ToDo,v 1.7 2001/02/02 15:40:34 michael Exp $
 
-- conform to validator1 suite
-- XMLRPC::DateTime class (? date3.rb) 
 - Conversion-class which handles conversion from and to XMLRPC.
-- add fastcgi server
 - write test-cases
 - write documentation (3/4 done)
 - convert from DOM to SAX ? (faster)
@@ -15,6 +12,8 @@ $Id: ToDo,v 1.6 2001/02/02 12:58:03 michael Exp $
 - XML pretty print?
 - write more/better samples
 - Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
+* XMLRPC::DateTime class (? date3.rb) 
+* conform to validator1 suite
 * check arity (if check_arity is true) before calling hanlder
 * argument_error_handler, which is called due to a ArgumentError exception 
 * added standalone server
