@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.8 2001/01/26 17:08:55 michael Exp $
+# $Id: create.rb,v 1.9 2001/01/26 17:17:23 michael Exp $
 #
 
 require "date"
@@ -127,8 +127,11 @@ class Create
       when Date, Time
         # TODO: Time.gm??? .local???
         t = param
-        t = Time.gm(t.year, t.month, t.day) if t.kind_of?(Date)
-        ele("dateTime.iso8601", t.strftime("%Y%m%dT%H:%M:%S"))  
+        if t.kind_of? Date then
+          ele("dateTime.iso8601", format("%.4d%02d%02dT00:00:00", t.year, t.month, t.day))
+        else
+          ele("dateTime.iso8601", t.strftime("%Y%m%dT%H:%M:%S"))  
+        end
       when XMLRPC::Base64
 	ele("base64", param.encoded) 
       else 

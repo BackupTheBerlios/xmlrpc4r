@@ -3,10 +3,11 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.6 2001/01/26 16:49:46 michael Exp $
+# $Id: parser.rb,v 1.7 2001/01/26 17:17:23 michael Exp $
 #
 
 
+require "date"
 require "xmltreebuilder"
 require "xmlrpc/base64"
 
@@ -145,7 +146,11 @@ class Parser
     
     if dt =~ /^(\d\d\d\d)(\d\d)(\d\d)T(\d\d):(\d\d):(\d\d)$/ then
       # TODO: Time.gm ??? .local ??? 
-      Time.gm($1.to_i, $2.to_i, $3.to_i, $4.to_i, $5.to_i, $6.to_i)
+      if $1 >= 1970 then
+        Time.gm($1.to_i, $2.to_i, $3.to_i, $4.to_i, $5.to_i, $6.to_i)
+      else
+        Date.new($1.to_i, $2.to_i, $3.to_i)
+      end
     else
       raise "wrong dateTime.iso8601 format"
     end
