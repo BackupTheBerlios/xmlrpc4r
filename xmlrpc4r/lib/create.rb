@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.3 2001/01/26 14:56:40 michael Exp $
+# $Id: create.rb,v 1.4 2001/01/26 15:25:09 michael Exp $
 #
 
 require "xmltreebuilder"
@@ -131,7 +131,7 @@ def conv2value(param)
         El.new("data", nil, *a)
       )
     when XMLRPC::Base64
-      ele("base64", XMLRPC::Base64.new(param)) 
+      ele("base64", XMLRPC::Base64.new(param).encoded) 
     else 
       raise "Wrong type: not yet working!"
     end
