@@ -1,4 +1,8 @@
 : 1.5
+* allow BigNum's that fit in 32-bit
+* now, always check the parity of a method before calling it
+* in server.rb, BasicServer#set/get_argument_error_handler removed
+* in server.rb, BasicServer.new removed argument "check_parity", now always on
 * introduced new type XMLRPC::DateTime to handle times which
   year is before 1970 (DateTime is now always returned, no more Date/Time)
 * xmlrpc4r now validates to the validator1 test-suite

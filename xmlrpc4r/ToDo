@@ -1,4 +1,4 @@
-$Id: ToDo,v 1.7 2001/02/02 15:40:34 michael Exp $
+$Id: ToDo,v 1.8 2001/02/02 16:35:01 michael Exp $
 
 - Conversion-class which handles conversion from and to XMLRPC.
 - write test-cases
@@ -11,7 +11,7 @@ $Id: ToDo,v 1.7 2001/02/02 15:40:34 michael Exp $
 - "400 Bad Request" on not valid XML ?
 - XML pretty print?
 - write more/better samples
-- Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
+* Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
 * XMLRPC::DateTime class (? date3.rb) 
 * conform to validator1 suite
 * check arity (if check_arity is true) before calling hanlder
