@@ -3,7 +3,7 @@
 # TCP Tunnel
 # Copyright (c) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: tcptunnelgui.rb,v 1.1 2001/07/04 10:26:05 michael Exp $
+# $Id: tcptunnelgui.rb,v 1.2 2001/07/04 10:39:34 michael Exp $
 # 
 
 require "socket"
@@ -23,9 +23,10 @@ REC_BUF_SZ = 100
 WIDTH  = 50
 HEIGHT = 35
 
-def forward(from, to, str)
+def forward(from, to, str, str2)
   Thread.new {
     while (ln = from.recv(REC_BUF_SZ)) != ""
+      str2 << ln
       str.insert("end", ln.gsub("\r", ""))
       to.write ln
     end
@@ -80,9 +81,19 @@ s = TCPServer.new(LISTENHOST, LISTENPORT)
 while client = s.accept
   server = TCPSocket.new(TUNNELHOST, TUNNELPORT)
 
-  a = forward(client, server, ltext)
-  b = forward(server, client, rtext)
+  sc = ""
+  ss = ""
+
+  a = forward(client, server, ltext, sc)
+  b = forward(server, client, rtext, ss)
 
   a.join; b.join
+
+  ltext.value = sc.gsub("\r", "")
+  rtext.value = ss.gsub("\r", "")
+
+  puts sc
+  puts "-" * 79
+  puts ss
 end
 
