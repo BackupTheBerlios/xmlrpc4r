@@ -3,7 +3,7 @@
 # TCP Tunnel
 # Copyright (c) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: tcptunnelgui.rb,v 1.2 2001/07/04 10:39:34 michael Exp $
+# $Id: tcptunnelgui.rb,v 1.3 2001/07/04 15:03:23 michael Exp $
 # 
 
 require "socket"
@@ -48,8 +48,8 @@ rlabel = TkLabel.new(top) { text "To #{TUNNELHOST}:#{TUNNELPORT}  " }
 rlabel.pack 'side' => 'right'
 llabel.pack 'side' => 'left' 
 TkButton.new(top) {
-  text "Refresh"
-  command { $refresh = true }
+  text "Clear"
+  command { $clear = true }
   pack
 }
 
@@ -68,10 +68,10 @@ Thread.new {
 
 Thread.new {
   loop {
-    if $refresh 
+    if $clear 
       ltext.value = ""
       rtext.value = "" 
-      $refresh = false
+      $clear = false
     end
   }
 }
