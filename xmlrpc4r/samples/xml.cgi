@@ -13,7 +13,7 @@ class MyHandlerClass
   def exp(a,b)
     a ** b
   end
- 
+  
 end
  
 
