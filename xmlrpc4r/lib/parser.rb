@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.2 2001/01/26 14:28:07 michael Exp $
+# $Id: parser.rb,v 1.3 2001/01/26 14:41:12 michael Exp $
 #
 
 
@@ -19,19 +19,18 @@ class Parser
   public
 
   def parseMethodResponse
-    methodResponse_document(@tree)
+    methodResponse_document(createCleanedTree(str))
   end
 
   def parseMethodCall
-    methodCall_document(@tree)
+    methodCall_document(createCleanedTree(str))
   end
 
 
 
   private
 
-  def initialize(str)
-    @tree = createCleanedTree(str)
+  def initialize
   end
 
   #
