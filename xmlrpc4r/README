@@ -1,4 +1,4 @@
-$Id: README,v 1.15 2001/02/07 20:06:27 michael Exp $
+$Id: README,v 1.16 2001/03/12 10:22:11 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -7,7 +7,7 @@ License is the same as Ruby's
 For more information about XML-RPC look at http://www.xmlrpc.com.
 
 ACKNOWLEDGMENTS
----------------
+===============
 I have included John W. Small's (jsmall@laser.net) ruby-generic-server 
 into this package, so that you'll not need to download it.
 For copyright notice and license, see file "lib/GServer.rb".
@@ -15,12 +15,12 @@ It is available from RAA. Thanks for his implementation.
 For the documentation, I use the style-sheet of RWiki from NaHi.
 
 PREREQUISITES
--------------
+=============
 You need xmlparser (I use version 0.6.1) from RAA, and 
 a Ruby version >= 1.6.
 
 TEST
------
+=====
 If you want, you can execute the testcases, to make sure, 
 all (for which testcases exist) works correctly.
 Therefore you need "RUNIT" from RAA installed.
@@ -30,7 +30,7 @@ and run "ruby test.rb". If in the last line there's an
 "OK", all works as expected.
 
 INSTALL
--------
+=======
 Type "ruby install.rb" in current directory.
 Make sure you have root priviledges before you do this.
 
@@ -40,12 +40,12 @@ directory "xmlrpc".
 
 
 DOCUMENTATION
--------------
+=============
 Open doc/index.html in a web-browser.
 
 
 SAMPLES
--------
+=======
 See samples/validator/validator1.rb for a very good example.
 I've also included one example of an XML-RPC cgi-based server and
 a ruby-program which calles it.
@@ -56,12 +56,12 @@ the URL /cgi-bin/xml.cgi in samples/call.rb if it points to the cgi-based
 server-script)
 
 PROBLEMS
---------
+========
 A problem is that XML-RPC do not specify the timezone. 
 I use Time.gm(...) to create a Time object!
 
 
 TODO
-----
+====
 See file ToDo.
 
