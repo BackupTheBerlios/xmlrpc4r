@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.14 2001/02/02 16:31:57 michael Exp $
+# $Id: create.rb,v 1.15 2001/02/05 00:19:55 michael Exp $
 #
 
 require "date"
@@ -120,6 +120,17 @@ class Create
 
       when Float
 	ele("double", param.to_s)
+
+      when Struct
+        h = param.members.collect do |key| 
+          value = param[key]
+       	  El.new("member", nil,
+	    ele("name", key.to_s),
+	    conv2value(value) 
+	  )
+	end
+
+	El.new("struct", nil, *h) 
 
       when Hash
 	# TODO: can a Hash be empty?
