@@ -46,12 +46,15 @@ message to this new instance. The given parameters indicate which method to
 call on the remote-side and of course the parameters for the remote procedure.
 
 == Class Methods
---- XMLRPC::Client.new( host, path="/RPC2", port=80 )
+--- XMLRPC::Client.new( host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil )
     Creates an object which represents the remote XML-RPC server on the 
     given host ((|host|)). If the server is CGI-based, ((|path|)) is the
     path to the CGI-script, which will be called, otherwise (in the
     case of a standalone server) ((|path|)) should be (({"/RPC2"})).
-    Finally ((|port|)) is the port on which the XML-RPC server listens.
+    ((|port|)) is the port on which the XML-RPC server listens.
+    If ((|proxy_addr|)) is given, then a proxy server listening at
+    ((|proxy_addr|)) is used. ((|proxy_port|)) is the port of the
+    proxy server.
 
 == Instance Methods
 --- XMLRPC::Client#call( method, *args )
@@ -141,7 +144,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.26 2001/03/22 20:29:29 michael Exp $
+    $Id: client.rb,v 1.27 2001/03/30 19:29:11 michael Exp $
 
 =end
 
@@ -157,9 +160,9 @@ class Client
  
   USER_AGENT = "XMLRPC::Client (Ruby #{RUBY_VERSION})"
 
-  def initialize(host, path="/RPC2", port=80)
+  def initialize(host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil)
     @path = path
-    @http = Net::HTTP.new(host, port)
+    @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
   end
 
   def call(method, *args)
