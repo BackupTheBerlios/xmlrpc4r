@@ -5,13 +5,12 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: test_datetime.rb,v 1.1 2001/02/07 17:06:38 michael Exp $
+# $Id: test_datetime.rb,v 1.2 2001/02/07 20:00:39 michael Exp $
 #
 
 
-
 require "runit/testcase"
-require "xmlrpc/datetime.rb"
+require "xmlrpc/datetime"
 
 class Test_DateTime < RUNIT::TestCase
 
@@ -20,6 +19,23 @@ class Test_DateTime < RUNIT::TestCase
 
     assert_instance_of(XMLRPC::DateTime, dt)
   end
+
+  def test_new_exception
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(4.5, 13, 32, 25, 60, 60) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 12, 32, 25, 60, 60) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 12, 31, 25, 60, 60) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 12, 31, 24, 60, 60) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 12, 31, 24, 59, 60) }
+    assert_no_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 12, 31, 24, 59, 59) }
+
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 0, 0, -1, -1, -1) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 1, 0, -1, -1, -1) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 1, 1, -1, -1, -1) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 1, 1, 0, -1, -1) }
+    assert_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 1, 1, 0, 0, -1) }
+    assert_no_exception(ArgumentError) { XMLRPC::DateTime.new(2001, 1, 1, 0, 0, 0) }
+  end
+
 
   def test_get_values
     y, m, d, h, mi, s = 1970, 3, 24, 12, 0, 5
@@ -58,6 +74,37 @@ class Test_DateTime < RUNIT::TestCase
     dt.mon = 5
     assert_equal(5, dt.month)
     assert_equal(5, dt.mon)
+  end
+
+  def test_set_exception
+    dt = createDateTime
+    
+    assert_exception(ArgumentError)    { dt.year = 4.5 }
+    assert_no_exception(ArgumentError) { dt.year = -2000 }
+ 
+    assert_exception(ArgumentError) { dt.month = 0 }
+    assert_exception(ArgumentError) { dt.month = 13 }
+    assert_no_exception(ArgumentError) { dt.month = 7 }
+
+    assert_exception(ArgumentError) { dt.mon = 0 }
+    assert_exception(ArgumentError) { dt.mon = 13 }
+    assert_no_exception(ArgumentError) { dt.mon = 7 }
+
+    assert_exception(ArgumentError) { dt.day = 0 }
+    assert_exception(ArgumentError) { dt.day = 32 }
+    assert_no_exception(ArgumentError) { dt.day = 16 }
+
+    assert_exception(ArgumentError) { dt.hour = -1 }
+    assert_exception(ArgumentError) { dt.hour = 25 }
+    assert_no_exception(ArgumentError) { dt.hour = 12 }
+
+    assert_exception(ArgumentError) { dt.min = -1 }
+    assert_exception(ArgumentError) { dt.min = 60 }
+    assert_no_exception(ArgumentError) { dt.min = 30 }
+
+    assert_exception(ArgumentError) { dt.sec = -1 }
+    assert_exception(ArgumentError) { dt.sec = 60 }
+    assert_no_exception(ArgumentError) { dt.sec = 30 }
   end
 
   def test_to_a
@@ -122,8 +169,4 @@ class Test_DateTime < RUNIT::TestCase
 
 end
  
-if $0 == __FILE__
-  require "runit/cui/testrunner"
-  RUNIT::CUI::TestRunner.run(Test_DateTime.suite)
-end    
-  
+
