@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.16 2001/04/20 12:17:43 michael Exp $
+# $Id: create.rb,v 1.17 2001/04/20 12:27:53 michael Exp $
 #
 
 require "date"
@@ -78,11 +78,14 @@ module XMLRPC
 
     end # class XMLParser
 
+
+    DEFAULT_WRITER = Simple
+
   end # module XMLWriter
 
   class Create
 
-    def initialize(xml_writer = XMLWriter::Simple.new)
+    def initialize(xml_writer = XMLWriter::DEFAULT_WRITER.new)
       @writer = xml_writer
     end
 
