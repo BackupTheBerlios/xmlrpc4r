@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
 # 
-# $Id: install.rb,v 1.6 2001/02/04 14:15:17 michael Exp $
+# $Id: install.rb,v 1.7 2001/04/20 13:36:26 michael Exp $
 # Install XML-RPC
 #
 
 DIR   = "xmlrpc"
-FILES = %w(GServer.rb base64.rb client.rb create.rb datetime.rb httpserver.rb parser.rb server.rb)
+FILES = %w(GServer.rb base64.rb client.rb create.rb datetime.rb httpserver.rb parser.rb server.rb utils.rb)
 
 
 require "rbconfig"
