@@ -17,10 +17,6 @@ much easier. For more information see the XML-RPC homepage
 == Download
 xmlrpc4r can be downloaded from here:
 
-* Version 1.1:
-
-  ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_1.tar.gz>))
-
 * Version 1.2:
 
   ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_2.tar.gz>))
@@ -29,11 +25,16 @@ xmlrpc4r can be downloaded from here:
 
   ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_3.tar.gz>))
 
+* Version 1.4:
+
+  ((<URL:http://www.uni-karlsruhe.de/~uu9r/xmlrpc4r/xmlrpc4r-1_4.tar.gz>))
+
+
 == Further information
 For more information on installation and prerequisites read the (('README')) 
 file of the package.
 
 == History
-    $Id: index.rd,v 1.3 2001/01/28 17:35:53 michael Exp $
+    $Id: index.rd,v 1.4 2001/01/29 21:30:49 michael Exp $
 
 =end
