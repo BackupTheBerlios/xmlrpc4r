@@ -1,6 +1,9 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+: 1.5.4
+* fixed empty string bug, thanks to NaHi
+
 : 1.5.3
 * added HOWTO
 * XMLRPC::DateTime.new and all setter-methods, raise now an ArgumentError if the value is out of range
@@ -28,5 +31,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.11 2001/02/07 23:38:41 michael Exp $
+  $Id: ChangeLog,v 1.12 2001/03/22 08:11:51 michael Exp $
 =end
