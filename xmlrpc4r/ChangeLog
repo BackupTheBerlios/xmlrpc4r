@@ -1,6 +1,9 @@
 =begin
 = ChangeLog for xmlrpc4r
 
+:1.6.3
+* added Introspection (BasicServer#add_introspection) (by Neil Conway)
+
 :1.6.2 (2001-06-03)
 * fixed bug; in create.rb XMLWrite::Simple did not escape text, thanx to Colin Steele
 * a XMLRPC::Base64 object is no longer returned from a RPC, instead a Ruby String is returned.
@@ -49,5 +52,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.21 2001/06/03 10:11:06 michael Exp $
+  $Id: ChangeLog,v 1.22 2001/06/09 17:07:27 michael Exp $
 =end

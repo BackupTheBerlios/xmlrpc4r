@@ -87,6 +87,11 @@ the same class.
     Should be an instance of a class from module (({XMLRPC::XMLParser})).
     If this method is not called, then (({XMLRPC::XMLParser::DEFAULT_WRITER})) is used.
 
+--- XMLRPC::BasicServer#add_introspection( prefix="system" )
+    Adds the introspection handlers "listMethods", "methodSignature" and "methodHelp", 
+    where only the first one works.
+    Note that method method names of class-handlers which occur in (({Object})) are not
+    shown.
 
 
 =end
@@ -112,23 +117,22 @@ class BasicServer
     @default_handler = method( :default_handler).to_proc
 
     @class_delim = class_delim
-
     @create = nil
     @parser = nil
   end
 
   def add_handler(prefix, obj=nil, &block)
     if obj.nil? and block.nil? 
-      raise ArgumentError, "Too less parameters"
+      raise ArgumentError, "Too few parameters"
     elsif ! obj.nil? and ! block.nil?
-      raise ArgumentError, "Too much parameters"
+      raise ArgumentError, "Too many parameters"
     else
       if ! obj.nil?
         @handler << [prefix + @class_delim, obj]
       elsif ! block.nil?
         @handler << [prefix, block]   
       else
-        raise "unexpected error"
+        raise "Unexpected error"
       end
     end
   end
@@ -146,8 +150,29 @@ class BasicServer
     end
   end  
 
+  def add_introspection(prefix="system")
+    add_handler(prefix + @class_delim + "listMethods") do
+      methods = []
+      @handler.each do |name, obj|
+        if obj.kind_of? Proc
+          methods << name
+        else
+          (obj.methods - Object.methods).each {|meth| methods << name + meth}
+        end
+      end
+      methods
+    end
 
-  private
+    add_handler(prefix + @class_delim + "methodSignature") do |meth|
+      "Not implemented"
+    end
+
+    add_handler(prefix + @class_delim + "methodHelp") do |meth|
+      "Not implemented"
+    end
+  end
+ 
+  private # --------------------------------------------------------------
  
   #
   # method dispatch
@@ -200,7 +225,7 @@ class BasicServer
   def default_handler(methodname, *args)
     raise XMLRPC::FaultException.new(-99, "Method <#{methodname}> missing or wrong number of parameters!")
   end
-
+ 
 end
 
 
@@ -403,6 +428,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.23 2001/05/08 13:02:27 michael Exp $    
+    $Id: server.rb,v 1.24 2001/06/09 17:07:32 michael Exp $    
 =end
 
