@@ -16,7 +16,7 @@ You can add handler and set a default handler.
 Do not use this server, as this is/should be an abstract class.
 
 == Class Methods
---- XMLRPC::BasicServer.new( class_delim=".", check_arity=true )
+--- XMLRPC::BasicServer.new( class_delim=".", check_arity=false )
     Creates a new (({XMLRPC::BasicServer})) instance, which should not be 
     done, because (({XMLRPC::BasicServer})) is an abstract class. This
     method should be called from a subclass indirectly by a (({super})) call
@@ -28,7 +28,8 @@ Do not use this server, as this is/should be an abstract class.
     a handler (method or (({Proc})) object) is compared to the given arguments submitted
     by the client for a RPC ((-Remote Procedure Call-)). 
     A handler is only called if it accepts the number of arguments, otherwise the search 
-    for another handler will go on.
+    for another handler will go on. When at the end no handler was found, 
+    the ((<default_handler|XMLRPC::BasicServer#set_default_handler>)) will be called.
     
 
 == Instance Methods
@@ -95,7 +96,7 @@ module XMLRPC
 
 class BasicServer
 
-  def initialize(class_delim=".", check_arity=true)
+  def initialize(class_delim=".", check_arity=false)
     @handler = []
     @default_handler        = method( :default_handler).to_proc
     @argument_error_handler = method( :argument_error_handler).to_proc 
@@ -420,6 +421,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.16 2001/01/29 21:28:06 michael Exp $    
+    $Id: server.rb,v 1.17 2001/01/29 22:08:36 michael Exp $    
 =end
 
