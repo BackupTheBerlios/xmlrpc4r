@@ -66,14 +66,14 @@ call on the remote-side and of course the parameters for the remote procedure.
     * (({Float}))
     * (({Hash}))
     * (({Array}))
-    * (({Date})), (({Time}))
+    * (({Date})), (({Time})), (({XMLRPC::DateTime}))
     * (({XMLRPC::Base64})) 
     
-    The method returns the return-value from the RPC ((-stands for Remote Procedure Call-)). 
+    The method returns the return-value from the RPC 
+    ((-stands for Remote Procedure Call-)). 
     The type of the return-value is one of the above shown,
-    only that a XML-RPC (('dateTime.iso8601')) type is, when possible, 
-    returned as a Ruby (({Time})) object and only if the range disallows as 
-    a (({Date})). 
+    only that a XML-RPC (('dateTime.iso8601')) type is always returned as
+    a ((<(({XMLRPC::DateTime}))|URL:datetime.rb>)) object.
     If the remote procedure returned a fault-structure, then a 
     (({XMLRPC::FaultException})) exception is raised, which has two accessor-methods
     (({faultCode})) and (({faultString})) of type (({Integer})) and (({String})).
@@ -87,7 +87,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.19 2001/01/29 16:30:21 michael Exp $
+    $Id: client.rb,v 1.20 2001/02/02 13:31:12 michael Exp $
 =end
 
 
