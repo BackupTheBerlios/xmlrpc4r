@@ -334,9 +334,10 @@ Implements a standalone XML-RPC server.
 ((<XMLRPC::BasicServer>))
 
 == Class Methods
---- XMLRPC::Server.new( port=8080, *a )
+--- XMLRPC::Server.new( port=8080, host="127.0.0.1", *a )
     Creates a new (({XMLRPC::Server})) instance, which is a XML-RPC server listening on
-    port ((|port|)). The server is not started, to start it you have to call ((<serve|XMLRPC::Server#serve>)).
+    port ((|port|)) and accepts requests for the host ((|host|)), which is by default only the localhost. 
+    The server is not started, to start it you have to call ((<serve|XMLRPC::Server#serve>)).
     All additionally given parameters in ((|*a|)) are by-passed to ((<XMLRPC::BasicServer.new>)). 
 
 == Instance Methods
@@ -351,9 +352,9 @@ Implements a standalone XML-RPC server.
 
 class Server < BasicServer
 
-  def initialize(port=8080, *a)
+  def initialize(port=8080, host="127.0.0.1", *a)
     super(*a)
-    @server = ::HttpServer.new(proc {|data| request_handler(data)}, port) 
+    @server = ::HttpServer.new(proc {|data| request_handler(data)}, port, host)
     @parser = Parser.new
   end
   
@@ -385,6 +386,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.20 2001/02/02 16:50:19 michael Exp $    
+    $Id: server.rb,v 1.21 2001/02/04 12:49:29 michael Exp $    
 =end
 
