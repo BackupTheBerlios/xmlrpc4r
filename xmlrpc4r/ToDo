@@ -1,4 +1,4 @@
-$Id: ToDo,v 1.20 2001/04/20 15:53:46 michael Exp $
+$Id: ToDo,v 1.21 2001/06/12 10:23:52 michael Exp $
 
 - implement new features of non-standard XML-RPC extensions
 - service introspection
@@ -16,6 +16,25 @@ $Id: ToDo,v 1.20 2001/04/20 15:53:46 michael Exp $
 - "400 Bad Request" on not valid XML ?
 - XML pretty print?
 - write more/better samples
+
+* Server method hooks (e.g. for converting types and catching exceptions):
+  class Service
+  ...
+  end
+  Server.set_hook {|params|
+    begin
+      x = yield params
+      # convert x
+    rescue
+      # rescue exceptions
+    end
+  }
+  or alternative two hook functions, one for converting paramerters
+  and one for converting the result.
+  Server.set_call_hook {|params|
+    # convert params and return them
+  }
+  Server.set_result_hook {...}
 
 
 * add support for NQXML
