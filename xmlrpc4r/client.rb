@@ -5,7 +5,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: client.rb,v 1.2 2001/01/24 17:06:58 michael Exp $
+# $Id: client.rb,v 1.3 2001/01/24 18:01:36 michael Exp $
 #
 
 
@@ -26,8 +26,8 @@
 
 
 
-require "create"
-require "parser"
+require "parser.rb"
+require "create.rb"
 require "net/http"
 
 
