@@ -1,0 +1,8 @@
+: 1.5
+* introduced new type XMLRPC::DateTime to handle times which
+  year is before 1970 (DateTime is now always returned, no more Date/Time)
+* xmlrpc4r now validates to the validator1 test-suite
+* added validator sample
+* fixed a bug in parser, which causes the validator-suite to fail
+* started writing ChangeLog
+: 1.4
