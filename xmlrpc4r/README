@@ -1,4 +1,4 @@
-$Id: README,v 1.17 2001/04/20 15:56:38 michael Exp $
+$Id: README,v 1.18 2001/06/19 13:30:28 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -32,6 +32,10 @@ and run "ruby test.rb". If in the last line there's an
 
 INSTALL
 =======
+
+Edit the lib/config.rb file to configure which XML parser/writer
+to use or which features to enable. 
+
 Type "ruby install.rb" in current directory.
 Make sure you have root priviledges before you do this.
 
