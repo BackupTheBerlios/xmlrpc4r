@@ -46,7 +46,7 @@ message to this new instance. The given parameters indicate which method to
 call on the remote-side and of course the parameters for the remote procedure.
 
 == Class Methods
---- XMLRPC::Client.new( host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil )
+--- XMLRPC::Client.new( host=nil, path=nil, port=nil, proxy_addr=nil, proxy_port=nil, user=nil, password=nil, use_ssl=false )
     Creates an object which represents the remote XML-RPC server on the 
     given host ((|host|)). If the server is CGI-based, ((|path|)) is the
     path to the CGI-script, which will be called, otherwise (in the
@@ -55,6 +55,16 @@ call on the remote-side and of course the parameters for the remote procedure.
     If ((|proxy_addr|)) is given, then a proxy server listening at
     ((|proxy_addr|)) is used. ((|proxy_port|)) is the port of the
     proxy server.
+
+    Default values for ((|host|)), ((|path|)) and ((|port|)) are 'localhost', '/RPC2' and
+    '80' respectively using SSL '443'.
+
+    If ((|user|)) and ((|password|)) are given, then on a HTTP 401 Authorization Required
+    status, these values are passed to authentificate the client. Currently only Basic
+    Authentification is implemented, no Digest. 
+
+    If ((|use_ssl|)) is set to (({true})), comunication over SSL is enabled.
+    Note, that you need the SSL package from RAA installed.
 
 == Instance Methods
 --- XMLRPC::Client#call( method, *args )
@@ -135,6 +145,13 @@ call on the remote-side and of course the parameters for the remote procedure.
     Should be an instance of a class from module (({XMLRPC::XMLParser})).
     If this method is not called, then (({XMLRPC::Config::DEFAULT_PARSER})) is used.
 
+--- XMLRPC::Client#user
+--- XMLRPC::Client#password
+--- XMLRPC::Client#user= (user)
+--- XMLRPC::Client#password (password)
+
+    Sets/gets the user or password used for Authentification.
+
 
 = XMLRPC::Client::Proxy
 == Synopsis
@@ -174,7 +191,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.38 2001/06/24 20:07:06 michael Exp $
+    $Id: client.rb,v 1.39 2001/06/25 11:16:02 michael Exp $
 
 =end
 
@@ -194,14 +211,41 @@ module XMLRPC
 
     include ParserWriterChooseMixin
 
-    def initialize(host, path="/RPC2", port=80, proxy_addr=nil, proxy_port=nil)
-      @path = path
+    def initialize(host=nil, path=nil, port=nil, proxy_addr=nil, proxy_port=nil, user=nil, password=nil, use_ssl=false)
+
+      host ||= "localhost"
+      if use_ssl
+        require "net/https"
+        port ||= 443
+      else
+        port ||= 80
+      end
+       
+      @path = path || "/RPC2"
       Net::HTTP.version_1_1
       @http = Net::HTTP.new(host, port, proxy_addr, proxy_port)
+      @http.use_ssl = true if use_ssl
 
       @parser = nil
       @create = nil
+
+      @user     = user
+      @password = password
+      @auth     = nil  # no authentification at the beginning (first if 401)
     end
+
+    attr_reader :user, :password
+
+    def user=(user) 
+      @user = user
+      @auth = nil
+    end
+
+    def password=(password) 
+      @password = password 
+      @auth     = nil
+    end 
+    
 
     def call(method, *args)
       ok, param = call2(method, *args) 
@@ -237,37 +281,65 @@ module XMLRPC
 
  
     def call2(method, *args)
-
       request = create().methodCall(method, *args)
+      try = 0
 
-      resp, data = @http.post (
-		     @path, 
-		     request,
-		     "User-Agent"     =>  USER_AGENT,
-		     "Content-Type"   => "text/xml",
-		     "Content-Length" => request.size.to_s 
-		   )
-      @http.finish
+      loop do
+        try += 1
 
-      if resp.code[0,1] != "2"
-	raise "HTTP-Error: #{resp.code} #{resp.message}" 
-      end
+        header = {  
+         "User-Agent"     =>  USER_AGENT,
+         "Content-Type"   => "text/xml",
+         "Content-Length" => request.size.to_s 
+        }
 
-      if resp["Content-Type"] != "text/xml"
-        if resp["Content-Type"] == "text/html"
-          raise "Wrong content-type: \n#{data}"
-        else
-          raise "Wrong content-type"
+        # add authorization header
+        unless @auth.nil?
+          raise "Authentification expected but no username or password specified." if @user.nil? or @password.nil?
+          if @auth == "Basic"
+            header["Authorization"] = ("Basic " + ["#{@user}:#{@password}"].pack("m")).chomp
+          else
+            raise "Other authorization methods than Basic not yet implemented"
+          end
         end
-      end
 
-      expected = resp["Content-Length"] || "<unknown>"
-      if data.nil? or data.size == 0 or expected.to_i != data.size
-	raise "Wrong size. Was #{data.size}, should be #{expected}"
-      end
+        # post request
+        resp = @http.post2( @path, request, header ) 
+        data = resp.body
+        @http.finish
 
+        if resp.code == "401"
+          # Authorization Required
+          raise "Authorization failed.\nHTTP-Error: #{resp.code} #{resp.message}" if try >= 2
 
-      parser().parseMethodResponse(data)
+          auth = resp["WWW-AUTHENTICATE"].split(/\s+/)
+          if auth[0] == "Basic"
+            @auth = "Basic"
+            next   # try once more (loop)
+          else
+            raise "Authorization method #{auth[0]} not yet implemented."
+          end
+
+        elsif resp.code[0,1] != "2"
+          raise "HTTP-Error: #{resp.code} #{resp.message}" 
+        end
+
+        if resp["Content-Type"] != "text/xml"
+          if resp["Content-Type"] == "text/html"
+            raise "Wrong content-type: \n#{data}"
+          else
+            raise "Wrong content-type"
+          end
+        end
+
+        expected = resp["Content-Length"] || "<unknown>"
+        if data.nil? or data.size == 0 or expected.to_i != data.size
+          raise "Wrong size. Was #{data.size}, should be #{expected}"
+        end
+
+        return parser().parseMethodResponse(data)
+
+      end # loop
     end
 
     
@@ -302,9 +374,6 @@ module XMLRPC
       end
 
     end # class Proxy
-
-
-
 
   end # class Client
 
