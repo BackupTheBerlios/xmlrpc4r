@@ -17,7 +17,7 @@ class MyHandlerClass
 end
  
 
-s = XMLRPC::Server.new(8070)    # if you want a standalone server
+s = XMLRPC::Server.new(8070, "127.0.0.1", 4, nil, true, true)    # if you want a standalone server
 #s = XMLRPC::CGIServer.new
 
 s.add_handler("michael.add") {|a,b|

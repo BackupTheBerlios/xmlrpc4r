@@ -2,7 +2,8 @@
 
 require "xmlrpc/client"
  
-server = XMLRPC::Client.new("localhost", "/cgi-bin/xml.cgi", 8070)
+#server = XMLRPC::Client.new("localhost", "/cgi-bin/xml.cgi", 80)
+server = XMLRPC::Client.new2("http://michael:neumann@localhost:80/cgi-bin/xml.cgi")
 #server = XMLRPC::Client.new("localhost", "/cgi-bin/xml.fcgi", 80)
 
 ok, param = server.call2("michael.add", 4, 5)
