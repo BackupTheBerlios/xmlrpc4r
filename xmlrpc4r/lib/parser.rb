@@ -3,13 +3,14 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.17 2001/01/30 21:18:15 michael Exp $
+# $Id: parser.rb,v 1.18 2001/02/02 13:45:11 michael Exp $
 #
 
 
 require "date"
 require "xmltreebuilder"
 require "xmlrpc/base64"
+require "xmlrpc/datetime"
 
 module XMLRPC
 
@@ -169,11 +170,12 @@ class Parser
       # TODO: Time.gm ??? .local ??? 
       a = [$1, $2, $3, $4, $5, $6].collect{|i| i.to_i}
       
-      if a[0] >= 1970 then
-        Time.gm(*a)
-      else
-        Date.new(*a[0,3])
-      end
+      XMLRPC::DateTime.new(*a)
+      #if a[0] >= 1970 then
+      #  Time.gm(*a)
+      #else
+      #  Date.new(*a[0,3])
+      #end
     else
       raise "wrong dateTime.iso8601 format"
     end
