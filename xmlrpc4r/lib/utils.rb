@@ -6,7 +6,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: utils.rb,v 1.3 2001/06/21 11:38:12 michael Exp $ 
+# $Id: utils.rb,v 1.4 2001/07/03 13:02:52 michael Exp $ 
 #
 
 module XMLRPC
@@ -56,6 +56,61 @@ module XMLRPC
     end
 
   end # module ParserWriterChooseMixin
+
+  #
+  # class which wraps a Service Interface definition, used
+  # by BasicServer#add_ihandler
+  #
+  class ServiceInterface
+    def initialize(prefix, &p)
+      raise "No interface specified" if p.nil?
+      @prefix  = prefix
+      @methods = []
+      instance_eval &p
+    end
+
+    attr_reader :prefix, :methods
+
+    def add_method(sig, help=nil, meth_name=nil)
+      mname = nil
+      sig = [sig] if sig.kind_of? String
+
+      sig = sig.collect do |s| 
+        name, si = parse_sig(s)
+        raise "Wrong signatures!" if mname != nil and name != mname 
+        mname = name
+        si
+      end
+
+      @methods << [mname, meth_name || mname, sig, help]
+    end
+
+    private # ---------------------------------
+  
+    def meth(*a)
+      add_method(*a)
+    end
+
+    def parse_sig(sig)
+      # sig is a String, returned will be 
+      if sig =~ /^\s*(\w+)\s+([^(]+)(\(([^)]*)\))?\s*$/
+        params = [$1]
+        name   = $2.strip 
+        $4.split(",").each {|i| params << i.strip} if $4 != nil
+        return name, params
+      else
+        raise "Syntax error in signature"
+      end
+    end
+
+  end # class Interface
+
+  # 
+  # short-form to create a ServiceInterface
+  #
+  def self.interface(prefix, &p)
+    ServiceInterface.new(prefix, &p)  
+  end
 
 end # module XMLRPC
 
