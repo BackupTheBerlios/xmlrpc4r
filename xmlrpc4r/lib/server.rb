@@ -155,7 +155,7 @@ class BasicServer
 
   def initialize(class_delim=".")
     @handler = []
-    @default_handler = nil #method( :default_handler).to_proc
+    @default_handler = nil 
     @service_hook = nil
 
     @class_delim = class_delim
@@ -499,11 +499,16 @@ program.
 ((<XMLRPC::BasicServer>))
 
 == Class Methods
---- XMLRPC::Server.new( port=8080, host="127.0.0.1", *a )
+--- XMLRPC::Server.new( port=8080, host="127.0.0.1", maxConnections=4, stdlog=$stdout, audit=true, debug=true, *a )
     Creates a new (({XMLRPC::Server})) instance, which is a XML-RPC server listening on
     port ((|port|)) and accepts requests for the host ((|host|)), which is by default only the localhost. 
     The server is not started, to start it you have to call ((<serve|XMLRPC::Server#serve>)).
+
+    The parameters ((|maxConnections|)), ((|stdlog|)), ((|audit|)) and ((|debug|)) are passed to the HTTP server and
+    specify it's behaviour more precise.
+
     All additionally given parameters in ((|*a|)) are by-passed to ((<XMLRPC::BasicServer.new>)). 
+    
 
 == Instance Methods
 --- XMLRPC::Server#serve
@@ -517,9 +522,9 @@ program.
 
 class Server < BasicServer
 
-  def initialize(port=8080, host="127.0.0.1", *a)
+  def initialize(port=8080, host="127.0.0.1", maxConnections=4, stdlog=$stdout, audit=true, debug=true, *a)
     super(*a)
-    @server = ::HttpServer.new(proc {|data| request_handler(data)}, port, host)
+    @server = ::HttpServer.new(proc {|data| request_handler(data)}, port, host, maxConnections, stdlog, audit, debug)
   end
   
   def serve
@@ -547,6 +552,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.32 2001/06/24 20:07:26 michael Exp $    
+    $Id: server.rb,v 1.33 2001/06/29 21:13:33 michael Exp $    
 =end
 
