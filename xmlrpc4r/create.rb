@@ -5,17 +5,94 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.2 2001/01/24 19:43:19 michael Exp $
+# $Id: create.rb,v 1.3 2001/01/24 19:58:01 michael Exp $
 #
 
-
 require "xmltreebuilder"
-require "xmltree"
-include XML::SimpleTree
 
+
+
+
+class Create
+
+  El = XML::SimpleTree::Element
+  Pi = XML::SimpleTree::ProcessingInstruction
+  Tx = XML::SimpleTree::Text
+  Do = XML::SimpleTree::Document
+
+
+####################################
+
+
+def methodCall(name, *params)
+  # TODO: check method_name
+
+  parameter = params.collect do |param|
+    El.new("param", nil, conv2value(param))
+  end
+
+  if not parameter.empty? then
+    parameter = [El.new("params", nil, *parameter)]
+  end
+
+    
+  tree = Do.new(
+           Pi.new("xml", 'version="1.0"'),
+           El.new("methodCall", nil,  
+             El.new("methodName", nil,
+               Tx.new(name)
+             ),
+             *parameter    # is nothing when == []
+           )
+         )
+
+  tree.to_s + "\n"
+end
+
+
+
+#
+# generates a XML-RPC methodResponse document
+#
+# if is_ret == false then the params array must
+# contain only one element, which is a structure
+# of a fault return-value.
+# 
+# if is_ret == true then a normal 
+# return-value of all the given params is created.
+#
+def methodResponse(is_ret, *params)
+
+  if is_ret 
+    resp = params.collect do |param|
+      El.new("param", nil, conv2value(param))
+    end
+ 
+    resp = [El.new("params", nil, *resp)]
+  else
+    if params.size != 1 or params[0] === Hash 
+      raise "no valid fault-structure given"
+    end
+    resp = El.new("fault", nil, conv2value(params[0]))
+  end
+
+    
+  tree = Do.new(
+           Pi.new("xml", 'version="1.0"'),
+           El.new("methodResponse", nil, resp) 
+         )
+
+  tree.to_s + "\n"
+end
+
+
+
+#####################################
+private
+#####################################
 
 def ele(e, txt)
-  Element.new(e, nil, Text.new(txt))
+  El.new(e, nil, Tx.new(txt))
 end
 
 #
@@ -40,90 +117,27 @@ def conv2value(param)
       # TODO: can a Hash be empty?
       
       h = param.collect do |key, value|
-        Element.new("member", nil,
+        El.new("member", nil,
           ele("name", key.to_s),
           conv2value(value) 
         )
       end
 
-      Element.new("struct", nil, *h) 
+      El.new("struct", nil, *h) 
     when Array
       # TODO: can an Array be empty?
       a = param.collect {|v| conv2value(v) }
       
-      Element.new("array", nil,
-        Element.new("data", nil, *a)
+      El.new("array", nil,
+        El.new("data", nil, *a)
       )
     else 
       raise "Wrong type: not yet working!"
     end
      
-    Element.new("value", nil, val)
+    El.new("value", nil, val)
 end
 
 
-####################################
-
-
-def createMethodCall(name, *params)
-  # TODO: check method_name
-
-  parameter = params.collect do |param|
-    Element.new("param", nil, conv2value(param))
-  end
-
-  if not parameter.empty? then
-    parameter = [Element.new("params", nil, *parameter)]
-  end
-
-    
-  tree = Document.new(
-           ProcessingInstruction.new("xml", 'version="1.0"'),
-           Element.new("methodCall", nil,  
-             Element.new("methodName", nil,
-               Text.new(name)
-             ),
-             *parameter    # is nothing when == []
-           )
-         )
-
-  tree.to_s + "\n"
 end
-
-
-
-#
-# generates a XML-RPC methodResponse document
-#
-# if is_ret == false then the params array must
-# contain only one element, which is a structure
-# of a fault return-value.
-# 
-# if is_ret == true then a normal 
-# return-value of all the given params is created.
-#
-def createMethodResponse(is_ret, *params)
-
-  if is_ret 
-    resp = params.collect do |param|
-      Element.new("param", nil, conv2value(param))
-    end
- 
-    resp = [Element.new("params", nil, *resp)]
-  else
-    if params.size != 1 or params[0] === Hash 
-      raise "no valid fault-structure given"
-    end
-    resp = Element.new("fault", nil, conv2value(params[0]))
-  end
-
-    
-  tree = Document.new(
-           ProcessingInstruction.new("xml", 'version="1.0"'),
-           Element.new("methodResponse", nil, resp) 
-         )
-
-  tree.to_s + "\n"
-end
-
 
