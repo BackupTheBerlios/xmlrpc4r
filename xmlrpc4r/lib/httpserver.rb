@@ -4,7 +4,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.5 2001/01/29 16:19:34 michael Exp $
+# $Id: httpserver.rb,v 1.6 2001/01/29 17:18:45 michael Exp $
 #
 
 
@@ -14,7 +14,7 @@ require "xmlrpc/EServer"
 class HttpServer < Server
 
   def http_error(status, message, io)
-    io.puts "HTTP/1.0 #{status} {message}"
+    io.puts "HTTP/1.0 #{status} #{message}"
     io.puts "Connection: close" 
     io.puts "Server: XMLRPC::Server (Ruby #{RUBY_VERSION})"
     io.puts
@@ -62,7 +62,7 @@ class HttpServer < Server
     end
 
     begin
-      resp = @handler.call(body) 
+      resp = @handler.call(data) 
       raise if resp.nil? or resp.size <= 0
     rescue Exception => e
       http_error(500, "Internal Server Error", io)
@@ -78,8 +78,6 @@ class HttpServer < Server
     io.print resp
 
   end
-
-end
 
 
   def initialize(handler, port=8080, maxConnections = 4, 
