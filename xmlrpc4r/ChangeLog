@@ -1,7 +1,7 @@
 =begin
 = ChangeLog for xmlrpc4r
 
-
+: 1.5.1
 * standalone-server (XMLRPC::Server) works correctly (changed \n to \r\n), and validates
 * XMLRPC::Server.new has now a second paramter "host" to specify the host to listen on
 
@@ -20,5 +20,5 @@
 : 1.4
 
 = History
-  $Id: ChangeLog,v 1.5 2001/02/04 14:13:19 michael Exp $
+  $Id: ChangeLog,v 1.6 2001/02/04 14:40:53 michael Exp $
 =end
