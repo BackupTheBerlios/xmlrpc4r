@@ -1,4 +1,4 @@
-$Id: README,v 1.14 2001/02/05 15:36:43 michael Exp $
+$Id: README,v 1.15 2001/02/07 20:06:27 michael Exp $
 
 XML-RPC for Ruby
 Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
@@ -19,6 +19,15 @@ PREREQUISITES
 You need xmlparser (I use version 0.6.1) from RAA, and 
 a Ruby version >= 1.6.
 
+TEST
+-----
+If you want, you can execute the testcases, to make sure, 
+all (for which testcases exist) works correctly.
+Therefore you need "RUNIT" from RAA installed.
+Then go into directory "test" (you have to go into 
+this directory, otherwise it will not work!!!), 
+and run "ruby test.rb". If in the last line there's an
+"OK", all works as expected.
 
 INSTALL
 -------
