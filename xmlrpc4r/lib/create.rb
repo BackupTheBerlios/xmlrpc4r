@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.17 2001/04/20 12:27:53 michael Exp $
+# $Id: create.rb,v 1.18 2001/05/15 19:04:34 michael Exp $
 #
 
 require "date"
@@ -44,7 +44,11 @@ module XMLRPC
       end
 
       def text(txt)
-        txt
+        cleaned = txt.dup
+        cleaned.gsub!(/&/, '&amp;')
+        cleaned.gsub!(/</, '&lt;')
+        cleaned.gsub!(/>/, '&gt;')
+        cleaned
       end
 
     end # class Simple
