@@ -4,7 +4,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: httpserver.rb,v 1.1 2001/01/28 17:04:06 michael Exp $
+# $Id: httpserver.rb,v 1.2 2001/01/28 17:58:52 michael Exp $
 #
 
 
@@ -15,8 +15,6 @@ class HttpServer < Server
 
   def serve(io)
     command = io.gets
-    puts command.inspect
-
     hash = {}
 
     while (line=io.gets) !~ /^(\n|\r)/
@@ -24,14 +22,9 @@ class HttpServer < Server
 	hash[$1.upcase] = $2.strip
       end
     end
-    puts hash.inspect
     
-    len = hash["CONTENT-LENGTH"].to_i
-    puts "LENGTG: #{len}"
-    body = io.read(len)
-    
+    body = io.read(hash["CONTENT-LENGTH"].to_i)
     resp = @handler.call(body) 
-    puts resp
 
     io.puts "HTTP/1.0 200 OK"
     io.puts "Connection: close" 
