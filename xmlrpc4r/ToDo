@@ -1,7 +1,5 @@
-$Id: ToDo,v 1.11 2001/02/03 22:29:13 michael Exp $
+$Id: ToDo,v 1.12 2001/02/04 14:14:23 michael Exp $
 
-- test validation with standalone server
-- TCPServer.new(host, port) in EServer.rb
 - make it work under Windows
 - Server: do method-lookup with Hash
 - Conversion-class which handles conversion from and to XMLRPC.
@@ -15,6 +13,9 @@ $Id: ToDo,v 1.11 2001/02/03 22:29:13 michael Exp $
 - "400 Bad Request" on not valid XML ?
 - XML pretty print?
 - write more/better samples
+
+* test validation with standalone server
+* TCPServer.new(host, port) in EServer.rb
 * Ruby's fixnum only 30 bit (without sign)? Allow Bignum of 32 bit?
 * XMLRPC::DateTime class (? date3.rb) 
 * conform to validator1 suite
