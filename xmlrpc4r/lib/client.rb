@@ -87,7 +87,7 @@ call on the remote-side and of course the parameters for the remote procedure.
     Both are explained in ((<call|XMLRPC::Client#call>)).
 
 = History
-    $Id: client.rb,v 1.18 2001/01/28 16:51:49 michael Exp $
+    $Id: client.rb,v 1.19 2001/01/29 16:30:21 michael Exp $
 =end
 
 
@@ -125,8 +125,20 @@ class Client
                    "Content-Type"   => "text/xml",
                    "Content-Length" => request.size.to_s 
                  )
-
     @http.finish
+
+    if resp.code[0,1] != "2"
+      raise "HTTP-Error: #{resp.code} #{resp.message}" 
+    end
+
+    if data.nil? or data.size == 0 or resp["Content-Length"].to_i != data.size
+      raise "Wrong size"
+    end
+
+    if resp["Content-Type"] != "text/xml"
+      raise "Wrong content-type"
+    end
+
     parser.parseMethodResponse(data)
   end
 
