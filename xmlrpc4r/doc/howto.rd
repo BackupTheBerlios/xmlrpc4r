@@ -17,8 +17,8 @@ Then you'll need "xmlrpc4r" of course, which is available at
 ((<URL:http://www.fantasy-coders.de/ruby/xmlrpc4r>)).
 
 To install xmlrpc4r:
-  tar -xvzf xmlrpc4r-1_6_3.tar.gz
-  cd xmlrpc4r-1_6_3
+  tar -xvzf xmlrpc4r-1_6_4.tar.gz
+  cd xmlrpc4r-1_6_4
   su root -c "ruby install.rb"
 
 
@@ -188,8 +188,11 @@ or:
 
 You can change the XML Writer by calling (({#set_writer})).
 
+  Much easier is (when using xmlrpc4r version > 1.6.3) to change
+  the file xmlrpc/config.rb and change there the settings which
+  XML parser/writer to use.  
 
 = History
-  $Id: howto.rd,v 1.6 2001/06/12 10:22:14 michael Exp $
+  $Id: howto.rd,v 1.7 2001/06/19 12:33:15 michael Exp $
 =end
 
