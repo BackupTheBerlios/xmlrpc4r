@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.20 2001/06/19 13:26:10 michael Exp $
+# $Id: create.rb,v 1.21 2001/06/19 13:59:42 michael Exp $
 #
 
 require "date"
@@ -189,6 +189,9 @@ module XMLRPC
 
 	when String 
 	  @writer.tag("string", param)
+
+	when Symbol 
+	  @writer.tag("string", param.to_s)
 
         when NilClass
           if Extensions::ENABLE_NIL_CREATE
