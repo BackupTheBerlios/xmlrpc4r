@@ -11,6 +11,7 @@ much easier. For more information see the XML-RPC homepage
 
 == Documentation
 * ((<Base64|URL:base64.html>)) 
+* ((<DateTime|URL:datetime.html>)) 
 * ((<Client|URL:client.html>)) 
 * ((<Server|URL:server.html>)) 
 
@@ -39,6 +40,6 @@ For more information on installation and prerequisites read the (('README'))
 file of the package.
 
 == History
-    $Id: index.rd,v 1.5 2001/02/02 13:44:08 michael Exp $
+    $Id: index.rd,v 1.6 2001/02/02 13:44:46 michael Exp $
 
 =end
