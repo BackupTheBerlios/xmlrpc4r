@@ -10,7 +10,7 @@ Released under the same term of license as Ruby.
 = XMLRPC::Base64
 == Description
 This class is necessary for (('xmlrpc4r')) to determine that a string should 
-be transmitted as encoded base64 string and not as a raw-string. 
+be transmitted base64-encoded and not as a raw-string. 
 You can use (({XMLRPC::Base64})) on the client and server-side as a 
 parameter and/or return-value.
 
@@ -19,8 +19,8 @@ parameter and/or return-value.
     Creates a new (({XMLRPC::Base64})) instance with string ((|str|)) as the
     internal string. When ((|state|)) is (({:dec})) it assumes that the 
     string ((|str|)) is not in base64 format (perhaps already decoded), 
-    otherwise if ((|state|)) is (({:enc})) then it decodes ((|str|)) 
-    first and stores it then as the internal string.
+    otherwise if ((|state|)) is (({:enc})) it decodes ((|str|)) 
+    and stores it as the internal string.
     
 --- XMLRPC::Base64.decode( str )
     Decodes string ((|str|)) with base64 and returns that value.
@@ -77,5 +77,5 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: base64.rb,v 1.2 2001/01/28 17:34:41 michael Exp $
+    $Id: base64.rb,v 1.3 2001/01/28 18:49:54 michael Exp $
 =end
