@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: parser.rb,v 1.24 2001/06/11 16:02:46 michael Exp $
+# $Id: parser.rb,v 1.25 2001/06/19 12:26:56 michael Exp $
 #
 
 
@@ -454,9 +454,6 @@ module XMLRPC
 
     end # class NQXML
 
-
-
-    DEFAULT_PARSER = XMLParser
 
   end # module XMLParser
 

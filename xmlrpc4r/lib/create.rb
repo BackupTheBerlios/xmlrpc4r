@@ -3,7 +3,7 @@
 # 
 # Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 #
-# $Id: create.rb,v 1.18 2001/05/15 19:04:34 michael Exp $
+# $Id: create.rb,v 1.19 2001/06/19 12:26:56 michael Exp $
 #
 
 require "date"
@@ -81,9 +81,6 @@ module XMLRPC
       end
 
     end # class XMLParser
-
-
-    DEFAULT_WRITER = Simple
 
   end # module XMLWriter
 

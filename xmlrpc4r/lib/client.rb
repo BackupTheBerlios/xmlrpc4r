@@ -170,7 +170,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 
 = History
-    $Id: client.rb,v 1.32 2001/06/12 14:04:42 michael Exp $
+    $Id: client.rb,v 1.33 2001/06/19 12:26:55 michael Exp $
 
 =end
 
@@ -178,6 +178,7 @@ Note: Inherited methods from class (({Object})) cannot be used as XML-RPC names,
 
 require "xmlrpc/parser"
 require "xmlrpc/create"
+require "xmlrpc/config"
 require "xmlrpc/utils"     # ParserWriterChooseMixin
 require "net/http"
 
