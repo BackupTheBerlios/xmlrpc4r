@@ -33,6 +33,7 @@ s.add_handler("michael.div") {|a,b|
 
 s.add_handler("michael", MyHandlerClass.new)
 
+s.add_multicall
 s.add_introspection
 
 s.serve
