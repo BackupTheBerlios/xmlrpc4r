@@ -7,7 +7,7 @@ Released under the same term of license as Ruby.
 = Classes
 * ((<XMLRPC::BasicServer>))
 * ((<XMLRPC::CGIServer>))
-
+* ((<XMLRPC::Server>))
 
 = XMLRPC::BasicServer
 == Description
@@ -71,6 +71,7 @@ Do not use this server, as this is/should be an abstract class.
 
 require "xmlrpc/parser"
 require "xmlrpc/create"
+require "xmlrpc/httpserver"
 
 module XMLRPC
 
@@ -217,11 +218,85 @@ class CGIServer < BasicServer
 end
 
 
+=begin
+= XMLRPC::Server
+== Synopsis
+    require "xmlrpc/server"
+ 
+    s = XMLRPC::Server.new(8080) 
+
+    s.add_handler("michael.add") do |a,b|
+      a + b
+    end
+
+    s.add_handler("michael.div") do |a,b|
+      if b == 0
+        raise XMLRPC::FaultException.new(1, "division by zero")
+      else
+        a / b 
+      end
+    end 
+
+    s.serve
+
+== Description
+Implements a standalone XML-RPC server.
+
+== Superclass
+((<XMLRPC::BasicServer>))
+
+== Class Methods
+--- XMLRPC::Server.new( port=8080, *a )
+    Creates a new (({XMLRPC::Server})) instance, which is a XML-RPC server listening on
+    port ((|port|)). The server is not started, to start it you have to call ((<serve|XMLRPC::Server#serve>)).
+    All additionally given parameters in ((|*a|)) are by-passed to ((<XMLRPC::BasicServer.new>)). 
+
+== Instance Methods
+--- XMLRPC::Server#serve
+    Call this after you have added all you handlers to the server.
+    This method starts the server to listen for XML-RPC requests and answer them.
+
+--- XMLRPC::Server#stop
+    Stops the server.
+    
+=end
+
+class Server < BasicServer
+
+  def initialize(port=8080, *a)
+    super(*a)
+    @server = ::HttpServer.new(proc {|data| request_handler(data)}, port) 
+    @parser = Parser.new
+  end
+  
+  def serve
+    begin
+      @server.start.join
+    ensure
+      @server.stop
+    end
+  end
+  
+  def stop
+    @server.stop
+  end
+
+ 
+  private
+
+  def request_handler(data)
+    $stderr.puts "in request_handler" if $DEBUG
+    method, params = @parser.parseMethodCall(data) 
+    handle(method, *params)
+   end
+  
+end
 
 end # module XMLRPC
 
 
 =begin
 = History
-    $Id: server.rb,v 1.8 2001/01/28 15:03:41 michael Exp $    
+    $Id: server.rb,v 1.9 2001/01/28 17:01:18 michael Exp $    
 =end
+
