@@ -1,8 +1,8 @@
 #
 # Client-interface wrapper for Sand-Storm component architecture
-# (sandstorm.sourceforge.net)
+# (sstorm.sourceforge.net)
 #
-# $Id: active.rb,v 1.1 2001/06/25 11:39:04 michael Exp $
+# $Id: active.rb,v 1.2 2001/06/26 11:28:00 michael Exp $
 #
 
 require "xmlrpc/client"
