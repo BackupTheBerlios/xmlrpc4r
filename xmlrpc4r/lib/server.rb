@@ -204,7 +204,8 @@ end
     end 
 
     s.set_default_handler do |name, *args|
-      raise XMLRPC::FaultException.new(-99, "Method #{name} missing or wrong number of parameters!")
+      raise XMLRPC::FaultException.new(-99, "Method #{name} missing" +
+                                       " or wrong number of parameters!")
     end
   
     s.serve
@@ -320,7 +321,8 @@ end
     end 
 
     s.set_default_handler do |name, *args|
-      raise XMLRPC::FaultException.new(-99, "Method #{name} missing or wrong number of parameters!")
+      raise XMLRPC::FaultException.new(-99, "Method #{name} missing" +
+                                       " or wrong number of parameters!")
     end
  
     s.serve
@@ -383,6 +385,6 @@ end # module XMLRPC
 
 =begin
 = History
-    $Id: server.rb,v 1.19 2001/02/02 16:02:39 michael Exp $    
+    $Id: server.rb,v 1.20 2001/02/02 16:50:19 michael Exp $    
 =end
 
