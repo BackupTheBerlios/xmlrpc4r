@@ -13,4 +13,3 @@ p server.call('system.multicall', [
     { 'methodName' => 'michael.sub', 'params'     => [4, 3] },
     { 'methodName' => 'michael.div', 'params'     => [3, 0] }
 ])
-
