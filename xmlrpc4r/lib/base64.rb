@@ -1,11 +1,41 @@
-#
-# Data-type Base64 which is supported by XML-RPC but has no direct equivialent in Ruby.
-# 
-# Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
-#
-# $Id: base64.rb,v 1.1 2001/01/26 14:28:07 michael Exp $ 
-#
+=begin
+= xmlrpc/base64.rb
+Copyright (C) 2001 by Michael Neumann (neumann@s-direktnet.de)
 
+Released under the same term of license as Ruby.
+
+= Classes
+* ((<XMLRPC::Base64>))
+
+= XMLRPC::Base64
+== Description
+This class is necessary for (('xmlrpc4r')) to determine that a string should 
+be transmitted as encoded base64 string and not as a raw-string. 
+You can use (({XMLRPC::Base64})) on the client and server-side as a 
+parameter and/or return-value.
+
+== Class Methods
+--- XMLRPC::Base64.new( str, state = :dec )
+    Creates a new (({XMLRPC::Base64})) instance with string ((|str|)) as the
+    internal string. When ((|state|)) is (({:dec})) it assumes that the 
+    string ((|str|)) is not in base64 format (perhaps already decoded), 
+    otherwise if ((|state|)) is (({:enc})) then it decodes ((|str|)) 
+    first and stores it then as the internal string.
+    
+--- XMLRPC::Base64.decode( str )
+    Decodes string ((|str|)) with base64 and returns that value.
+
+--- XMLRPC::Base64.encode( str )
+    Encodes string ((|str|)) with base64 and returns that value.
+
+== Instance Methods
+--- XMLRPC::Base64#decoded
+    Returns the internal string decoded.
+
+--- XMLRPC::Base64#encoded
+    Returns the internal string encoded with base64.
+
+=end
 
 module XMLRPC
 
@@ -18,19 +48,18 @@ class Base64
     when :dec
       @str = str
     else
-      raise "wrong argument; either :enc or :dec"
+      raise ArgumentError, "wrong argument; either :enc or :dec"
     end
   end
   
- 
+  def decoded
+    @str  
+  end
+  
   def encoded
     Base64.encode(@str)
   end
 
-  def decoded
-    @str  
-  end
- 
 
   def Base64.decode(str)
     str.unpack("m")[0]
@@ -45,3 +74,8 @@ end
 
 end # module XMLRPC
 
+
+=begin
+= History
+    $Id: base64.rb,v 1.2 2001/01/28 17:34:41 michael Exp $
+=end
